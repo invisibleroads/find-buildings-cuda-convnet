@@ -1,12 +1,41 @@
-# US/Pacific 2/3/2014
+# US/Pacific 2/5/2014
+Explore new libraries
+    Write code example with https://code.google.com/p/pyresample/
+    Write code example with https://github.com/storpipfugl/pykdtree
+    Write code example with https://github.com/mraspaud/mpop
+    Write code example with http://spectralpython.sourceforge.net/
+    Write code example with https://github.com/matplotlib/basemap
+    Write code example with https://code.google.com/p/pycoast/
+    Write code example with https://github.com/mraspaud/trollimage
+    Write code example with https://pypi.python.org/pypi/OWSLib
+    Work through tutorials on http://www.pytroll.org/
 = Send human estimates for building count in 10k windows [Monday 6pm]
     = Write script to extract windows for human inspection from satellite image [1/31/2014 6pm 10h]
-        = Decide how to combine the spectral bands of the satellite image [1/30/2014 6pm 6h]
+        = Design wrapper API
+        Write script that a extracts a window from the infrared band
+        Decide how to combine the spectral bands of the satellite image [1/30/2014 6pm 6h]
+        Research interpolation methods
+        Send update to Vijay Modi [Friday 6pm]
     Write script to extract windows for image recognition from a satellite image [10h]
     Decide window length and width based on average building dimensions [2h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
     Combine results into a clean dataset [8h]
 Send computer estimates for building count in 10m windows [3/17/2014 6pm]
+    Investigate new packages related to image classification
+        Investigate http://deeplearning.net/software/pylearn2/
+        Investigate http://deeplearning.net/software/theano/
+        Investigate http://fastml.com/object-recognition-in-images-with-cuda-convnet/
+        Investigate http://opencv.org/
+        Investigate http://pybrain.org/
+        Investigate http://scikit-image.org/
+        Investigate http://scikit-learn.org/stable/
+        Investigate https://code.google.com/p/cuda-convnet/
+        Investigate https://code.google.com/p/neurolab/
+        Investigate https://code.google.com/p/pynnet/
+        Investigate https://github.com/dnouri/noccn
+        Investigate https://github.com/iskandr/striate
+        Investigate https://github.com/rjpower/fastnet
+        Investigate https://github.com/zygmuntz/kaggle-cifar
     Finalize initial architecture
         Evaluate new libraries for image recognition [6h]
         Send proposed architecture to Marc'Aurelio for review
