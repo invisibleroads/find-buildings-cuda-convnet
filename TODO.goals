@@ -3,7 +3,7 @@ Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/storpipfugl/pykdtree
     Write code example with https://github.com/mraspaud/mpop
-    Write code example with http://spectralpython.sourceforge.net/
+    _ Write code example with http://spectralpython.sourceforge.net/
     Write code example with https://github.com/matplotlib/basemap
     Write code example with https://code.google.com/p/pycoast/
     Write code example with https://github.com/mraspaud/trollimage
@@ -11,7 +11,15 @@ Explore new libraries
     Work through tutorials on http://www.pytroll.org/
 = Send human estimates for building count in 10k windows [Monday 6pm]
     = Write script to extract windows for human inspection from satellite image [1/31/2014 6pm 10h]
-        = Design wrapper API
+        + Design wrapper API
+        Implement wrapper API
+            + Implement Calibration.get_pixel_xy()
+            + Implement Calibration.get_dimensions()
+            + Implement Calibration.get_pixel_dimensions()
+            = Get array given image and pixel coordinates and pixel dimensions
+            Get gridded geo points given image and dimensions
+            Get array given image and geo coordinates and geo dimensions
+            Get array given two images and geo coordinates and geo dimensions and function
         Write script that a extracts a window from the infrared band
         Decide how to combine the spectral bands of the satellite image [1/30/2014 6pm 6h]
         Research interpolation methods
@@ -49,5 +57,6 @@ Evaluate classifiers on cost-effective lower resolution satellite images [4/15/2
     Train classifiers on lower resolution satellite images [14h]
 Reach cross-validation accuracy of 80% [4/15/2014 6pm]
     Apply different techniques to improve classifier performance [14h]
+        Experiment with YUV colorspace
 Feature Modi Research Group logo and link on tool webpage [8/1/2014 6pm]
 Send access credentials to all tools, valid with no membership fee for one year [8/1/2014 6pm]
