@@ -1,4 +1,15 @@
-# UTC 02/05/2014
+# UTC 02/12/2014
++ Design wrapper API [02/12/2014]
++ Implement wrapper API [02/12/2014]
++ Integrate scope_pixel_dimensions into save_pixel_frame [02/12/2014]
++ Get gridded geo points given image and dimensions [02/12/2014]
++ Implement Calibration.get_pixel_xy() [02/12/2014]
++ Implement Calibration.get_dimensions() [02/12/2014]
++ Implement Calibration.get_pixel_dimensions() [02/12/2014]
++ Get array given image and pixel coordinates and pixel dimensions [02/12/2014]
++ Get array given image and geo coordinates and geo dimensions [02/12/2014]
++ Get array given two images and geo coordinates and geo dimensions and function [02/12/2014]
++ Write script that a extracts a window from the infrared band [02/12/2014]
 + Recover old code from https://github.com/invisibleroads/furtherperception [02/05/2014]
 + Investigate new packages related to satellite images [02/05/2014]
 + Investigate http://spectralpython.sourceforge.net/ [02/05/2014]
