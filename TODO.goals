@@ -1,4 +1,4 @@
-# US/Pacific 2/12/2014
+# US/Pacific 2/13/2014
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/storpipfugl/pykdtree
@@ -9,9 +9,9 @@ Explore new libraries
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
 = Send human estimates for building count in 10k windows [2/10/2014 6pm]
-    = Write script to extract windows for human inspection from satellite image [1/31/2014 6pm 10h]
+    = Generate windows for human inspection
+    Generate dataset
     Send update to Vijay Modi [2/7/2014 6pm]
-    Write script to extract windows for image recognition from a satellite image [10h]
     Decide window length and width based on average building dimensions [2h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
     Combine results into a clean dataset [8h]

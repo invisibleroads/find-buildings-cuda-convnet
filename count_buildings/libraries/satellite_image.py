@@ -105,20 +105,20 @@ class ImageScope(SatelliteImage):
             pixel_center - self.scope_pixel_dimensions / 2,
             self.scope_pixel_dimensions)
 
-    def save_frame(self, target_path, xy):
+    def save_fixed_frame(self, target_path, xy):
         pixel_xy = self.to_pixel_xy(xy)
         return self.save_pixel_frame(
             target_path, pixel_xy)
 
-    def save_pixel_frame(self, target_path, pixel_xy):
+    def save_fixed_pixel_frame(self, target_path, pixel_xy):
         return super(ImageScope, self).save_pixel_frame(
             target_path, pixel_xy, self.scope_pixel_dimensions)
 
-    def get_array_from_frame(self, xy):
+    def get_array_from_fixed_frame(self, xy):
         pixel_xy = self.to_pixel_xy(xy)
         return self.get_array_from_pixel_frame(pixel_xy)
 
-    def get_array_from_pixel_frame(self, pixel_xy):
+    def get_array_from_fixed_pixel_frame(self, pixel_xy):
         return super(ImageScope, self).get_array_from_pixel_frame
 
 

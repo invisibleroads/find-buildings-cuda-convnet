@@ -1,4 +1,6 @@
-# UTC 02/12/2014
+# UTC 02/13/2014
++ Write script to extract windows for image recognition from a satellite image [02/13/2014]
++ Write script to extract windows for human inspection from satellite image [02/13/2014]
 + Design wrapper API [02/12/2014]
 + Implement wrapper API [02/12/2014]
 + Integrate scope_pixel_dimensions into save_pixel_frame [02/12/2014]
