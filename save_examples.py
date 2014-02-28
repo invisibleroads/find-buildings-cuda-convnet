@@ -13,7 +13,8 @@ def run(
         target_folder,
         source_image_path,
         source_point_path,
-        scope_dimensions):
+        scope_dimensions,
+        save_images):
     image_scope = satellite_image.ImageScope(
         source_image_path, scope_dimensions)
     point_proj4, positive_centers = load_points(source_point_path)[:2]
@@ -21,6 +22,11 @@ def run(
 
     target_path = os.path.normpath(target_folder) + '.h5'
     target_h5 = h5py.File(target_path, 'w')
+
+    def save_example(target_folder, pixel_center, array):
+        target_name = 'pixel-center-%s-%s.jpg' % tuple(pixel_center)
+        target_path = os.path.join(target_folder, target_name)
+        image_scope.save_array(target_path, array[:, :, :3])
 
     positives = []
     positives_folder = os.path.join(target_folder, 'positives')
@@ -31,14 +37,12 @@ def run(
     for center in positive_centers:
         # Transform center into spatial reference of image
         transformed_center = transform_point(*center)
-        # Save array as image
-        target_name = 'pixel-center-%s-%s.jpg' % tuple(
-            image_scope.to_pixel_xy(transformed_center))
-        target_path = os.path.join(positives_folder, target_name)
-        array = image_scope.save_array_from_center(
-            target_path, transformed_center)
-        # Append array
+        pixel_center = image_scope.to_pixel_xy(transformed_center)
+        # Get array
+        array = image_scope.get_array_from_pixel_center(pixel_center)
         positives.append(array)
+        if save_images:
+            save_example(positives_folder, pixel_center, array)
     target_h5.create_dataset('positives', data=positives)
 
     positive_count = len(positives)
@@ -77,13 +81,11 @@ def run(
         # Retry if the pixel_frame contains a positive_pixel_center
         if list(positive_rtree.intersection(pixel_bounds)):
             continue
-        # Save array as image
-        target_name = 'pixel-center-%s-%s.jpg' % tuple(pixel_center)
-        target_path = os.path.join(negatives_folder, target_name)
-        array = image_scope.save_array_from_pixel_center(
-            target_path, pixel_center)
-        # Append array
+        # Get array
+        array = image_scope.get_array_from_pixel_center(pixel_center)
         negatives.append(array)
+        if save_images:
+            save_example(negatives_folder, pixel_center, array)
     target_h5.create_dataset('negatives', data=negatives)
 
 
@@ -91,9 +93,13 @@ if __name__ == '__main__':
     argument_parser = script.get_argument_parser()
     argument_parser.add_argument(
         'source_point_path')
+    argument_parser.add_argument(
+        '--save_images',
+        action='store_true')
     arguments = script.parse_arguments(argument_parser)
     run(
         arguments.target_folder,
         arguments.source_image_path,
         arguments.source_point_path,
-        arguments.scope_dimensions)
+        arguments.scope_dimensions,
+        arguments.save_images)
