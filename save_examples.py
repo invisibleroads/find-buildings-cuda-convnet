@@ -28,7 +28,8 @@ def run(
         target_path = os.path.join(target_folder, target_name)
         image_scope.save_array(target_path, array[:, :, :3])
 
-    positives = []
+    positive_pixel_centers = []
+    positive_arrays = []
     positives_folder = os.path.join(target_folder, 'positives')
     try:
         os.makedirs(positives_folder)
@@ -38,35 +39,28 @@ def run(
         # Transform center into spatial reference of image
         transformed_center = transform_point(*center)
         pixel_center = image_scope.to_pixel_xy(transformed_center)
+        positive_pixel_centers.append(pixel_center)
         # Get array
         array = image_scope.get_array_from_pixel_center(pixel_center)
-        positives.append(array)
+        positive_arrays.append(array)
         if save_images:
             save_example(positives_folder, pixel_center, array)
-    target_h5.create_dataset('positives', data=positives)
+    target_h5.create_dataset(
+        'positive/pixel_centers', data=positive_pixel_centers)
+    target_h5.create_dataset(
+        'positive/arrays', data=positive_arrays)
 
-    positive_count = len(positives)
+    positive_count = len(positive_centers)
     print 'positive_count = %s' % positive_count
-    # Compute the positive pixel area
-    scope_pixel_dimensions = image_scope.scope_pixel_dimensions
-    scope_pixel_area = reduce(operator.mul, scope_pixel_dimensions)
-    positive_pixel_area = scope_pixel_area * positive_count
-    # Compute the negative pixel area
-    image_pixel_area = reduce(operator.mul, image_scope.pixel_dimensions)
-    negative_pixel_area = image_pixel_area - positive_pixel_area
-    # Compute the ratio of negatives to positives
-    negative_count_over_positive_count = negative_pixel_area / float(
-        positive_pixel_area)
-    # Estimate the required number of negative examples
-    negative_count = calculator.round_integer(
-        negative_count_over_positive_count * positive_count)
+    negative_count = estimate_negative_count(image_scope, positive_count)
     print 'negative_count = %s' % negative_count
 
     positive_rtree = index.Index()
     for positive_index, positive_center in enumerate(positive_centers):
         positive_rtree.insert(positive_index, positive_center)
 
-    negatives = []
+    negative_pixel_centers = []
+    negative_arrays = []
     negatives_folder = os.path.join(target_folder, 'negatives')
     try:
         os.makedirs(negatives_folder)
@@ -81,12 +75,32 @@ def run(
         # Retry if the pixel_frame contains a positive_pixel_center
         if list(positive_rtree.intersection(pixel_bounds)):
             continue
+        negative_pixel_centers.append(pixel_center)
         # Get array
         array = image_scope.get_array_from_pixel_center(pixel_center)
-        negatives.append(array)
+        negative_arrays.append(array)
         if save_images:
             save_example(negatives_folder, pixel_center, array)
-    target_h5.create_dataset('negatives', data=negatives)
+    target_h5.create_dataset(
+        'negative/pixel_centers', data=negative_pixel_centers)
+    target_h5.create_dataset(
+        'negative/arrays', data=negative_arrays)
+
+
+def estimate_negative_count(image_scope, positive_count):
+    # Compute the positive pixel area
+    scope_pixel_dimensions = image_scope.scope_pixel_dimensions
+    scope_pixel_area = reduce(operator.mul, scope_pixel_dimensions)
+    positive_pixel_area = scope_pixel_area * positive_count
+    # Compute the negative pixel area
+    image_pixel_area = reduce(operator.mul, image_scope.pixel_dimensions)
+    negative_pixel_area = image_pixel_area - positive_pixel_area
+    # Compute the ratio of negatives to positives
+    negative_count_over_positive_count = negative_pixel_area / float(
+        positive_pixel_area)
+    # Estimate the required number of negative examples
+    return calculator.round_integer(
+        negative_count_over_positive_count * positive_count)
 
 
 if __name__ == '__main__':
@@ -95,6 +109,9 @@ if __name__ == '__main__':
         'source_point_path')
     argument_parser.add_argument(
         '--save_images',
+        action='store_true')
+    argument_parser.add_argument(
+        '--test',
         action='store_true')
     arguments = script.parse_arguments(argument_parser)
     run(
