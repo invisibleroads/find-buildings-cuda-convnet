@@ -1,12 +1,29 @@
 import h5py
 import operator
 import os
+import rtree
 from geometryIO import get_transformPoint, load_points
-from rtree import index
+from scipy.sparse import lil_matrix
 
 from count_buildings.libraries import calculator
 from count_buildings.libraries import satellite_image
 from count_buildings.libraries import script
+
+
+class PointTree(object):
+
+    def __init__(self, points):
+        self.rtree = rtree.index.Index()
+        for index, point in enumerate(points):
+            self.rtree.insert(index, tuple(point))
+
+    def intersects(self, bounds):
+        try:
+            self.rtree.intersection(bounds).next()
+        except StopIteration:
+            return False
+        else:
+            return True
 
 
 def run(
@@ -14,7 +31,8 @@ def run(
         source_image_path,
         source_point_path,
         scope_dimensions,
-        save_images):
+        save_images,
+        is_test):
     image_scope = satellite_image.ImageScope(
         source_image_path, scope_dimensions)
     point_proj4, positive_centers = load_points(source_point_path)[:2]
@@ -28,6 +46,9 @@ def run(
         target_path = os.path.join(target_folder, target_name)
         image_scope.save_array(target_path, array[:, :, :3])
 
+    positive_count = 1 if is_test else len(positive_centers)
+    print 'positive_count = %s' % positive_count
+
     positive_pixel_centers = []
     positive_arrays = []
     positives_folder = os.path.join(target_folder, 'positives')
@@ -35,7 +56,8 @@ def run(
         os.makedirs(positives_folder)
     except OSError:
         pass
-    for center in positive_centers:
+    for positive_index in xrange(positive_count):
+        center = positive_centers[positive_index]
         # Transform center into spatial reference of image
         transformed_center = transform_point(*center)
         pixel_center = image_scope.to_pixel_xy(transformed_center)
@@ -50,14 +72,9 @@ def run(
     target_h5.create_dataset(
         'positive/arrays', data=positive_arrays)
 
-    positive_count = len(positive_centers)
-    print 'positive_count = %s' % positive_count
-    negative_count = estimate_negative_count(image_scope, positive_count)
+    negative_count = 1 if is_test else estimate_negative_count(
+        image_scope, positive_pixel_centers)
     print 'negative_count = %s' % negative_count
-
-    positive_rtree = index.Index()
-    for positive_index, positive_center in enumerate(positive_centers):
-        positive_rtree.insert(positive_index, positive_center)
 
     negative_pixel_centers = []
     negative_arrays = []
@@ -66,6 +83,7 @@ def run(
         os.makedirs(negatives_folder)
     except OSError:
         pass
+    point_tree = PointTree(positive_pixel_centers)
     for negative_index in xrange(negative_count):
         # Get random pixel_center
         pixel_center = image_scope.get_random_pixel_center()
@@ -73,7 +91,7 @@ def run(
         pixel_bounds = image_scope.get_pixel_bounds_from_pixel_center(
             pixel_center)
         # Retry if the pixel_frame contains a positive_pixel_center
-        if list(positive_rtree.intersection(pixel_bounds)):
+        if point_tree.intersects(pixel_bounds):
             continue
         negative_pixel_centers.append(pixel_center)
         # Get array
@@ -87,20 +105,27 @@ def run(
         'negative/arrays', data=negative_arrays)
 
 
-def estimate_negative_count(image_scope, positive_count):
+def estimate_negative_count(image_scope, positive_pixel_centers):
+    canvas = lil_matrix(image_scope.pixel_dimensions, dtype='bool')
     # Compute the positive pixel area
-    scope_pixel_dimensions = image_scope.scope_pixel_dimensions
-    scope_pixel_area = reduce(operator.mul, scope_pixel_dimensions)
-    positive_pixel_area = scope_pixel_area * positive_count
+    for positive_pixel_center in positive_pixel_centers:
+        pixel_frame = image_scope.get_pixel_frame_from_pixel_center(
+            positive_pixel_center)
+        (pixel_x, pixel_y), (pixel_width, pixel_height) = pixel_frame
+        canvas[
+            pixel_x:pixel_x + pixel_width,
+            pixel_y:pixel_y + pixel_height] = 1
+    positive_pixel_area = canvas.sum()
     # Compute the negative pixel area
     image_pixel_area = reduce(operator.mul, image_scope.pixel_dimensions)
     negative_pixel_area = image_pixel_area - positive_pixel_area
     # Compute the ratio of negatives to positives
-    negative_count_over_positive_count = negative_pixel_area / float(
+    negative_area_over_positive_area = negative_pixel_area / float(
         positive_pixel_area)
     # Estimate the required number of negative examples
+    positive_count = len(positive_pixel_centers)
     return calculator.round_integer(
-        negative_count_over_positive_count * positive_count)
+        negative_area_over_positive_area * positive_count)
 
 
 if __name__ == '__main__':
@@ -119,4 +144,5 @@ if __name__ == '__main__':
         arguments.source_image_path,
         arguments.source_point_path,
         arguments.scope_dimensions,
-        arguments.save_images)
+        arguments.save_images,
+        arguments.test)

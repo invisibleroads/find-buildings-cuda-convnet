@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 from argparse import ArgumentParser
 
 
@@ -22,8 +23,8 @@ def get_argument_parser():
 
 def parse_arguments(argument_parser):
     arguments = argument_parser.parse_args()
-    if not os.path.exists(arguments.target_folder):
-        os.makedirs(arguments.target_folder)
+    shutil.rmtree(arguments.target_folder, ignore_errors=True)
+    os.makedirs(arguments.target_folder)
     return arguments
 
 
