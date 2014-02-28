@@ -134,10 +134,12 @@ if __name__ == '__main__':
         'source_point_path')
     argument_parser.add_argument(
         '--save_images',
-        action='store_true')
+        action='store_true',
+        help='save images of positive and negative examples')
     argument_parser.add_argument(
         '--test',
-        action='store_true')
+        action='store_true',
+        help='save one positive example and one negative example')
     arguments = script.parse_arguments(argument_parser)
     run(
         arguments.target_folder,

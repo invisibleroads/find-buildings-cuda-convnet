@@ -17,7 +17,7 @@ def get_argument_parser():
         metavar='WIDTH,HEIGHT',
         required=True,
         type=parse_dimensions,
-        help='Dimensions of extracted image in geographic units')
+        help='dimensions of extracted image in geographic units')
     return argument_parser
 
 

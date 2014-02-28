@@ -26,7 +26,7 @@ if __name__ == '__main__':
         metavar='WIDTH,HEIGHT',
         required=True,
         type=script.parse_dimensions,
-        help='Dimensions of scanning interval in geographic units')
+        help='dimensions of scanning interval in geographic units')
     arguments = script.parse_arguments(argument_parser)
     run(
         arguments.target_folder,
