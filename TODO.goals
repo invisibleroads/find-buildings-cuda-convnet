@@ -9,12 +9,15 @@ Explore new libraries
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
 = Send human estimates for building count in 10k windows [2/10/2014 6pm]
-    = Generate windows for human inspection
-    Generate dataset
+    + Generate windows for human inspection
+    = Generate dataset
     Send update to Vijay Modi [2/7/2014 6pm]
     Decide window length and width based on average building dimensions [2h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
     Combine results into a clean dataset [8h]
+
+    Let user specific archive as target_path
+    Support x delimiter as well as comma
 Send computer estimates for building count in 10m windows [3/17/2014 6pm]
     Investigate new packages related to image classification
         Investigate http://deeplearning.net/software/pylearn2/
