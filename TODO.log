@@ -1,4 +1,7 @@
-# UTC 02/13/2014
+# UTC 03/01/2014
++ Generate windows for human inspection [03/01/2014]
++ Decide window length and width based on average building dimensions [03/01/2014]
++ Support x delimiter as well as comma [03/01/2014]
 + Write script to extract windows for image recognition from a satellite image [02/13/2014]
 + Write script to extract windows for human inspection from satellite image [02/13/2014]
 + Design wrapper API [02/12/2014]
