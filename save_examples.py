@@ -6,6 +6,7 @@ from geometryIO import get_transformPoint, load_points
 from scipy.sparse import lil_matrix
 
 from count_buildings.libraries import calculator
+from count_buildings.libraries import disk
 from count_buildings.libraries import satellite_image
 from count_buildings.libraries import script
 
@@ -35,6 +36,7 @@ def run(
         is_test):
     image_scope = satellite_image.ImageScope(
         source_image_path, scope_dimensions)
+    scope_pixel_width, scope_pixel_height = image_scope.scope_pixel_dimensions
     point_proj4, positive_centers = load_points(source_point_path)[:2]
     transform_point = get_transformPoint(point_proj4, image_scope.proj4)
 
@@ -49,13 +51,14 @@ def run(
     positive_count = 1 if is_test else len(positive_centers)
     print 'positive_count = %s' % positive_count
 
+    positives_folder = disk.make_folder(target_folder, 'positives')
     positive_pixel_centers = []
-    positive_arrays = []
-    positives_folder = os.path.join(target_folder, 'positives')
-    try:
-        os.makedirs(positives_folder)
-    except OSError:
-        pass
+    positive_arrays = target_h5.create_dataset(
+        'positive/arrays', shape=(
+            positive_count,
+            scope_pixel_height,
+            scope_pixel_width,
+            image_scope.band_count))
     for positive_index in xrange(positive_count):
         center = positive_centers[positive_index]
         # Transform center into spatial reference of image
@@ -64,25 +67,24 @@ def run(
         positive_pixel_centers.append(pixel_center)
         # Get array
         array = image_scope.get_array_from_pixel_center(pixel_center)
-        positive_arrays.append(array)
+        positive_arrays[positive_index, :, :, :] = array
         if save_images:
             save_example(positives_folder, pixel_center, array)
     target_h5.create_dataset(
         'positive/pixel_centers', data=positive_pixel_centers)
-    target_h5.create_dataset(
-        'positive/arrays', data=positive_arrays)
 
     negative_count = 1 if is_test else estimate_negative_count(
         image_scope, positive_pixel_centers)
     print 'negative_count = %s' % negative_count
 
+    negatives_folder = disk.make_folder(target_folder, 'negatives')
     negative_pixel_centers = []
-    negative_arrays = []
-    negatives_folder = os.path.join(target_folder, 'negatives')
-    try:
-        os.makedirs(negatives_folder)
-    except OSError:
-        pass
+    negative_arrays = target_h5.create_dataset(
+        'negative/arrays', shape=(
+            negative_count,
+            scope_pixel_height,
+            scope_pixel_width,
+            image_scope.band_count))
     point_tree = PointTree(positive_pixel_centers)
     for negative_index in xrange(negative_count):
         # Get random pixel_center
@@ -96,13 +98,11 @@ def run(
         negative_pixel_centers.append(pixel_center)
         # Get array
         array = image_scope.get_array_from_pixel_center(pixel_center)
-        negative_arrays.append(array)
+        negative_arrays[negative_index, :, :, :] = array
         if save_images:
             save_example(negatives_folder, pixel_center, array)
     target_h5.create_dataset(
         'negative/pixel_centers', data=negative_pixel_centers)
-    target_h5.create_dataset(
-        'negative/arrays', data=negative_arrays)
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):

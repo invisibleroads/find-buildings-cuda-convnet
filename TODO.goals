@@ -11,6 +11,7 @@ Explore new libraries
 = Send human estimates for building count in 10k windows [2/10/2014 6pm]
     + Generate windows for human inspection
     = Generate dataset
+        Chunk dataset into smaller pieces
     Send update to Vijay Modi [2/7/2014 6pm]
     Decide window length and width based on average building dimensions [2h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]

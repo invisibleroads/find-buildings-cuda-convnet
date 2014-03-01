@@ -51,6 +51,7 @@ class SatelliteImage(Calibration):
         self._vmin, self._vmax = _get_extreme_values(image)
         super(SatelliteImage, self).__init__(image.GetGeoTransform())
 
+        self.band_count = image.RasterCount
         self.pixel_dimensions = image.RasterXSize, image.RasterYSize
         self.spatial_reference = osr.SpatialReference()
         self.spatial_reference.ImportFromWkt(image.GetProjectionRef())
