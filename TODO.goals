@@ -1,4 +1,4 @@
-# US/Pacific 2/28/2014
+# US/Pacific 3/8/2014
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/storpipfugl/pykdtree
@@ -8,27 +8,18 @@ Explore new libraries
     Write code example with https://github.com/mraspaud/trollimage
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
-= Send human estimates for building count in 10k windows [2/10/2014 6pm]
-    = Generate dataset
-    Send update to Vijay Modi [2/7/2014 6pm]
-    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
-    Combine Amazon Mechanical Turk results into a clean dataset [8h]
-Send computer estimates for building count in 10m windows [3/17/2014 6pm]
-    Investigate new packages related to image classification
-        Investigate http://deeplearning.net/software/pylearn2/
-        Investigate http://deeplearning.net/software/theano/
-        Investigate http://fastml.com/object-recognition-in-images-with-cuda-convnet/
-        Investigate http://opencv.org/
-        Investigate http://pybrain.org/
-        Investigate http://scikit-image.org/
-        Investigate http://scikit-learn.org/stable/
-        Investigate https://code.google.com/p/cuda-convnet/
-        Investigate https://code.google.com/p/neurolab/
-        Investigate https://code.google.com/p/pynnet/
-        Investigate https://github.com/dnouri/noccn
-        Investigate https://github.com/iskandr/striate
-        Investigate https://github.com/rjpower/fastnet
-        Investigate https://github.com/zygmuntz/kaggle-cifar
+    Write code example with scikit-image
+= Send computer estimates for building count in 10m windows [3/17/2014 6pm]
+    = Train classifier with scikit-learn
+    Train classifier with fastnet
+    Train classifier with pybrain
+    Train classifier with pynnet
+    Train classifier with cuda-convnet and noccn
+    Train classifier with dropconnect
+    Train classifier with opencv
+    Train classifier with neurolab
+    Train classifier with pylearn2
+    Train classifier with theano
     Finalize initial architecture
         Evaluate new libraries for image recognition [6h]
         Send proposed architecture to Marc'Aurelio for review
@@ -36,8 +27,11 @@ Send computer estimates for building count in 10m windows [3/17/2014 6pm]
         Send proposed architecture to another CBLL expert for review
     Build classifier to estimate the building count in a window [20h]
     Write script to estimate the building count of a satellite image [14h]
+Combine Amazon Mechanical Turk results into a clean dataset [8h]
+    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Reach cross-validation accuracy of 75% [3/17/2014 6pm 20h]
     Optimize classifier to estimate the building count in a window [20h]
+    Schedule demo with Modi Research Group
 Evaluate classifiers on cost-effective lower resolution satellite images [4/15/2014 6pm 14h]
     Train classifiers on lower resolution satellite images [14h]
 Reach cross-validation accuracy of 80% [4/15/2014 6pm]
