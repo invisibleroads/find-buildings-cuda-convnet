@@ -22,6 +22,14 @@ def run(
 if __name__ == '__main__':
     argument_parser = script.get_argument_parser()
     argument_parser.add_argument(
+        'source_image_path')
+    argument_parser.add_argument(
+        '--scope_dimensions',
+        metavar='WIDTH,HEIGHT',
+        required=True,
+        type=script.parse_dimensions,
+        help='dimensions of extracted image in geographic units')
+    argument_parser.add_argument(
         '--interval_dimensions',
         metavar='WIDTH,HEIGHT',
         required=True,

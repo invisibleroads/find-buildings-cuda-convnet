@@ -131,7 +131,15 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 if __name__ == '__main__':
     argument_parser = script.get_argument_parser()
     argument_parser.add_argument(
+        'source_image_path')
+    argument_parser.add_argument(
         'source_point_path')
+    argument_parser.add_argument(
+        '--scope_dimensions',
+        metavar='WIDTH,HEIGHT',
+        required=True,
+        type=script.parse_dimensions,
+        help='dimensions of extracted image in geographic units')
     argument_parser.add_argument(
         '--save_images',
         action='store_true',

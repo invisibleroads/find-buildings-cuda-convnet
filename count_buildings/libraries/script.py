@@ -7,17 +7,9 @@ from argparse import ArgumentParser
 def get_argument_parser():
     argument_parser = ArgumentParser()
     argument_parser.add_argument(
-        'source_image_path')
-    argument_parser.add_argument(
         '--target_folder',
         metavar='FOLDER',
         required=True)
-    argument_parser.add_argument(
-        '--scope_dimensions',
-        metavar='WIDTH,HEIGHT',
-        required=True,
-        type=parse_dimensions,
-        help='dimensions of extracted image in geographic units')
     return argument_parser
 
 
