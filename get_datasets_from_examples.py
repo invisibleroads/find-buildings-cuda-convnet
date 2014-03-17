@@ -4,6 +4,7 @@ import re
 import numpy as np
 from random import shuffle
 
+from count_buildings.libraries import disk
 from count_buildings.libraries import script
 
 
@@ -26,8 +27,7 @@ def run(target_folder, example_path, dataset_size, preserve_ratio):
         preserve_ratio = True
     dataset_name = get_dataset_name(
         example_name, dataset_size, preserve_ratio)
-    dataset_path = os.path.join(target_folder, dataset_name)
-    dataset_h5 = h5py.File(dataset_path, 'w')
+    dataset_h5 = get_dataset_h5(target_folder, dataset_name)
 
     if preserve_ratio:
         positive_count *= dataset_size / example_size
@@ -44,16 +44,18 @@ def run(target_folder, example_path, dataset_size, preserve_ratio):
     dataset_h5['labels'] = labels[indices]
 
 
+def get_dataset_h5(target_folder, dataset_name):
+    dataset_path = os.path.join(target_folder, dataset_name)
+    return h5py.File(dataset_path, 'w')
+
+
 def get_dataset_name(source_path, dataset_size, preserve_ratio):
     source_name = os.path.basename(source_path)
-    file_name, file_extension = os.path.splitext(source_name)
-    parts = [
-        file_name,
-        'd%s' % format_dataset_size(dataset_size),
-    ]
+    source_base, source_extension = os.path.splitext(source_name)
+    parts = [source_base, 'd%s' % format_dataset_size(dataset_size)]
     if preserve_ratio:
         parts.append('p')
-    return '-'.join(parts) + file_extension
+    return '-'.join(parts) + source_extension
 
 
 def parse_dataset_size(dataset_size_string):

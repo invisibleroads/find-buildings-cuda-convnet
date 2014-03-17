@@ -1,4 +1,8 @@
-# UTC 03/09/2014
+# UTC 03/17/2014
++ Schedule demo with Modi Research Group [03/17/2014]
++ Write get_tiles_from_images.py [03/17/2014]
++ Write get_examples_from_points.py [03/17/2014]
++ Write get_datasets_from_examples.py [03/17/2014]
 + Investigate new packages related to image classification [03/09/2014]
 + Investigate https://github.com/zygmuntz/kaggle-cifar [03/09/2014]
 + Investigate http://fastml.com/object-recognition-in-images-with-cuda-convnet/ [03/09/2014]

@@ -28,81 +28,42 @@ class PointTree(object):
 
 
 def run(
-        target_folder,
-        source_image_path,
-        source_point_path,
-        scope_dimensions,
-        save_images,
-        is_test):
+        target_folder, source_image_path, source_point_path,
+        example_dimensions, positive_count, negative_count, save_images):
     image_scope = satellite_image.ImageScope(
-        source_image_path, scope_dimensions)
-    scope_pixel_width, scope_pixel_height = image_scope.scope_pixel_dimensions
+        source_image_path, example_dimensions)
+    example_pixel_dimensions = image_scope.scope_pixel_dimensions
     point_proj4, positive_centers = load_points(source_point_path)[:2]
     transform_point = get_transformPoint(point_proj4, image_scope.proj4)
+    positive_pixel_centers = [
+        image_scope.to_pixel_xy(transform_point(*_)) for _ in positive_centers]
+    example_folder = get_example_folder(target_folder, example_dimensions)
+    example_h5 = get_example_h5(example_folder)
 
-    target_path = os.path.normpath(target_folder) + '.h5'
-    target_h5 = h5py.File(target_path, 'w')
-
-    def save_example(target_folder, pixel_center, array):
-        target_name = 'pixel-center-%s-%s.jpg' % tuple(pixel_center)
-        target_path = os.path.join(target_folder, target_name)
-        image_scope.save_array(target_path, array[:, :, :3])
-
-    positive_count = 1 if is_test else len(positive_centers)
+    if positive_count is None:
+        positive_count = len(positive_pixel_centers)
     print 'positive_count = %s' % positive_count
-
-    positives_folder = disk.make_folder(target_folder, 'positives')
-    positive_pixel_centers = []
-    positive_arrays = target_h5.create_dataset(
-        'positive/arrays', shape=(
-            positive_count,
-            scope_pixel_height,
-            scope_pixel_width,
-            image_scope.band_count))
-    for positive_index in xrange(positive_count):
-        center = positive_centers[positive_index]
-        # Transform center into spatial reference of image
-        transformed_center = transform_point(*center)
-        pixel_center = image_scope.to_pixel_xy(transformed_center)
-        positive_pixel_centers.append(pixel_center)
-        # Get array
-        array = image_scope.get_array_from_pixel_center(pixel_center)
-        positive_arrays[positive_index, :, :, :] = array
-        if save_images:
-            save_example(positives_folder, pixel_center, array)
-    target_h5.create_dataset(
-        'positive/pixel_centers', data=positive_pixel_centers)
-
-    negative_count = 1 if is_test else estimate_negative_count(
-        image_scope, positive_pixel_centers)
+    if negative_count is None:
+        negative_count = estimate_negative_count(
+            image_scope, positive_pixel_centers)
     print 'negative_count = %s' % negative_count
 
-    negatives_folder = disk.make_folder(target_folder, 'negatives')
-    negative_pixel_centers = []
-    negative_arrays = target_h5.create_dataset(
-        'negative/arrays', shape=(
-            negative_count,
-            scope_pixel_height,
-            scope_pixel_width,
-            image_scope.band_count))
-    point_tree = PointTree(positive_pixel_centers)
-    for negative_index in xrange(negative_count):
-        # Get random pixel_center
-        pixel_center = image_scope.get_random_pixel_center()
-        # Convert pixel_center to pixel_bounds
-        pixel_bounds = image_scope.get_pixel_bounds_from_pixel_center(
-            pixel_center)
-        # Retry if the pixel_frame contains a positive_pixel_center
-        if point_tree.intersects(pixel_bounds):
-            continue
-        negative_pixel_centers.append(pixel_center)
-        # Get array
-        array = image_scope.get_array_from_pixel_center(pixel_center)
-        negative_arrays[negative_index, :, :, :] = array
-        if save_images:
-            save_example(negatives_folder, pixel_center, array)
-    target_h5.create_dataset(
-        'negative/pixel_centers', data=negative_pixel_centers)
+    save_positive_examples(
+        example_h5, example_folder, example_pixel_dimensions,
+        image_scope, positive_pixel_centers, positive_count, save_images)
+    save_negative_examples(
+        example_h5, example_folder, example_pixel_dimensions,
+        image_scope, positive_pixel_centers, negative_count, save_images)
+
+
+def get_example_folder(target_folder, example_dimensions):
+    example_folder_name = 'e%dx%d' % tuple(example_dimensions)
+    return os.path.join(target_folder, example_folder_name)
+
+
+def get_example_h5(example_folder):
+    file_path = os.path.normpath(example_folder) + '.h5'
+    return h5py.File(file_path, 'w')
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):
@@ -128,6 +89,70 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
         negative_area_over_positive_area * positive_count)
 
 
+def save_positive_examples(
+        example_h5, example_folder,
+        (example_pixel_width, example_pixel_height),
+        image_scope, positive_pixel_centers, positive_count, save_images):
+    if save_images:
+        positives_folder = disk.replace_folder(example_folder, 'positives')
+    positive_arrays = example_h5.create_dataset(
+        'positive/arrays', shape=(
+            positive_count, example_pixel_height, example_pixel_width,
+            image_scope.band_count))
+    for positive_index in xrange(positive_count):
+        pixel_center = positive_pixel_centers[positive_index]
+        # Get array
+        array = image_scope.get_array_from_pixel_center(pixel_center)
+        positive_arrays[positive_index, :, :, :] = array
+        if save_images:
+            save_example(image_scope, positives_folder, pixel_center, array)
+    example_h5.create_dataset(
+        'positive/pixel_centers', data=positive_pixel_centers)
+    return positive_pixel_centers
+
+
+def save_negative_examples(
+        example_h5, example_folder,
+        (example_pixel_width, example_pixel_height),
+        image_scope, positive_pixel_centers, negative_count, save_images):
+    if save_images:
+        negatives_folder = disk.replace_folder(example_folder, 'negatives')
+    negative_pixel_centers = []
+    negative_arrays = example_h5.create_dataset(
+        'negative/arrays', shape=(
+            negative_count, example_pixel_height, example_pixel_width,
+            image_scope.band_count))
+    point_tree = PointTree(positive_pixel_centers)
+    for negative_index in xrange(negative_count):
+        # Get random pixel_center
+        pixel_center = image_scope.get_random_pixel_center()
+        # Convert pixel_center to pixel_bounds
+        pixel_bounds = image_scope.get_pixel_bounds_from_pixel_center(
+            pixel_center)
+        # Retry if the pixel_frame contains a positive_pixel_center
+        if point_tree.intersects(pixel_bounds):
+            continue
+        negative_pixel_centers.append(pixel_center)
+        # Get array
+        array = image_scope.get_array_from_pixel_center(pixel_center)
+        negative_arrays[negative_index, :, :, :] = array
+        if save_images:
+            save_example(image_scope, negatives_folder, pixel_center, array)
+    example_h5.create_dataset(
+        'negative/pixel_centers', data=negative_pixel_centers)
+    return negative_pixel_centers
+
+
+def save_example(image_scope, target_folder, pixel_center, array):
+    example_path = get_example_path(target_folder, pixel_center)
+    image_scope.save_array(example_path, array[:, :, :3])
+
+
+def get_example_path(target_folder, pixel_center):
+    example_file_name = 'pixel-center-%s-%s.jpg' % tuple(pixel_center)
+    return os.path.join(target_folder, example_file_name)
+
+
 if __name__ == '__main__':
     argument_parser = script.get_argument_parser()
     argument_parser.add_argument(
@@ -135,24 +160,29 @@ if __name__ == '__main__':
     argument_parser.add_argument(
         'source_point_path')
     argument_parser.add_argument(
-        '--scope_dimensions',
+        '--example_dimensions',
         metavar='WIDTH,HEIGHT',
         required=True,
         type=script.parse_dimensions,
-        help='dimensions of extracted image in geographic units')
+        help='dimensions of extracted example in geographic units')
+    argument_parser.add_argument(
+        '--positive_count',
+        type=int,
+        help='maximum number of positive examples to extract')
+    argument_parser.add_argument(
+        '--negative_count',
+        type=int,
+        help='maximum number of negative examples to extract')
     argument_parser.add_argument(
         '--save_images',
         action='store_true',
         help='save images of positive and negative examples')
-    argument_parser.add_argument(
-        '--test',
-        action='store_true',
-        help='save one positive example and one negative example')
     arguments = script.parse_arguments(argument_parser)
     run(
         arguments.target_folder,
         arguments.source_image_path,
         arguments.source_point_path,
-        arguments.scope_dimensions,
-        arguments.save_images,
-        arguments.test)
+        arguments.example_dimensions,
+        arguments.positive_count,
+        arguments.negative_count,
+        arguments.save_images)

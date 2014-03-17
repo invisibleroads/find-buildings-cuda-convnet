@@ -1,7 +1,7 @@
-import os
 import re
-import shutil
 from argparse import ArgumentParser
+
+from count_buildings.libraries import disk
 
 
 def get_argument_parser():
@@ -15,9 +15,12 @@ def get_argument_parser():
 
 def parse_arguments(argument_parser):
     arguments = argument_parser.parse_args()
-    shutil.rmtree(arguments.target_folder, ignore_errors=True)
-    os.makedirs(arguments.target_folder)
+    disk.make_folder(arguments.target_folder)
     return arguments
+
+
+def parse_numbers(text):
+    return [int(x) for x in text.split(',')]
 
 
 def parse_dimensions(text):

@@ -1,4 +1,32 @@
-# US/Pacific 3/8/2014
+# US/Pacific 3/16/2014
+= Send computer estimates for building count in 10m windows [Tomorrow 6pm]
+    = Complete first pass of complete pipeline
+        = Write get_models_from_datasets.py
+        Write get_labels_from_models.py
+        Write get_counts_from_labels.py
+    Finalize initial architecture
+        Evaluate new libraries for image recognition [6h]
+            Train classifier with scikit-learn
+            Train classifier with fastnet
+            Train classifier with pybrain
+            Train classifier with pynnet
+            Train classifier with cuda-convnet and noccn
+            Train classifier with dropconnect
+            Train classifier with opencv
+            Train classifier with neurolab
+            Train classifier with pylearn2
+            Train classifier with theano
+        Send proposed architecture to Marc'Aurelio for review
+        Send proposed architecture to Yann LeCun for review
+Combine Amazon Mechanical Turk results into a clean dataset [8h]
+    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
+Reach cross-validation accuracy of 75% [Tomorrow 6pm 20h]
+    Optimize classifier to estimate the building count in a window [20h]
+Evaluate classifiers on cost-effective lower resolution satellite images [4/15/2014 6pm 14h]
+    Train classifiers on lower resolution satellite images [14h]
+Reach cross-validation accuracy of 80% [4/15/2014 6pm]
+    Apply different techniques to improve classifier performance [14h]
+        Experiment with YUV colorspace
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/storpipfugl/pykdtree
@@ -10,40 +38,5 @@ Explore new libraries
     Work through tutorials on http://www.pytroll.org/
     Write code example with scikit-image
     Write code example with cartopy
-= Send computer estimates for building count in 10m windows [3/17/2014 6pm]
-    = Complete first pass of complete pipeline
-        + Write get_tiles_from_images.py
-        + Write get_examples_from_points.py
-        + Write get_datasets_from_examples.py
-        = Write get_models_from_datasets.py
-        Write get_labels_from_models.py
-        Write get_counts_from_labels.py
-    Train classifier with scikit-learn
-    Train classifier with fastnet
-    Train classifier with pybrain
-    Train classifier with pynnet
-    Train classifier with cuda-convnet and noccn
-    Train classifier with dropconnect
-    Train classifier with opencv
-    Train classifier with neurolab
-    Train classifier with pylearn2
-    Train classifier with theano
-    Finalize initial architecture
-        Evaluate new libraries for image recognition [6h]
-        Send proposed architecture to Marc'Aurelio for review
-        Send proposed architecture to Yann LeCun for review
-        Send proposed architecture to another CBLL expert for review
-    Build classifier to estimate the building count in a window [20h]
-    Write script to estimate the building count of a satellite image [14h]
-Combine Amazon Mechanical Turk results into a clean dataset [8h]
-    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
-Reach cross-validation accuracy of 75% [3/17/2014 6pm 20h]
-    Optimize classifier to estimate the building count in a window [20h]
-    Schedule demo with Modi Research Group
-Evaluate classifiers on cost-effective lower resolution satellite images [4/15/2014 6pm 14h]
-    Train classifiers on lower resolution satellite images [14h]
-Reach cross-validation accuracy of 80% [4/15/2014 6pm]
-    Apply different techniques to improve classifier performance [14h]
-        Experiment with YUV colorspace
-Feature Modi Research Group logo and link on tool webpage [8/1/2014 6pm]
 Send access credentials to all tools, valid with no membership fee for one year [8/1/2014 6pm]
+    Feature Modi Research Group logo and link on tool webpage [8/1/2014 6pm]
