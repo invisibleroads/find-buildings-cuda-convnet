@@ -9,8 +9,16 @@ Explore new libraries
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
     Write code example with scikit-image
+    Write code example with cartopy
 = Send computer estimates for building count in 10m windows [3/17/2014 6pm]
-    = Train classifier with scikit-learn
+    = Complete first pass of complete pipeline
+        + Write get_tiles_from_images.py
+        + Write get_examples_from_points.py
+        + Write get_datasets_from_examples.py
+        = Write get_models_from_datasets.py
+        Write get_labels_from_models.py
+        Write get_counts_from_labels.py
+    Train classifier with scikit-learn
     Train classifier with fastnet
     Train classifier with pybrain
     Train classifier with pynnet
