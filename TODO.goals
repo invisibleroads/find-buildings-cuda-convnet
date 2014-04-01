@@ -16,6 +16,7 @@
             Train classifier with neurolab
             Train classifier with pylearn2
             Train classifier with theano
+            Train classifier with OverFeat
         Send proposed architecture to Marc'Aurelio for review
         Send proposed architecture to Yann LeCun for review
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
@@ -29,7 +30,7 @@ Reach cross-validation accuracy of 80% [4/15/2014 6pm]
         Experiment with YUV colorspace
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
-    Write code example with https://github.com/storpipfugl/pykdtree
+    + Write code example with https://github.com/storpipfugl/pykdtree
     Write code example with https://github.com/mraspaud/mpop
     Write code example with https://github.com/matplotlib/basemap
     Write code example with https://code.google.com/p/pycoast/
