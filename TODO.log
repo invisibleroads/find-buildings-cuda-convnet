@@ -1,4 +1,12 @@
-# UTC 03/17/2014
+# UTC 04/06/2014
++ Update get_examples_from_points.py [04/06/2014]
++ Use --target_folder [04/06/2014]
++ Save run.pkl [04/06/2014]
++ Update get_tiles_from_image.py [04/06/2014]
++ Use --target_folder [04/06/2014]
++ Save run.pkl [04/06/2014]
++ Write get_markers_from_datasets.py [04/06/2014]
++ Write code example with https://github.com/storpipfugl/pykdtree [04/01/2014]
 + Schedule demo with Modi Research Group [03/17/2014]
 + Write get_tiles_from_images.py [03/17/2014]
 + Write get_examples_from_points.py [03/17/2014]
