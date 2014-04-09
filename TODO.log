@@ -1,4 +1,14 @@
-# UTC 04/06/2014
+# UTC 04/09/2014
++ Build dataset [04/09/2014]
++ Build production test dataset [04/09/2014]
++ Target t400x300/173-pul13600x2400.jpg 13600,2400,14400,3000 [04/09/2014]
++ Add --stay_inside_pixel_bounds to get_examples_from_points [04/09/2014]
++ Build production training dataset [04/09/2014]
++ Exclude t400x300/173-pul13600x2400.jpg 13600,2400,14400,3000 [04/09/2014]
++ Build development training dataset [04/08/2014]
++ Update get_dataset_from_examples.py [04/08/2014]
++ Use --target_folder [04/08/2014]
++ Save run.pkl [04/08/2014]
 + Update get_examples_from_points.py [04/06/2014]
 + Use --target_folder [04/06/2014]
 + Save run.pkl [04/06/2014]

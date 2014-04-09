@@ -25,11 +25,9 @@ def run(
 
     if positive_count is None:
         positive_count = len(positive_pixel_centers)
-    print 'positive_count = %s' % positive_count
     if negative_count is None:
         negative_count = estimate_negative_count(
             image_scope, positive_pixel_centers)
-    print 'negative_count = %s' % negative_count
 
     save_positive_examples(
         example_h5, target_folder, example_pixel_dimensions,
@@ -49,9 +47,9 @@ def get_example_h5(target_folder, example_dimensions):
     return h5py.File(example_path, 'w')
 
 
-def save_example(image_scope, target_folder, pixel_center, array):
+def save_image(image_scope, target_folder, pixel_center, array):
     example_path = get_example_path(target_folder, pixel_center)
-    image_scope.save_array(example_path, array[:, :, :3])
+    image_scope.save_image(example_path, array[:, :, :3])
 
 
 def get_example_path(target_folder, pixel_center):
@@ -97,7 +95,7 @@ def save_positive_examples(
         array = image_scope.get_array_from_pixel_center(pixel_center)
         positive_arrays[positive_index, :, :, :] = array
         if save_images:
-            save_example(image_scope, positives_folder, pixel_center, array)
+            save_image(image_scope, positives_folder, pixel_center, array)
     example_h5.create_dataset(
         'positive/pixel_centers',
         data=positive_pixel_centers, dtype=image_scope.pixel_dtype)
@@ -123,7 +121,7 @@ def save_negative_examples(
         array = image_scope.get_array_from_pixel_center(pixel_center)
         negative_arrays[negative_index, :, :, :] = array
         if save_images:
-            save_example(image_scope, negatives_folder, pixel_center, array)
+            save_image(image_scope, negatives_folder, pixel_center, array)
     example_h5.create_dataset(
         'negative/pixel_centers',
         data=negative_pixel_centers, dtype=image_scope.pixel_dtype)

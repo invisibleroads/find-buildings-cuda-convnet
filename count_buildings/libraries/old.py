@@ -1,10 +1,10 @@
-import math
 import numpy as np
 import random
 from functools import partial
 from itertools import product
 from matplotlib import pyplot as plt
 from osgeo import gdal, osr
+from shapely.geometry import box
 
 from . import calculator
 
@@ -99,20 +99,22 @@ class ImageScope(SatelliteImage):
             targeted_indices=None):
         image_pixel_width, image_pixel_height = self.pixel_dimensions
         interval_pixel_width, interval_pixel_height = interval_pixel_dimensions
-        try:
-            x1, y1, x2, y2 = targeted_pixel_bounds
-        except TypeError:
-            x1, y1 = 0, 0
-            x2, y2 = self.pixel_dimensions
-        pixel_x_iter = get_covering_xrange(x1, x2, interval_pixel_width)
-        pixel_y_iter = get_covering_xrange(y1, y2, interval_pixel_height)
-        row_count = get_row_count(image_pixel_height, interval_pixel_height)
-        for pixel_upper_left in product(pixel_x_iter, pixel_y_iter):
-            tile_index = get_tile_index(
-                pixel_upper_left, interval_pixel_dimensions, row_count)
-            if targeted_indices and tile_index not in targeted_indices:
+        targeted_pixel_box = box(
+            *targeted_pixel_bounds) if targeted_pixel_bounds else None
+        pixel_x_iter = xrange(0, image_pixel_width, interval_pixel_width)
+        pixel_y_iter = xrange(0, image_pixel_height, interval_pixel_height)
+
+        for pixel_index, pixel_upper_left in enumerate(product(
+                pixel_x_iter, pixel_y_iter)):
+            if targeted_indices and pixel_index not in targeted_indices:
                 continue
-            yield tile_index, pixel_upper_left
+            if targeted_pixel_box:
+                pixel_bounds = self.get_pixel_bounds_from_pixel_upper_left(
+                    pixel_upper_left)
+                pixel_box = box(*pixel_bounds)
+                if not pixel_box.intersects(targeted_pixel_box):
+                    continue
+            yield pixel_index, pixel_upper_left
 
     def save_image_from_center(self, target_path, center):
         pixel_center = self.to_pixel_xy(center)
@@ -205,19 +207,3 @@ def get_pixel_frame_from_pixel_center(pixel_center, pixel_dimensions):
 def get_pixel_center_from_pixel_frame(pixel_frame):
     pixel_upper_left, pixel_dimensions = pixel_frame
     return pixel_upper_left + np.array(pixel_dimensions) / 2
-
-
-def get_covering_xrange(a, b, interval):
-    a_cover = int(math.ceil(-1 + a / float(interval)) * interval)
-    b_cover = int(math.floor(+1 + b / float(interval)) * interval)
-    return xrange(max(a_cover, 0), b_cover, interval)
-
-
-def get_tile_index(pixel_upper_left, interval_pixel_dimensions, row_count):
-    pixel_x, pixel_y = pixel_upper_left
-    interval_pixel_x, interval_pixel_y = interval_pixel_dimensions
-    return row_count * pixel_x / interval_pixel_x + pixel_y / interval_pixel_y
-
-
-def get_row_count(height, interval_y):
-    return int(math.ceil(height / float(interval_y)))

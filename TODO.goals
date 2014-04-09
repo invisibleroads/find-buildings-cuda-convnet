@@ -1,11 +1,14 @@
-# US/Pacific 4/5/2014
-Send computer estimates for building count in 10m windows
-    Update get_dataset_from_examples.py
-        Use --target_folder
+# US/Pacific 4/9/2014
+= Send computer estimates for building count in 10m windows
+    = Update get_marker_from_datasets.py
+        = Use --target_folder
         Save run.pkl
-    Update get_marker_from_datasets.py
-        Use --target_folder
-        Save run.pkl
+    Run cuda-convnet on test dataset
+        Write script to set up gpu machine
+        Run cuda-convnet on cifar10
+        Run cuda-convnet on d10k
+        Run cuda-convnet on d100k
+        Move --stay_outside_pixel_bounds to get_examples_from_points
     Update get_labels_from_marker.py
         Use --target_folder
         Save run.pkl
@@ -15,13 +18,12 @@ Send computer estimates for building count in 10m windows
     Complete first pass of complete pipeline
         Write get_labels_from_models.py
         Write get_counts_from_labels.py
-    = Finalize initial architecture
+    Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
             Train classifier with scikit-learn
-            = Train classifier with fastnet
+            Train classifier with cuda-convnet and noccn
             Train classifier with pybrain
             Train classifier with pynnet
-            Train classifier with cuda-convnet and noccn
             Train classifier with dropconnect
             Train classifier with opencv
             Train classifier with neurolab

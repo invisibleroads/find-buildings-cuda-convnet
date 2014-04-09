@@ -10,12 +10,12 @@ from count_buildings.libraries import satellite_image
 
 def run(
         target_folder, example_path,
-        dataset_size, preserve_ratio, excluded_pixel_bounds):
+        dataset_size, preserve_ratio, stay_outside_pixel_bounds):
     example_h5 = h5py.File(example_path, 'r')
     positive_indices = get_indices(
-        example_h5['positive'], dataset_size, excluded_pixel_bounds)
+        example_h5['positive'], dataset_size, stay_outside_pixel_bounds)
     negative_indices = get_indices(
-        example_h5['negative'], dataset_size, excluded_pixel_bounds)
+        example_h5['negative'], dataset_size, stay_outside_pixel_bounds)
     target_positive_count, target_negative_count = adjust_counts(
         len(positive_indices),
         len(negative_indices), dataset_size, preserve_ratio)
@@ -39,11 +39,12 @@ def get_indices(examples, dataset_size, excluded_pixel_bounds):
     excluded_pixel_box = box(
         *excluded_pixel_bounds) if excluded_pixel_bounds else None
     for index, pixel_center in enumerate(pixel_centers):
-        pixel_bounds = satellite_image.get_pixel_bounds_from_pixel_center(
-            pixel_center, example_pixel_dimensions)
-        pixel_box = box(*pixel_bounds)
-        if excluded_pixel_box and pixel_box.intersects(excluded_pixel_box):
-            continue
+        if excluded_pixel_box:
+            pixel_bounds = satellite_image.get_pixel_bounds_from_pixel_center(
+                pixel_center, example_pixel_dimensions)
+            pixel_box = box(*pixel_bounds)
+            if pixel_box.intersects(excluded_pixel_box):
+                continue
         indices.append(index)
     return indices
 
@@ -113,9 +114,9 @@ if __name__ == '__main__':
         '--preserve_ratio', action='store_true',
         help='preserve ratio of positive to negative examples')
     argument_parser.add_argument(
-        '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
+        '--stay_outside_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
         type=script.parse_bounds,
-        help='bounds to exclude from dataset')
+        help='ignore specified bounds')
     arguments = script.parse_arguments(argument_parser)
     variables = run(**arguments.__dict__)
     script.save_run(arguments, variables, verbose=True)

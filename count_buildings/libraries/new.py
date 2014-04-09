@@ -5,6 +5,7 @@ from functools import partial
 from itertools import product
 from matplotlib import pyplot as plt
 from osgeo import gdal, osr
+from shapely.geometry import box
 
 from . import calculator
 
@@ -99,6 +100,8 @@ class ImageScope(SatelliteImage):
             targeted_indices=None):
         image_pixel_width, image_pixel_height = self.pixel_dimensions
         interval_pixel_width, interval_pixel_height = interval_pixel_dimensions
+        # targeted_pixel_box = box(
+            # *targeted_pixel_bounds) if targeted_pixel_bounds else None
         try:
             x1, y1, x2, y2 = targeted_pixel_bounds
         except TypeError:
@@ -112,6 +115,12 @@ class ImageScope(SatelliteImage):
                 pixel_upper_left, interval_pixel_dimensions, row_count)
             if targeted_indices and tile_index not in targeted_indices:
                 continue
+            # if targeted_pixel_box:
+                # pixel_bounds = self.get_pixel_bounds_from_pixel_upper_left(
+                    # pixel_upper_left)
+                # pixel_box = box(*pixel_bounds)
+                # if not pixel_box.intersects(targeted_pixel_box):
+                    # continue
             yield tile_index, pixel_upper_left
 
     def save_image_from_center(self, target_path, center):
