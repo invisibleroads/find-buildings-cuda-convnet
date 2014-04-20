@@ -1,4 +1,7 @@
-# UTC 04/09/2014
+# UTC 04/20/2014
++ Update get_markers_from_datasets.py [04/20/2014]
++ Use --target_folder [04/20/2014]
++ Save run.pkl [04/20/2014]
 + Build dataset [04/09/2014]
 + Build production test dataset [04/09/2014]
 + Target t400x300/173-pul13600x2400.jpg 13600,2400,14400,3000 [04/09/2014]

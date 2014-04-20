@@ -1,8 +1,7 @@
-# US/Pacific 4/9/2014
+# US/Pacific 4/19/2014
 = Send computer estimates for building count in 10m windows
-    = Update get_marker_from_datasets.py
-        = Use --target_folder
-        Save run.pkl
+    = Run sklearn.logistic_regression on test dataset
+    Run sklearn.support_vector_machine on test dataset
     Run cuda-convnet on test dataset
         Write script to set up gpu machine
         Run cuda-convnet on cifar10

@@ -1,0 +1,2 @@
+class CudaConvNetMarker(object):
+    pass

@@ -107,7 +107,7 @@ if __name__ == '__main__':
         '--example_path', metavar='PATH', required=True,
         help='extracted examples')
     argument_parser.add_argument(
-        '--dataset_size', metavar='INTEGER',
+        '--dataset_size', metavar='SIZE',
         type=script.parse_size,
         help='maximum number of examples to include')
     argument_parser.add_argument(
