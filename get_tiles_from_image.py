@@ -37,6 +37,7 @@ def get_target_pack(
         target_folder, image_scope, tile_count, overlap_dimensions):
     tile_dimensions = image_scope.scope_dimensions
     tile_h5 = get_tile_h5(target_folder, tile_dimensions, overlap_dimensions)
+    tile_h5.create_dataset('labels', shape=(0,), dtype=bool)
     tile_pixel_width, tile_pixel_height = image_scope.scope_pixel_dimensions
     arrays = tile_h5.create_dataset(
         'arrays', shape=(
@@ -45,6 +46,8 @@ def get_target_pack(
     pixel_upper_lefts = tile_h5.create_dataset(
         'pixel_upper_lefts', shape=(
             tile_count, 2), dtype=image_scope.pixel_dtype)
+    pixel_upper_lefts.attrs['calibration_pack'] = image_scope.calibration_pack
+    pixel_upper_lefts.attrs['proj4'] = image_scope.proj4
     tile_indices = tile_h5.create_dataset(
         'tile_indices', shape=(
             tile_count,), dtype=np.min_scalar_type(tile_count))

@@ -16,3 +16,8 @@ def skip_if_exists(f, *args, **kw):
 def load_arrays_and_labels(dataset_path):
     dataset_h5 = h5py.File(dataset_path, 'r')
     return dataset_h5['arrays'], dataset_h5['labels']
+
+
+def load_arrays(arrays_path):
+    dataset_h5 = h5py.File(arrays_path, 'r')
+    return dataset_h5['arrays']

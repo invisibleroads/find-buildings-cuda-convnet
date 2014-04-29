@@ -1,6 +1,12 @@
 # US/Pacific 4/19/2014
 = Send computer estimates for building count in 10m windows
-    = Run sklearn.logistic_regression on test dataset
+    = Complete first pass of complete pipeline with sklearn.logistic_regression
+        Write get_labels_from_models.py
+            Use --target_folder
+            Save run.pkl
+        Write get_counts_from_labels.py
+            Use --target_folder
+            Save run.pkl
     Run sklearn.support_vector_machine on test dataset
     Run cuda-convnet on test dataset
         Write script to set up gpu machine
@@ -8,15 +14,6 @@
         Run cuda-convnet on d10k
         Run cuda-convnet on d100k
         Move --stay_outside_pixel_bounds to get_examples_from_points
-    Update get_labels_from_marker.py
-        Use --target_folder
-        Save run.pkl
-    Update get_counts_from_labels.py
-        Use --target_folder
-        Save run.pkl
-    Complete first pass of complete pipeline
-        Write get_labels_from_models.py
-        Write get_counts_from_labels.py
     Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
             Train classifier with scikit-learn

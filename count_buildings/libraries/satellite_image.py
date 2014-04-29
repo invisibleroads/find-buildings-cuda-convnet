@@ -12,18 +12,18 @@ from . import calculator
 class Calibration(object):
 
     def __init__(self, calibration_pack):
-        self._calibration_pack = calibration_pack
+        self.calibration_pack = calibration_pack
 
     def to_xy(self, (pixel_x, pixel_y)):
         'Get geographic coordinates given pixel coordinates'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         x = g0 + pixel_x * g1 + pixel_y * g2
         y = g3 + pixel_x * g4 + pixel_y * g5
         return np.array([x, y])
 
     def to_pixel_xy(self, (x, y)):
         'Get pixel coordinates given geographic coordinates'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         pixel_x = (-g0 * g5 + g2 * g3 - g2 * y + g5 * x) / (g1 * g5 - g2 * g4)
         pixel_y = (-g1 * (g3 - y) + g4 * (g0 - x)) / (g1 * g5 - g2 * g4)
         return np.array([
@@ -32,14 +32,14 @@ class Calibration(object):
 
     def to_dimensions(self, (pixel_width, pixel_height)):
         'Get geographic dimensions given pixel dimensions'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return np.array([
             abs(pixel_width * g1),
             abs(pixel_height * g5)])
 
     def to_pixel_dimensions(self, (width, height)):
         'Get pixel dimensions given geographic dimensions'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return np.array([
             calculator.round_integer(width / float(g1)),
             calculator.round_integer(height / float(g5))])
