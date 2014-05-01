@@ -52,7 +52,9 @@ class SatelliteImage(Calibration):
         self._image = image
         self._vmin, self._vmax = _get_extreme_values(image)
         super(SatelliteImage, self).__init__(image.GetGeoTransform())
-        self.pixel_dimensions = image.RasterXSize, image.RasterYSize
+        self.pixel_dimensions = np.array((
+            image.RasterXSize,
+            image.RasterYSize))
         self.pixel_dtype = np.min_scalar_type(max(self.pixel_dimensions))
         self.band_count = image.RasterCount
         self.spatial_reference = osr.SpatialReference()
@@ -94,10 +96,12 @@ class ImageScope(SatelliteImage):
         self.scope_pixel_dimensions = self.to_pixel_dimensions(
             scope_dimensions)
 
-    def yield_pixel_upper_left(
-            self, interval_pixel_dimensions, targeted_pixel_bounds=None,
+    def yield_tile_pack(
+            self, overlap_dimensions, targeted_pixel_bounds=None,
             targeted_indices=None):
         image_pixel_width, image_pixel_height = self.pixel_dimensions
+        interval_pixel_dimensions = self.to_pixel_dimensions(
+            self.scope_dimensions - overlap_dimensions)
         interval_pixel_width, interval_pixel_height = interval_pixel_dimensions
         try:
             x1, y1, x2, y2 = targeted_pixel_bounds

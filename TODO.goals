@@ -1,19 +1,33 @@
-# US/Pacific 4/19/2014
+# US/Pacific 4/30/2014
 = Send computer estimates for building count in 10m windows
-    = Complete first pass of complete pipeline with sklearn.logistic_regression
-        Write get_labels_from_models.py
+    = Train with Myanmar and test on Myanmar
+        = Update scripts
+            + Check get_tiles_from_image
+            Set default output file in get_examples_from_points
+            Set default output file in get_dataset_from_examples
+                Use default output file in examples_folder
+            Write get_arrays_from_image
+                Set default output file in get_arrays_from_image
+            Set default output file in get_marker_from_datasets
+                Support multiple dataset_folders
+            Set default output file in get_predictions_from_arrays
+                Use default output file in arrays_folder
+        Write bash script to train and run sklearn.support_vector_machine
+        Write bash script to train and run cudaconv2
+        + Write bash script to train and run sklearn.logistic_regression
+    Train with all and test on Myanmar
+        Write bash script to train and run sklearn.logistic_regression
+        Write bash script to train and run sklearn.support_vector_machine
+        Write bash script to train and run cudaconv2
+    Complete first pass of complete pipeline with sklearn.logistic_regression
+        Write get_counts_from_predictions.py
             Use --target_folder
             Save run.pkl
-        Write get_counts_from_labels.py
-            Use --target_folder
-            Save run.pkl
-    Run sklearn.support_vector_machine on test dataset
     Run cuda-convnet on test dataset
         Write script to set up gpu machine
         Run cuda-convnet on cifar10
         Run cuda-convnet on d10k
         Run cuda-convnet on d100k
-        Move --stay_outside_pixel_bounds to get_examples_from_points
     Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
             Train classifier with scikit-learn

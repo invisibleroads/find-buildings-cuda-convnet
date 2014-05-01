@@ -1,4 +1,7 @@
-# UTC 04/20/2014
+# UTC 04/30/2014
++ Write get_predictions_from_arrays.py [04/30/2014]
++ Use --target_folder [04/30/2014]
++ Save run.pkl [04/30/2014]
 + Update get_markers_from_datasets.py [04/20/2014]
 + Use --target_folder [04/20/2014]
 + Save run.pkl [04/20/2014]
