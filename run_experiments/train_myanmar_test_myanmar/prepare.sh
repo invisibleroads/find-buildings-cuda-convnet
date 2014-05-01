@@ -7,18 +7,18 @@ get_tiles_from_image \
     --image_path $IMAGE_PATH \
     --included_pixel_bounds $PIXEL_BOUNDS
 
-# python get_examples_from_points.py \
-    # --target_folder $OUTPUT_FOLDER/examples \
-    # --image_path $IMAGE_PATH \
-    # --points_path $POINTS_PATH \
-    # --example_dimensions 10x10
+get_examples_from_points \
+    --target_folder $OUTPUT_FOLDER/examples \
+    --image_path $IMAGE_PATH \
+    --points_path $POINTS_PATH \
+    --example_dimensions 10x10
 
-# python get_dataset_from_examples.py \
+# get_dataset_from_examples \
     # --target_folder $OUTPUT_FOLDER/training_dataset \
     # --examples_folder $OUTPUT_FOLDER/examples \
     # --excluded_pixel_bounds $PIXEL_BOUNDS
 
-# python get_arrays_from_image.py \
+# get_arrays_from_image \
     # --target_folder $OUTPUT_FOLDER/test_arrays \
     # --image_path $IMAGE_PATH \
     # --tile_dimensions 10x10 \

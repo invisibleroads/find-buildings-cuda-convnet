@@ -6,30 +6,27 @@ from crosscompute.libraries import script
 from count_buildings.libraries import satellite_image
 
 
-def go(argv=sys.argv):
-    argument_parser = script.get_argument_parser(__file__)
-    argument_parser.add_argument(
-        '--image_path', metavar='PATH', required=True,
-        help='satellite image')
-    argument_parser.add_argument(
-        '--tile_dimensions', metavar='WIDTH,HEIGHT',
-        type=script.parse_dimensions,
-        help='dimensions of extracted tile in geographic units')
-    argument_parser.add_argument(
-        '--overlap_dimensions', metavar='WIDTH,HEIGHT', default=(0, 0),
-        type=script.parse_dimensions,
-        help='dimensions of tile overlap in geographic units')
-    argument_parser.add_argument(
-        '--tile_indices', metavar='INTEGER,INTEGER,INTEGER',
-        type=script.parse_numbers,
-        help='indices to extract')
-    argument_parser.add_argument(
-        '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
-        type=script.parse_bounds,
-        help='target specified bounds')
-    arguments = script.parse_arguments(argument_parser, argv)
-    variables = run(**arguments.__dict__)
-    script.save_run(arguments, variables)
+def start(argv=sys.argv):
+    with script.Starter(run, argv) as starter:
+        starter.add_argument(
+            '--image_path', metavar='PATH', required=True,
+            help='satellite image')
+        starter.add_argument(
+            '--tile_dimensions', metavar='WIDTH,HEIGHT',
+            type=script.parse_dimensions,
+            help='dimensions of extracted tile in geographic units')
+        starter.add_argument(
+            '--overlap_dimensions', metavar='WIDTH,HEIGHT', default=(0, 0),
+            type=script.parse_dimensions,
+            help='dimensions of tile overlap in geographic units')
+        starter.add_argument(
+            '--tile_indices', metavar='INTEGER,INTEGER,INTEGER',
+            type=script.parse_numbers,
+            help='indices to extract')
+        starter.add_argument(
+            '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
+            type=script.parse_bounds,
+            help='target specified bounds')
 
 
 def run(

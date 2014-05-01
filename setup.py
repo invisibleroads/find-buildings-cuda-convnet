@@ -8,11 +8,12 @@ DESCRIPTION = '\n\n'.join(open(os.path.join(HERE, _)).read() for _ in [
     'CHANGES.md',
 ])
 REQUIREMENTS = [
-] + [
+    'crosscompute',
 ]
 ENTRY_POINTS = """\
 [console_scripts]
-get_tiles_from_image = count_buildings.scripts.get_tiles_from_image:go
+get_tiles_from_image =\
+    count_buildings.scripts.get_tiles_from_image:start
 """
 
 

@@ -3,7 +3,7 @@
     = Train with Myanmar and test on Myanmar
         = Update scripts
             + Check get_tiles_from_image
-            Set default output file in get_examples_from_points
+            = Set default output file in get_examples_from_points
             Set default output file in get_dataset_from_examples
                 Use default output file in examples_folder
             Write get_arrays_from_image
