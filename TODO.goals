@@ -1,20 +1,15 @@
-# US/Pacific 4/30/2014
+# US/Pacific 5/8/2014
 = Send computer estimates for building count in 10m windows
     = Train with Myanmar and test on Myanmar
         = Update scripts
-            = Set default output file in get_dataset_from_examples
-                = Use default output file in examples_folder
-            Write get_arrays_from_image
+            = Write get_arrays_from_image
                 Set default output file in get_arrays_from_image
             Set default output file in get_marker_from_datasets
                 Support multiple dataset_folders
             Set default output file in get_predictions_from_arrays
                 Use default output file in arrays_folder
-            + Check get_tiles_from_image
-            + Set default output file in get_examples_from_points
         Write bash script to train and run sklearn.support_vector_machine
         Write bash script to train and run cudaconv2
-        + Write bash script to train and run sklearn.logistic_regression
     Train with all and test on Myanmar
         Write bash script to train and run sklearn.logistic_regression
         Write bash script to train and run sklearn.support_vector_machine

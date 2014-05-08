@@ -8,10 +8,13 @@ from geometryIO import get_transformPoint
 from geometryIO import load_points
 from scipy.sparse import lil_matrix
 
-from count_buildings.libraries import calculator
-from count_buildings.libraries import disk
-from count_buildings.libraries import satellite_image
-from count_buildings.libraries.tree import RTree
+from ..libraries import calculator
+from ..libraries import disk
+from ..libraries import satellite_image
+from ..libraries.tree import RTree
+
+
+EXAMPLES_NAME = 'examples.h5'
 
 
 def start(argv=sys.argv):
@@ -69,7 +72,7 @@ def run(
 
 
 def get_examples_h5(target_folder):
-    return h5py.File(os.path.join(target_folder, 'examples.h5'), 'w')
+    return h5py.File(os.path.join(target_folder, EXAMPLES_NAME), 'w')
 
 
 def get_positive_pixel_centers(points_path, image_scope):
@@ -104,10 +107,10 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 def save_positive_examples(
         target_folder, image_scope, positive_pixel_centers,
         positive_count, examples_h5):
-    array_pixel_width, array_pixel_height = image_scope.scope_pixel_dimensions
+    pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     positive_arrays = examples_h5.create_dataset(
         'positive/arrays', shape=(
-            positive_count, array_pixel_height, array_pixel_width,
+            positive_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
     for positive_index in xrange(positive_count):
         pixel_center = positive_pixel_centers[positive_index]
@@ -115,16 +118,17 @@ def save_positive_examples(
         positive_arrays[positive_index, :, :, :] = array
     examples_h5.create_dataset(
         'positive/pixel_centers',
-        data=positive_pixel_centers, dtype=image_scope.pixel_dtype)
+        data=positive_pixel_centers[:positive_count],
+        dtype=image_scope.pixel_dtype)
 
 
 def save_negative_examples(
         target_folder, image_scope, positive_pixel_centers,
         negative_count, examples_h5):
-    array_pixel_width, array_pixel_height = image_scope.scope_pixel_dimensions
+    pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
-            negative_count, array_pixel_height, array_pixel_width,
+            negative_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
     negative_pixel_centers = []
     negative_pixel_center_iter = yield_negative_pixel_center(
@@ -136,7 +140,8 @@ def save_negative_examples(
         negative_pixel_centers.append(pixel_center)
     examples_h5.create_dataset(
         'negative/pixel_centers',
-        data=negative_pixel_centers, dtype=image_scope.pixel_dtype)
+        data=negative_pixel_centers[:negative_count],
+        dtype=image_scope.pixel_dtype)
 
 
 def save_example_array(target_folder, image_scope, pixel_center):

@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from crosscompute.libraries import script
 
-from count_buildings.libraries import satellite_image
+from ..libraries import satellite_image
 
 
 def start(argv=sys.argv):

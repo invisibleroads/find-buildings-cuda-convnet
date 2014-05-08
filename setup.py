@@ -16,6 +16,8 @@ get_tiles_from_image =\
     count_buildings.scripts.get_tiles_from_image:start
 get_examples_from_points =\
     count_buildings.scripts.get_examples_from_points:start
+get_dataset_from_examples =\
+    count_buildings.scripts.get_dataset_from_examples:start
 """
 
 

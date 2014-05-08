@@ -1,4 +1,12 @@
-# UTC 04/30/2014
+# UTC 05/08/2014
++ Set default output file in get_dataset_from_examples [05/08/2014]
++ Write bash test script [05/08/2014]
++ Add starter [05/08/2014]
++ Add arguments [05/08/2014]
++ Use default output file in examples_folder [05/08/2014]
++ Check get_tiles_from_image [05/08/2014]
++ Set default output file in get_examples_from_points [05/08/2014]
++ Write bash script to train and run sklearn.logistic_regression [05/08/2014]
 + Write get_predictions_from_arrays.py [04/30/2014]
 + Use --target_folder [04/30/2014]
 + Save run.pkl [04/30/2014]
