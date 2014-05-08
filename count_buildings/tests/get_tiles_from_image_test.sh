@@ -1,5 +1,5 @@
-OUTPUT_FOLDER=~/Experiments/`basename $0`
-IMAGE_PATH=~/Links/satellite-images/test-image
+OUTPUT_FOLDER=~/Experiments/`basename -s .sh $0`
+IMAGE_PATH=~/Links/satellite-images/test-geotiff
 TILE_DIMENSIONS=400x300
 OVERLAP_DIMENSIONS=10x10
 TILE_INDICES=446

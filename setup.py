@@ -14,6 +14,8 @@ ENTRY_POINTS = """\
 [console_scripts]
 get_tiles_from_image =\
     count_buildings.scripts.get_tiles_from_image:start
+get_examples_from_points =\
+    count_buildings.scripts.get_examples_from_points:start
 """
 
 

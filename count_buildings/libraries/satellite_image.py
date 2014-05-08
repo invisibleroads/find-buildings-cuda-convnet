@@ -225,3 +225,6 @@ def get_tile_index(pixel_upper_left, interval_pixel_dimensions, row_count):
 
 def get_row_count(height, interval_y):
     return int(math.ceil(height / float(interval_y)))
+
+
+gdal.UseExceptions()

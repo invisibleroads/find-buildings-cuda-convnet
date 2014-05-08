@@ -1,6 +1,9 @@
 import h5py
 import operator
 import os
+import random
+import sys
+from crosscompute.libraries import script
 from geometryIO import get_transformPoint
 from geometryIO import load_points
 from scipy.sparse import lil_matrix
@@ -8,53 +11,71 @@ from scipy.sparse import lil_matrix
 from count_buildings.libraries import calculator
 from count_buildings.libraries import disk
 from count_buildings.libraries import satellite_image
-from count_buildings.libraries import script
 from count_buildings.libraries.tree import RTree
 
 
-def run(
-        target_folder, image_path, point_path,
-        example_dimensions, positive_count, negative_count, save_images):
-    image_scope = satellite_image.ImageScope(image_path, example_dimensions)
-    example_pixel_dimensions = image_scope.scope_pixel_dimensions
-    point_proj4, positive_centers = load_points(point_path)[:2]
-    transform_point = get_transformPoint(point_proj4, image_scope.proj4)
-    positive_pixel_centers = [
-        image_scope.to_pixel_xy(transform_point(*_)) for _ in positive_centers]
-    example_h5 = get_example_h5(target_folder, example_dimensions)
+def start(argv=sys.argv):
+    with script.Starter(run, argv) as starter:
+        starter.add_argument(
+            '--image_path', metavar='PATH', required=True,
+            help='satellite image')
+        starter.add_argument(
+            '--points_path', metavar='PATH', required=True,
+            help='building locations')
+        starter.add_argument(
+            '--example_dimensions', metavar='WIDTH,HEIGHT', required=True,
+            type=script.parse_dimensions,
+            help='dimensions of extracted example in geographic units')
+        starter.add_argument(
+            '--maximum_positive_count', metavar='INTEGER',
+            type=int,
+            help='maximum number of positive examples to extract')
+        starter.add_argument(
+            '--maximum_negative_count', metavar='INTEGER',
+            type=int,
+            help='maximum number of negative examples to extract')
+        starter.add_argument(
+            '--random_seed', metavar='STRING',
+            help='seed for random number generator')
+        starter.add_argument(
+            '--save_images', action='store_true',
+            help='save images of positive and negative examples')
 
-    if positive_count is None:
-        positive_count = len(positive_pixel_centers)
-    if negative_count is None:
-        negative_count = estimate_negative_count(
-            image_scope, positive_pixel_centers)
+
+def run(
+        target_folder, image_path, points_path, example_dimensions,
+        maximum_positive_count, maximum_negative_count, random_seed,
+        save_images):
+    random.seed(random_seed)
+    examples_h5 = get_examples_h5(target_folder)
+    image_scope = satellite_image.ImageScope(image_path, example_dimensions)
+    positive_pixel_centers = get_positive_pixel_centers(
+        points_path, image_scope)
+
+    positive_count = maximum_positive_count or len(positive_pixel_centers)
+    negative_count = maximum_negative_count or estimate_negative_count(
+        image_scope, positive_pixel_centers)
 
     save_positive_examples(
-        example_h5, target_folder, example_pixel_dimensions,
-        image_scope, positive_pixel_centers, positive_count, save_images)
+        save_images and disk.replace_folder(target_folder, 'positives'),
+        image_scope, positive_pixel_centers, positive_count, examples_h5)
     save_negative_examples(
-        example_h5, target_folder, example_pixel_dimensions,
-        image_scope, positive_pixel_centers, negative_count, save_images)
+        save_images and disk.replace_folder(target_folder, 'negatives'),
+        image_scope, positive_pixel_centers, negative_count, examples_h5)
     return dict(
-        example_pixel_dimensions=example_pixel_dimensions,
+        example_pixel_dimensions=image_scope.scope_pixel_dimensions,
         positive_count=positive_count,
         negative_count=negative_count)
 
 
-def get_example_h5(target_folder, example_dimensions):
-    example_name = 'e%dx%d' % tuple(example_dimensions)
-    example_path = os.path.join(target_folder, example_name + '.h5')
-    return h5py.File(example_path, 'w')
+def get_examples_h5(target_folder):
+    return h5py.File(os.path.join(target_folder, 'examples.h5'), 'w')
 
 
-def save_image(image_scope, target_folder, pixel_center, array):
-    example_path = get_example_path(target_folder, pixel_center)
-    image_scope.save_image(example_path, array[:, :, :3])
-
-
-def get_example_path(target_folder, pixel_center):
-    example_name = 'pce%dx%d.jpg' % tuple(pixel_center)
-    return os.path.join(target_folder, example_name)
+def get_positive_pixel_centers(points_path, image_scope):
+    points_proj4, centers = load_points(points_path)[:2]
+    transform_point = get_transformPoint(points_proj4, image_scope.proj4)
+    return [image_scope.to_pixel_xy(transform_point(*_)) for _ in centers]
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):
@@ -81,51 +102,52 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 
 
 def save_positive_examples(
-        example_h5, target_folder, (example_pixel_width, example_pixel_height),
-        image_scope, positive_pixel_centers, positive_count, save_images):
-    if save_images:
-        positives_folder = disk.replace_folder(target_folder, 'positives')
-    positive_arrays = example_h5.create_dataset(
+        target_folder, image_scope, positive_pixel_centers,
+        positive_count, examples_h5):
+    array_pixel_width, array_pixel_height = image_scope.scope_pixel_dimensions
+    positive_arrays = examples_h5.create_dataset(
         'positive/arrays', shape=(
-            positive_count, example_pixel_height, example_pixel_width,
+            positive_count, array_pixel_height, array_pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
     for positive_index in xrange(positive_count):
         pixel_center = positive_pixel_centers[positive_index]
-        # Get array
-        array = image_scope.get_array_from_pixel_center(pixel_center)
+        array = save_example_array(target_folder, image_scope, pixel_center)
         positive_arrays[positive_index, :, :, :] = array
-        if save_images:
-            save_image(image_scope, positives_folder, pixel_center, array)
-    example_h5.create_dataset(
+    examples_h5.create_dataset(
         'positive/pixel_centers',
         data=positive_pixel_centers, dtype=image_scope.pixel_dtype)
-    return positive_pixel_centers
 
 
 def save_negative_examples(
-        example_h5, target_folder, (example_pixel_width, example_pixel_height),
-        image_scope, positive_pixel_centers, negative_count, save_images):
-    if save_images:
-        negatives_folder = disk.replace_folder(target_folder, 'negatives')
-    negative_pixel_centers = []
-    negative_arrays = example_h5.create_dataset(
+        target_folder, image_scope, positive_pixel_centers,
+        negative_count, examples_h5):
+    array_pixel_width, array_pixel_height = image_scope.scope_pixel_dimensions
+    negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
-            negative_count, example_pixel_height, example_pixel_width,
+            negative_count, array_pixel_height, array_pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
+    negative_pixel_centers = []
     negative_pixel_center_iter = yield_negative_pixel_center(
         image_scope, positive_pixel_centers)
     for negative_index in xrange(negative_count):
         pixel_center = negative_pixel_center_iter.next()
-        negative_pixel_centers.append(pixel_center)
-        # Get array
-        array = image_scope.get_array_from_pixel_center(pixel_center)
+        array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
-        if save_images:
-            save_image(image_scope, negatives_folder, pixel_center, array)
-    example_h5.create_dataset(
+        negative_pixel_centers.append(pixel_center)
+    examples_h5.create_dataset(
         'negative/pixel_centers',
         data=negative_pixel_centers, dtype=image_scope.pixel_dtype)
-    return negative_pixel_centers
+
+
+def save_example_array(target_folder, image_scope, pixel_center):
+    array = image_scope.get_array_from_pixel_center(pixel_center)
+    try:
+        image_scope.save_image(
+            os.path.join(target_folder, 'pce%dx%d.jpg' % tuple(pixel_center)),
+            array[:, :, :3])
+    except AttributeError:
+        pass
+    return array
 
 
 def yield_negative_pixel_center(image_scope, positive_pixel_centers):
@@ -138,31 +160,3 @@ def yield_negative_pixel_center(image_scope, positive_pixel_centers):
         if point_rtree.intersects(pixel_bounds):
             continue
         yield pixel_center
-
-
-if __name__ == '__main__':
-    argument_parser = script.get_argument_parser()
-    argument_parser.add_argument(
-        '--image_path', metavar='PATH', required=True,
-        help='satellite image')
-    argument_parser.add_argument(
-        '--point_path', metavar='PATH', required=True,
-        help='building locations')
-    argument_parser.add_argument(
-        '--example_dimensions', metavar='WIDTH,HEIGHT', required=True,
-        type=script.parse_dimensions,
-        help='dimensions of extracted example in geographic units')
-    argument_parser.add_argument(
-        '--positive_count', metavar='INTEGER',
-        type=int,
-        help='maximum number of positive examples to extract')
-    argument_parser.add_argument(
-        '--negative_count', metavar='INTEGER',
-        type=int,
-        help='maximum number of negative examples to extract')
-    argument_parser.add_argument(
-        '--save_images', action='store_true',
-        help='save images of positive and negative examples')
-    arguments = script.parse_arguments(argument_parser)
-    variables = run(**arguments.__dict__)
-    script.save_run(arguments, variables, verbose=True)
