@@ -201,6 +201,16 @@ def get_pixel_bounds_from_pixel_upper_left(
     return list(pixel_upper_left) + list(pixel_lower_right)
 
 
+def get_pixel_frame_from_pixel_bounds(pixel_bounds):
+    minimum_x, minimum_y, maximum_x, maximum_y = pixel_bounds
+    pixel_upper_left = minimum_x, minimum_y
+    tile_pixel_dimensions = np.array([
+        (maximum_x - minimum_x),
+        (maximum_y - minimum_y),
+    ])
+    return pixel_upper_left, tile_pixel_dimensions
+
+
 def get_pixel_frame_from_pixel_center(pixel_center, pixel_dimensions):
     pixel_upper_left = pixel_center - np.array(pixel_dimensions) / 2
     return pixel_upper_left, pixel_dimensions

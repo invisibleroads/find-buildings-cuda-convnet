@@ -1,6 +1,5 @@
 import os
 import sys
-import numpy as np
 from crosscompute.libraries import script
 
 from ..libraries import satellite_image
@@ -53,21 +52,17 @@ def save_image_dimensions(image_path):
 
 def save_pixel_bounds(
         target_folder, image_path, included_pixel_bounds):
+    pixel_frame = [
+        pixel_upper_left, pixel_dimensions
+    ] = satellite_image.get_pixel_frame_from_pixel_bounds(
+        included_pixel_bounds)
     image = satellite_image.SatelliteImage(image_path)
-    minimum_x, minimum_y, maximum_x, maximum_y = included_pixel_bounds
-    tile_pixel_dimensions = np.array([
-        (maximum_x - minimum_x),
-        (maximum_y - minimum_y),
-    ])
-    tile_dimensions = image.to_dimensions(tile_pixel_dimensions)
-    pixel_upper_left = minimum_x, minimum_y
-    # Save
+
     target_path = get_tile_path(target_folder, pixel_upper_left)
-    pixel_frame = pixel_upper_left, tile_pixel_dimensions
     image.save_image_from_pixel_frame(target_path, pixel_frame)
     return dict(
-        tile_dimensions=tile_dimensions,
-        tile_pixel_dimensions=tile_pixel_dimensions)
+        tile_dimensions=image.to_dimensions(pixel_dimensions),
+        tile_pixel_dimensions=pixel_dimensions)
 
 
 def save_tiles(

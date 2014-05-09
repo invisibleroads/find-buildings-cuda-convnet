@@ -87,34 +87,29 @@ def adjust_counts(
 
 
 def get_dataset_h5(target_folder):
-    dataset_path = os.path.join(target_folder, DATASET_NAME)
-    return h5py.File(dataset_path, 'w')
+    return h5py.File(os.path.join(target_folder, DATASET_NAME), 'w')
 
 
 def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
-    # Count
-    positive_count = len(positive_indices)
-    negative_count = len(negative_indices)
-    dataset_size = positive_count + negative_count
-    # Label
+    dataset_size = len(positive_indices) + len(negative_indices)
     positive_packs = [(_, True) for _ in positive_indices]
     negative_packs = [(_, False) for _ in negative_indices]
     dataset_packs = positive_packs + negative_packs
     random.shuffle(dataset_packs)
-    # Prepare
-    array_shape = examples_h5['positive']['arrays'].shape[1:]
-    array_dtype = examples_h5['positive']['arrays'].dtype
+    positive_arrays = examples_h5['positive']['arrays']
+    positive_pixel_centers = examples_h5['positive']['pixel_centers']
     arrays = dataset_h5.create_dataset(
-        'arrays', shape=(dataset_size,) + array_shape, dtype=array_dtype)
+        'arrays', shape=(dataset_size,) + positive_arrays.shape[1:],
+        dtype=positive_arrays.dtype)
+    pixel_centers = dataset_h5.create_dataset(
+        'pixel_centers', shape=(dataset_size, 2),
+        dtype=positive_pixel_centers.dtype)
+    for key, value in positive_pixel_centers.attrs.iteritems():
+        pixel_centers.attrs[key] = value
     labels = dataset_h5.create_dataset(
         'labels', shape=(dataset_size,), dtype=bool)
-    pixel_center_dtype = examples_h5['positive']['pixel_centers'].dtype
-    pixel_centers = dataset_h5.create_dataset(
-        'pixel_centers', shape=(dataset_size, 2), dtype=pixel_center_dtype)
-    # Save
     for index, (inner_index, label) in enumerate(dataset_packs):
-        inner_key = 'positive' if label else 'negative'
-        inner_examples = examples_h5[inner_key]
+        inner_examples = examples_h5['positive' if label else 'negative']
         arrays[index, :, :, :] = inner_examples['arrays'][inner_index]
         labels[index] = label
         pixel_centers[index, :] = inner_examples['pixel_centers'][inner_index]

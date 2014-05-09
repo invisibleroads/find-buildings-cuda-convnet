@@ -1,13 +1,18 @@
-# US/Pacific 5/8/2014
+# US/Pacific 5/9/2014
 = Send computer estimates for building count in 10m windows
     = Train with Myanmar and test on Myanmar
         = Update scripts
-            = Write get_arrays_from_image
-                Set default output file in get_arrays_from_image
             Set default output file in get_marker_from_datasets
+                Write bash test script
+                + Add starter
+                Add arguments
                 Support multiple dataset_folders
             Set default output file in get_predictions_from_arrays
+                Write bash test script
+                + Add starter
+                Add arguments
                 Use default output file in arrays_folder
+        Write bash script to train and run sklearn.logistic_regression
         Write bash script to train and run sklearn.support_vector_machine
         Write bash script to train and run cudaconv2
     Train with all and test on Myanmar

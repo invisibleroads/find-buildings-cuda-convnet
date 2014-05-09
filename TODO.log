@@ -1,4 +1,12 @@
-# UTC 05/08/2014
+# UTC 05/09/2014
++ Write get_arrays_from_image [05/09/2014]
++ Add script to setup.py [05/09/2014]
++ Write bash test script [05/09/2014]
++ Add starter [05/09/2014]
++ Add arguments [05/09/2014]
++ Set default output file in get_arrays_from_image [05/09/2014]
++ Add script to setup.py [05/09/2014]
++ Add script to setup.py [05/09/2014]
 + Set default output file in get_dataset_from_examples [05/08/2014]
 + Write bash test script [05/08/2014]
 + Add starter [05/08/2014]

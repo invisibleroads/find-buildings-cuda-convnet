@@ -116,10 +116,9 @@ def save_positive_examples(
         pixel_center = positive_pixel_centers[positive_index]
         array = save_example_array(target_folder, image_scope, pixel_center)
         positive_arrays[positive_index, :, :, :] = array
-    examples_h5.create_dataset(
-        'positive/pixel_centers',
-        data=positive_pixel_centers[:positive_count],
-        dtype=image_scope.pixel_dtype)
+    save_pixel_centers(
+        examples_h5, 'positive', positive_pixel_centers[:positive_count],
+        image_scope)
 
 
 def save_negative_examples(
@@ -138,10 +137,9 @@ def save_negative_examples(
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
         negative_pixel_centers.append(pixel_center)
-    examples_h5.create_dataset(
-        'negative/pixel_centers',
-        data=negative_pixel_centers[:negative_count],
-        dtype=image_scope.pixel_dtype)
+    save_pixel_centers(
+        examples_h5, 'negative', negative_pixel_centers[:negative_count],
+        image_scope)
 
 
 def save_example_array(target_folder, image_scope, pixel_center):
@@ -153,6 +151,15 @@ def save_example_array(target_folder, image_scope, pixel_center):
     except AttributeError:
         pass
     return array
+
+
+def save_pixel_centers(examples_h5, category, pixel_centers, image_scope):
+    pixel_centers = examples_h5.create_dataset(
+        '%s/pixel_centers' % category,
+        data=pixel_centers,
+        dtype=image_scope.pixel_dtype)
+    pixel_centers.attrs['calibration_pack'] = image_scope.calibration_pack
+    pixel_centers.attrs['proj4'] = image_scope.proj4
 
 
 def yield_negative_pixel_center(image_scope, positive_pixel_centers):
