@@ -9,7 +9,7 @@ from .get_dataset_from_examples import DATASET_NAME
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(
-            '--dataset_folder', metavar='PATH', required=True,
+            '--dataset_folder', metavar='FOLDER', required=True,
             help='selection of positive and negative examples')
         starter.add_argument(
             '--marker_module', metavar='PACKAGE', required=True,

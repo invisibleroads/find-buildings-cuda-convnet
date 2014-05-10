@@ -1,4 +1,13 @@
-# UTC 05/09/2014
+# UTC 05/10/2014
++ Set default output file in get_predictions_from_arrays [05/10/2014]
++ Add arguments [05/10/2014]
++ Use default output file in arrays_folder [05/10/2014]
++ Set default output file in get_marker_from_dataset [05/10/2014]
++ Write bash test script [05/10/2014]
++ Add arguments [05/10/2014]
++ Add starter [05/10/2014]
++ Write bash test script [05/10/2014]
++ Add starter [05/10/2014]
 + Write get_arrays_from_image [05/09/2014]
 + Add script to setup.py [05/09/2014]
 + Write bash test script [05/09/2014]

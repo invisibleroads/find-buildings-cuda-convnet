@@ -15,7 +15,7 @@ DATASET_NAME = 'dataset.h5'
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(
-            '--examples_folder', metavar='PATH', required=True,
+            '--examples_folder', metavar='FOLDER', required=True,
             help='extracted examples')
         starter.add_argument(
             '--maximum_dataset_size', metavar='SIZE',
