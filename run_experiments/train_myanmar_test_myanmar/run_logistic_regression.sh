@@ -1,9 +1,8 @@
 source initialize.sh
 
-python get_marker_from_datasets.py \
+python get_marker_from_dataset.py \
     --target_folder $OUTPUT_FOLDER/logistic_regression/marker \
-    --dataset_folders \
-        $OUTPUT_FOLDER/training_dataset \
+    --dataset_folder $OUTPUT_FOLDER/training_dataset \
     --marker_module sklearn.logistic_regression
 
 # python get_predictions_from_arrays.py \

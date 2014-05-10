@@ -1,7 +1,7 @@
+import joblib
 import numpy as np
 import os
 from sklearn.cross_validation import cross_val_score
-from sklearn.externals import joblib
 
 from .. import AbstractMarker
 from ... import dataset
@@ -25,7 +25,6 @@ class ScikitLearnMarker(AbstractMarker):
         }
 
     def scan(self, arrays_path):
-        predictions = []
         arrays = dataset.load_arrays(flatten(arrays_path))
         return [self.model.predict(_)[0] for _ in arrays]
 

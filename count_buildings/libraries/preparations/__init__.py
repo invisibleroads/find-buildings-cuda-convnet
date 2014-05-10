@@ -32,4 +32,5 @@ def prepare_arrays_and_labels(
     for index, source_label in enumerate(source_labels):
         target_labels[index] = get_label(source_label)
 
+    target_dataset_h5.close()
     return target_dataset_path

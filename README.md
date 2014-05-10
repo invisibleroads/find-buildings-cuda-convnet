@@ -7,7 +7,7 @@ Estimate the number of buildings in a satellite image.
 
     get_examples_from_points.py
     get_dataset_from_examples.py
-    get_marker_from_datasets.py
+    get_marker_from_dataset.py
 
     get_arrays_from_image.py
     get_predictions_from_arrays.py

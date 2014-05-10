@@ -18,8 +18,8 @@ get_examples_from_points =\
     count_buildings.scripts.get_examples_from_points:start
 get_dataset_from_examples =\
     count_buildings.scripts.get_dataset_from_examples:start
-get_marker_from_datasets =\
-    count_buildings.scripts.get_marker_from_datasets:start
+get_marker_from_dataset =\
+    count_buildings.scripts.get_marker_from_dataset:start
 get_arrays_from_image =\
     count_buildings.scripts.get_arrays_from_image:start
 get_predictions_from_arrays =\
