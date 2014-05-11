@@ -1,4 +1,6 @@
-# UTC 05/10/2014
+# UTC 05/11/2014
++ Write train with Myanmar and test on Myanmar [05/11/2014]
++ Write train with Myanmar and test on Myanmar [05/11/2014]
 + Set default output file in get_predictions_from_arrays [05/10/2014]
 + Add arguments [05/10/2014]
 + Use default output file in arrays_folder [05/10/2014]

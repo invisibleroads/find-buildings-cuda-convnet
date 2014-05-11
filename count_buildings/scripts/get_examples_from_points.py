@@ -76,7 +76,7 @@ def get_positive_pixel_centers(points_path, image_scope):
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):
-    canvas = lil_matrix(image_scope.pixel_dimensions, dtype='bool')
+    canvas = lil_matrix(tuple(image_scope.pixel_dimensions), dtype='bool')
     # Compute the positive pixel area
     for positive_pixel_center in positive_pixel_centers:
         pixel_frame = image_scope.get_pixel_frame_from_pixel_center(

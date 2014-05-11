@@ -4,6 +4,7 @@ POINTS_PATH=~/Links/building-locations/Myanmar/o12JAN12044704-S2AS-053388615010_
 PIXEL_BOUNDS=13260,2320,14060,2920
 EXAMPLE_DIMENSIONS=10x10
 OVERLAP_DIMENSIONS=5x5
+RANDOM_SEED=myanmar
 
 get_tiles_from_image \
     --target_folder $OUTPUT_FOLDER/tiles \
@@ -12,12 +13,14 @@ get_tiles_from_image \
 
 get_examples_from_points \
     --target_folder $OUTPUT_FOLDER/examples \
+    --random_seed $RANDOM_SEED \
     --image_path $IMAGE_PATH \
     --points_path $POINTS_PATH \
     --example_dimensions $EXAMPLE_DIMENSIONS
 
 get_dataset_from_examples \
     --target_folder $OUTPUT_FOLDER/training_dataset \
+    --random_seed $RANDOM_SEED \
     --examples_folder $OUTPUT_FOLDER/examples \
     --excluded_pixel_bounds $PIXEL_BOUNDS
 
