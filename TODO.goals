@@ -1,18 +1,18 @@
 # US/Pacific 5/10/2014
 = Send computer estimates for building count in 10m windows
-    = Train with Myanmar and test on Myanmar
-        Write bash script to train and run sklearn.logistic_regression
-        Write bash script to train and run sklearn.support_vector_machine
-        Write bash script to train and run cudaconv2
-    Train with all and test on Myanmar
-        Write get_dataset_from_datasets
-        Write bash script to train and run sklearn.logistic_regression
-        Write bash script to train and run sklearn.support_vector_machine
-        Write bash script to train and run cudaconv2
-    Complete first pass of complete pipeline with sklearn.logistic_regression
-        Write get_counts_from_predictions.py
-            = Write bash test script
-            Add arguments
+    Write get_counts_from_predictions
+    Write get_dataset_from_datasets
+    Record execution time
+    Record precision and recall
+    = Write bash script to train and run sklearn.logistic_regression
+        = Train with Myanmar and test on Myanmar
+        Train with all and test on Myanmar
+    Write bash script to train and run sklearn.support_vector_machine
+        = Train with Myanmar and test on Myanmar
+        Train with all and test on Myanmar
+    Write bash script to train and run cudaconv2
+        = Train with Myanmar and test on Myanmar
+        Train with all and test on Myanmar
     Run cuda-convnet on test dataset
         Write script to set up gpu machine
         Run cuda-convnet on cifar10
@@ -22,9 +22,10 @@
         = Evaluate new libraries for image recognition [6h]
             Train classifier with scikit-learn
             Train classifier with cuda-convnet and noccn
+            Train classifier with cuda-convnet and dropout
+            Train classifier with dropconnect
             Train classifier with pybrain
             Train classifier with pynnet
-            Train classifier with dropconnect
             Train classifier with opencv
             Train classifier with neurolab
             Train classifier with pylearn2
@@ -50,5 +51,5 @@ Explore new libraries
     Write code example with scikit-image
     Write code example with cartopy
 Send access credentials to all tools, valid with no membership fee for one year
-    Feature Modi Research Group logo and link on tool webpage
     Mask paths in run.pkl
+    Feature Modi Research Group logo and link on tool webpage

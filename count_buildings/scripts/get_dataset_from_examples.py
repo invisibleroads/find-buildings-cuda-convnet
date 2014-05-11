@@ -22,9 +22,6 @@ def start(argv=sys.argv):
             type=script.parse_size,
             help='maximum number of examples to include')
         starter.add_argument(
-            '--random_seed', metavar='STRING',
-            help='seed for random number generator')
-        starter.add_argument(
             '--preserve_ratio', action='store_true',
             help='preserve ratio of positive to negative examples')
         starter.add_argument(
@@ -34,9 +31,8 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, examples_folder, maximum_dataset_size, random_seed,
+        target_folder, examples_folder, maximum_dataset_size,
         preserve_ratio, excluded_pixel_bounds):
-    random.seed(random_seed)
     examples_h5 = h5py.File(os.path.join(examples_folder, EXAMPLES_NAME), 'r')
     positive_indices = get_indices(
         examples_h5['positive'], maximum_dataset_size, excluded_pixel_bounds)

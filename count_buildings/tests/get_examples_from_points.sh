@@ -8,7 +8,6 @@ get_examples_from_points \
     --image_path $IMAGE_PATH \
     --points_path $POINTS_PATH \
     --example_dimensions $EXAMPLE_DIMENSIONS \
-    --random_seed whee \
     --maximum_positive_count 2000 \
     --maximum_negative_count 2000
 
@@ -17,7 +16,6 @@ get_examples_from_points \
     --image_path $IMAGE_PATH \
     --points_path $POINTS_PATH \
     --example_dimensions $EXAMPLE_DIMENSIONS \
-    --random_seed whee \
     --maximum_positive_count 100 \
     --maximum_negative_count 100 \
     --save_images

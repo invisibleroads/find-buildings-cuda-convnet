@@ -1,7 +1,6 @@
 import h5py
 import operator
 import os
-import random
 import sys
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint
@@ -38,18 +37,13 @@ def start(argv=sys.argv):
             type=int,
             help='maximum number of negative examples to extract')
         starter.add_argument(
-            '--random_seed', metavar='STRING',
-            help='seed for random number generator')
-        starter.add_argument(
             '--save_images', action='store_true',
             help='save images of positive and negative examples')
 
 
 def run(
         target_folder, image_path, points_path, example_dimensions,
-        maximum_positive_count, maximum_negative_count, random_seed,
-        save_images):
-    random.seed(random_seed)
+        maximum_positive_count, maximum_negative_count, save_images):
     examples_h5 = get_examples_h5(target_folder)
     image_scope = satellite_image.ImageScope(image_path, example_dimensions)
     positive_pixel_centers = get_positive_pixel_centers(
