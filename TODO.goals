@@ -22,7 +22,7 @@
         Run cuda-convnet on d100k
     Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
-            Train classifier with scikit-learn
+            + Train classifier with scikit-learn
             Train classifier with cuda-convnet and noccn
             Train classifier with cuda-convnet and dropout
             Train classifier with dropconnect
