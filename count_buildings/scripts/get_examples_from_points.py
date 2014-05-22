@@ -30,11 +30,11 @@ def start(argv=sys.argv):
             help='dimensions of extracted example in geographic units')
         starter.add_argument(
             '--maximum_positive_count', metavar='INTEGER',
-            type=int,
+            type=script.parse_size,
             help='maximum number of positive examples to extract')
         starter.add_argument(
             '--maximum_negative_count', metavar='INTEGER',
-            type=int,
+            type=script.parse_size,
             help='maximum number of negative examples to extract')
         starter.add_argument(
             '--save_images', action='store_true',

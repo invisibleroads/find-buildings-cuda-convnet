@@ -1,30 +1,33 @@
-# US/Pacific 5/10/2014
+# US/Pacific 5/22/2014
 = Send computer estimates for building count in 10m windows
-    Write get_dataset_from_datasets
-    Write get_counts_from_predictions
-    Record execution time
-    Record precision and recall
-    = Write bash script to train and run sklearn.logistic_regression
+    = Write bash script to train and run cudaconv2
+        = Train with Myanmar and test on Myanmar
+            = Consolidate changes
+                Consolidate changes to cuda-convnet
+                Consolidate changes to noccn
+                Consolidate layer configurations
+ 
+                Consolidate script to save batches
+                Write script to set up gpu machine
+                Write bash script to run experiment
+            Generate training batches
+            Generate test batches
+            Setup machine
+        Train with all and test on Myanmar
+        Write get_counts_from_predictions
+            Run non-maximal suppression on predictions
+        Record execution time
+        Record precision and recall
+    Write bash script to train and run sklearn.logistic_regression
+        Write get_dataset_from_datasets
         = Run train Myanmar and test on Myanmar
-            + Set up server on digitalocean
-            Set up server with lots of memory
+            Modify code to use SGDClassifier
         Train with all and test on Myanmar
     Write bash script to train and run sklearn.support_vector_machine
         Run train Myanmar and test on Myanmar
         Train with all and test on Myanmar
-    Write bash script to train and run cudaconv2
-        = Train with Myanmar and test on Myanmar
-        Train with all and test on Myanmar
-    Run cuda-convnet on test dataset
-        Write script to set up gpu machine
-        Run cuda-convnet on cifar10
-        Run cuda-convnet on d10k
-        Run cuda-convnet on d100k
     Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
-            + Train classifier with scikit-learn
-            Train classifier with cuda-convnet and noccn
-            Train classifier with cuda-convnet and dropout
             Train classifier with dropconnect
             Train classifier with pybrain
             Train classifier with pynnet
@@ -41,6 +44,10 @@ Evaluate classifiers on cost-effective lower resolution satellite images
     Train classifiers on lower resolution satellite images [14h]
 Reach cross-validation accuracy of 80%
     Apply different techniques to improve classifier performance [14h]
+        Experiment with dropout and extra hidden layers
+        Experiment with random translations of training set
+        Experiment with weight norm constraint
+        Experiment with autoencoders to pretrain neural network
         Experiment with YUV colorspace
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
@@ -53,5 +60,6 @@ Explore new libraries
     Write code example with scikit-image
     Write code example with cartopy
 Send access credentials to all tools, valid with no membership fee for one year
+    = Experiment with boto
     Mask paths in run.pkl
     Feature Modi Research Group logo and link on tool webpage
