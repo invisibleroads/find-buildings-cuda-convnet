@@ -1,29 +1,41 @@
 # US/Pacific 5/22/2014
-= Send computer estimates for building count in 10m windows
+Verify routines
+    + Check that cifar-10 has data that is plottable by get_plottable_data
+    + Check that new ccn-make-batches produces data that is plottable by get_plottable_data
+    _ Check that old ccn-make-batches produces data that is plottable by get_plottable_data
+    + Check that get_tiles_from_image produces tiles with the correct orientation
+    + Check that get_examples_from_points produces arrays that are directly plottable
+        + Check that the array orientation is correct and matches the satellite image
+    + Check that get_dataset_from_examples produces arrays that are directly plottable
+        + Check that the array orientation is correct and matches the satellite image
+    + Check that get_arrays_from_image produces arrays that are directly plottable
+        + Check that the array orientation is correct and matches the satellite image
+    Check that get_batches_from_dataset produces data that is plottable by get_plottable_data
+    Check that get_batches_from_arrays produces data that is plottable by get_plottable_data
+
+Send computer estimates for building count in 10m windows
     = Write bash script to train and run cudaconv2
         = Train with Myanmar and test on Myanmar
-            = Consolidate changes
-                Consolidate changes to cuda-convnet
-                Consolidate changes to noccn
-                Consolidate layer configurations
- 
-                Consolidate script to save batches
-                Write script to set up gpu machine
-                Write bash script to run experiment
-            Generate training batches
-            Generate test batches
+            + Consolidate changes
+                + Consolidate changes to cuda-convnet
+                + Consolidate changes to noccn
+                + Write bash script to run experiment
+                    + Generate training batches
+                    + Generate test batches
+                    + Use sys.path.append
+                    _ Convert cuda-convnet to use setup.py
+                + Consolidate layer configurations
+                + Consolidate script to save batches
+
             Setup machine
+                Write script to set up gpu machine
         Train with all and test on Myanmar
         Write get_counts_from_predictions
             Run non-maximal suppression on predictions
         Record execution time
         Record precision and recall
-    Write bash script to train and run sklearn.logistic_regression
-        Write get_dataset_from_datasets
-        = Run train Myanmar and test on Myanmar
-            Modify code to use SGDClassifier
-        Train with all and test on Myanmar
-    Write bash script to train and run sklearn.support_vector_machine
+    Write bash script to train and run SGDClassifier
+        = Write get_dataset_from_datasets
         Run train Myanmar and test on Myanmar
         Train with all and test on Myanmar
     Finalize initial architecture
@@ -44,6 +56,7 @@ Evaluate classifiers on cost-effective lower resolution satellite images
     Train classifiers on lower resolution satellite images [14h]
 Reach cross-validation accuracy of 80%
     Apply different techniques to improve classifier performance [14h]
+        Experiment with zero mean and dividing by standard deviation
         Experiment with dropout and extra hidden layers
         Experiment with random translations of training set
         Experiment with weight norm constraint
