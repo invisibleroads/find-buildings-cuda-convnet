@@ -1,34 +1,11 @@
-# US/Pacific 5/22/2014
-Verify routines
-    + Check that cifar-10 has data that is plottable by get_plottable_data
-    + Check that new ccn-make-batches produces data that is plottable by get_plottable_data
-    _ Check that old ccn-make-batches produces data that is plottable by get_plottable_data
-    + Check that get_tiles_from_image produces tiles with the correct orientation
-    + Check that get_examples_from_points produces arrays that are directly plottable
-        + Check that the array orientation is correct and matches the satellite image
-    + Check that get_dataset_from_examples produces arrays that are directly plottable
-        + Check that the array orientation is correct and matches the satellite image
-    + Check that get_arrays_from_image produces arrays that are directly plottable
-        + Check that the array orientation is correct and matches the satellite image
-    Check that get_batches_from_dataset produces data that is plottable by get_plottable_data
-    Check that get_batches_from_arrays produces data that is plottable by get_plottable_data
-
+# US/Pacific 5/25/2014
++ Verify routines
+    + Check that get_batches_from_arrays produces data that is plottable by get_plottable_data
 Send computer estimates for building count in 10m windows
     = Write bash script to train and run cudaconv2
         = Train with Myanmar and test on Myanmar
-            + Consolidate changes
-                + Consolidate changes to cuda-convnet
-                + Consolidate changes to noccn
-                + Write bash script to run experiment
-                    + Generate training batches
-                    + Generate test batches
-                    + Use sys.path.append
-                    _ Convert cuda-convnet to use setup.py
-                + Consolidate layer configurations
-                + Consolidate script to save batches
-
-            Setup machine
-                Write script to set up gpu machine
+            = Setup machine
+                = Write script to set up gpu machine
         Train with all and test on Myanmar
         Write get_counts_from_predictions
             Run non-maximal suppression on predictions
@@ -41,10 +18,7 @@ Send computer estimates for building count in 10m windows
     Finalize initial architecture
         = Evaluate new libraries for image recognition [6h]
             Train classifier with dropconnect
-            Train classifier with pybrain
-            Train classifier with pynnet
             Train classifier with opencv
-            Train classifier with neurolab
             Train classifier with pylearn2
             Train classifier with theano
             Train classifier with OverFeat

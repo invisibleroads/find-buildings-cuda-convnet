@@ -13,9 +13,11 @@ from .get_arrays_from_image import ARRAYS_NAME
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(
-            '--arrays_folder', metavar='FOLDER', required=True)
+            '--arrays_folder', metavar='FOLDER', required=True,
+            help='')
         starter.add_argument(
-            '--marker_folder', metavar='FOLDER', required=True)
+            '--marker_folder', metavar='FOLDER', required=True,
+            help='')
 
 
 def run(target_folder, arrays_folder, marker_folder):
