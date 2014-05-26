@@ -12,5 +12,5 @@ get_batches_from_arrays \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE
 
-ccn-train options.cfg
-ccn-predict options.cfg -f $OUTPUT_FOLDER/$MARKER_MODULE/ConvNet__*
+# ccn-train options.cfg
+# ccn-predict options.cfg -f $OUTPUT_FOLDER/$MARKER_MODULE/ConvNet__*
