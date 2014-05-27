@@ -23,6 +23,12 @@
             + Experiment with no dropout (control)
             + Experiment with one hidden layer (dropout_layers)
             + Experiment with two hidden layers
+        = Evaluate experimental results
+            = Write get_counts_from_predictions
+                = Run non-maximal suppression on predictions
+                Optimize radius using ROC curve
+                Experiment with different overlap_dimensions
+
         Experiment with random translations of training set
             + Experiment with no random translations (control)
             Experiment with random translations (random_translations)
@@ -30,30 +36,19 @@
             + Train with Myanmar and test on Myanmar (control)
             Train with all and test on Myanmar (all_countries)
                 Write get_batches_from_datasets
-        Experiment with weight norm constraint
-            + Experiment with no weight norm constraint (control)
-            Experiment with weight norm constraint (weight_constraint)
-        Experiment with rnorm
-            + Experiment with no rnorm (control)
-            Experiment with rnorm (response_normalization)
-        Experiment with local pooling
-            + Experiment with no local pooling (control)
-            Experiment with local pooling (local_pooling)
-        Use early stopping
-            + Experiment with no early stopping (control)
-            Experiment with early stopping (early_stopping)
         Compare different layer configurations
+            layers-conv-local-11pct.cfg
+            layers-conv-local-13pct.cfg
             layers-18pct.cfg
             + layers-19pct.cfg (control)
             layers-80sec.cfg
-            layers-conv-local-11pct.cfg
-            layers-conv-local-13pct.cfg
-        Evaluate experimental results
-            Write get_counts_from_predictions
-                Run non-maximal suppression on predictions
-                Optimize radius using ROC curve
-                Experiment with different overlap_dimensions
+        Use early stopping
+            + Experiment with no early stopping (control)
+            Experiment with early stopping (early_stopping)
     Run secondary experiments
+        Experiment with weight norm constraint
+            + Experiment with no weight norm constraint (control)
+            Experiment with weight norm constraint (weight_constraint)
         Experiment with autoencoders to pretrain neural network
         Experiment with YUV colorspace
         Write bash script to train and run SGDClassifier
