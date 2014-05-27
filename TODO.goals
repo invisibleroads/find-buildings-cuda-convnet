@@ -1,44 +1,63 @@
-# US/Pacific 5/25/2014
-+ Verify routines
-    + Check that get_batches_from_arrays produces data that is plottable by get_plottable_data
-Send computer estimates for building count in 10m windows
-    = Write bash script to train and run cudaconv2
-        = Train with Myanmar and test on Myanmar
-            = Setup machine
-                = Write script to set up gpu machine
-        Train with all and test on Myanmar
-        Write get_counts_from_predictions
-            Run non-maximal suppression on predictions
-        Record execution time
-        Record precision and recall
-    Write bash script to train and run SGDClassifier
-        = Write get_dataset_from_datasets
-        Run train Myanmar and test on Myanmar
-        Train with all and test on Myanmar
-    Finalize initial architecture
-        = Evaluate new libraries for image recognition [6h]
-            Train classifier with dropconnect
-            Train classifier with opencv
-            Train classifier with pylearn2
-            Train classifier with theano
-            Train classifier with OverFeat
+# US/Pacific 5/26/2014
+= Improve development classifier
+    = Run primary experiments
+        Generate control results with 100k and excluded region
+            Write get_counts_from_predictions
+                Run non-maximal suppression on predictions
+                Optimize radius using ROC curve
+        Determine whether it is better to use more data
+            Train with Myanmar 10k and test on Myanmar
+            Train with Myanmar 100k and test on Myanmar (control)
+            Train with Myanmar 500k and test on Myanmar
+        Determine whether it is better to use all countries
+            = Train with Myanmar and test on Myanmar
+            Train with all and test on Myanmar
+        Experiment with zero mean and dividing by standard deviation
+            Experiment with raw
+            Experiment with zero mean (control)
+            Experiment with zero mean and standard deviation
+        Experiment with random translations of training set
+            Experiment with no random translations (control)
+            Experiment with random translations
+        Experiment with dropout and extra hidden layers
+            Experiment with no dropout (control)
+            Experiment with one hidden layer
+            Experiment with two hidden layers
+        Experiment with weight norm constraint
+            Experiment with no weight norm constraint (constraint)
+            Experiment with weight norm constraint
+        Experiment with rnorm
+            Experiment with no rnorm (control)
+            Experiment with rnorm
+        Experiment with local pooling
+            Experiment with no local pooling (control)
+            Experiment with local pooling
+        Use early stopping
+            Experiment with no early stopping (control)
+            Experiment with early stopping
+    Run secondary experiments
+        Experiment with autoencoders to pretrain neural network
+        Experiment with YUV colorspace
+        Write bash script to train and run SGDClassifier
+            = Write get_dataset_from_datasets
+    Record execution time
+    Record precision and recall
+Release production classifier
+    Combine best techniques from primary experiments
+    Send access credentials to all tools, valid with no membership fee for one year
+        Experiment with boto
+        Add payment
+        Experiment with message queues
+        Mask paths in run.pkl
+        Feature Modi Research Group logo and link on tool webpage
+Evaluate new libraries for image recognition [6h]
+    Train classifier with dropconnect
+    Train classifier with opencv
+    Train classifier with pylearn2
+    Train classifier with theano
+    Train classifier with OverFeat
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
-Reach cross-validation accuracy of 75%
-    Optimize classifier to estimate the building count in a window [20h]
-Evaluate classifiers on cost-effective lower resolution satellite images
-    Train classifiers on lower resolution satellite images [14h]
-Reach cross-validation accuracy of 80%
-    Apply different techniques to improve classifier performance [14h]
-        Apply primary techniques
-            Experiment with zero mean and dividing by standard deviation
-            Experiment with random translations of training set
-            Experiment with dropout and extra hidden layers
-            Experiment with weight norm constraint
-            Use early stopping
-        Apply secondary techniques
-            Experiment with autoencoders to pretrain neural network
-            Experiment with YUV colorspace
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/mraspaud/mpop
@@ -47,9 +66,5 @@ Explore new libraries
     Write code example with https://github.com/mraspaud/trollimage
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
-    Write code example with scikit-image
     Write code example with cartopy
-Send access credentials to all tools, valid with no membership fee for one year
-    = Experiment with boto
-    Mask paths in run.pkl
-    Feature Modi Research Group logo and link on tool webpage
+Evaluate classifiers on cost-effective lower resolution satellite images

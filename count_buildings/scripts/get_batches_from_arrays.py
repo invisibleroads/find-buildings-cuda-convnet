@@ -1,4 +1,5 @@
 import h5py
+import numpy as np
 import os
 import sys
 from crosscompute.libraries import script
@@ -34,4 +35,4 @@ def run(
         (_, pixel_dimensions)) for _ in pixel_upper_lefts]
 
     save_meta(target_folder, vectors, label_names, pixel_centers, array_shape)
-    save_data(target_folder, vectors, [], batch_size)
+    save_data(target_folder, vectors, np.zeros(len(vectors)), batch_size)

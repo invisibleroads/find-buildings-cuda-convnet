@@ -59,9 +59,10 @@ def save_data(target_folder, vectors, labels, batch_size):
         # Prepare
         target_path = target_path_template % batch_index
         data = vectors[start_index:end_index].T
+        array_count = data.shape[1]
         # Save
         pickle.dump({
-            'ids': range(len(vectors)),
+            'ids': range(start_index, start_index + array_count),
             'data': data.astype(np.single),
             'labels': [1 if x else 0 for x in labels[start_index:end_index]],
         }, open(target_path, 'w'), protocol=-1)

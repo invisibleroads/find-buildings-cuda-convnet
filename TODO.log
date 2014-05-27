@@ -1,4 +1,10 @@
-# UTC 05/26/2014
+# UTC 05/27/2014
++ Write code example with scikit-image [05/27/2014]
++ Verify routines [05/27/2014]
++ Check that get_batches_from_arrays produces data that is plottable by get_plottable_data [05/27/2014]
++ Train with Myanmar and test on Myanmar [05/27/2014]
++ Setup machine [05/27/2014]
++ Write script to set up gpu machine [05/27/2014]
 + Check that cifar-10 has data that is plottable by get_plottable_data [05/26/2014]
 + Check that new ccn-make-batches produces data that is plottable by get_plottable_data [05/26/2014]
 + Check that get_tiles_from_image produces tiles with the correct orientation [05/26/2014]
