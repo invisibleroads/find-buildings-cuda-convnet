@@ -95,7 +95,7 @@ def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):
             tile_count, 2), dtype=image.pixel_dtype)
     pixel_upper_lefts.attrs['calibration_pack'] = image.calibration_pack
     pixel_upper_lefts.attrs['proj4'] = image.proj4
-    arrays_h5.create_dataset('labels', shape=(0,), dtype=bool)
+    arrays_h5.create_dataset('labels', shape=(tile_count,), dtype=bool)
     return arrays, pixel_upper_lefts
 
 
