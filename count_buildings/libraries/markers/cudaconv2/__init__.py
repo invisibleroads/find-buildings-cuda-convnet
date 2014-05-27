@@ -11,6 +11,20 @@ class CudaConvNetMarker(object):
 
 class GenericDataProvider(LabeledMemoryDataProvider):
 
+    def __init__(
+            self, data_dir, batch_range, init_epoch=1, init_batchnum=None,
+            dp_params={}, test=False):
+        LabeledMemoryDataProvider.__init__(
+            self, data_dir, batch_range, init_epoch, init_batchnum,
+            dp_params, test)
+        for d in self.data_dic:
+            d['data'] = np.require(
+                d['data'],
+                dtype=np.single, requirements='C')
+            d['labels'] = np.require(
+                d['labels'].reshape((1, len(d['labels']))),
+                dtype=np.single, requirements='C')
+
     def get_data_dims(self, idx=0):
         return self.batch_meta['num_vis'] if idx == 0 else 1
 
@@ -40,9 +54,6 @@ class ZeroMeanDataProvider(GenericDataProvider):
         for d in self.data_dic:
             d['data'] = np.require(
                 d['data'] - self.batch_meta['data_mean'],
-                dtype=np.single, requirements='C')
-            d['labels'] = np.require(
-                d['labels'].reshape((1, len(d['labels']))),
                 dtype=np.single, requirements='C')
 
     def restore_data(self, data):
