@@ -49,9 +49,12 @@ def run(
     positive_pixel_centers = get_positive_pixel_centers(
         points_path, image_scope)
 
-    positive_count = maximum_positive_count or len(positive_pixel_centers)
-    negative_count = maximum_negative_count or estimate_negative_count(
-        image_scope, positive_pixel_centers)
+    positive_count = trim_to_minimum(
+        maximum_positive_count,
+        len(positive_pixel_centers))
+    negative_count = trim_to_minimum(
+        maximum_negative_count,
+        estimate_negative_count(image_scope, positive_pixel_centers))
 
     save_positive_examples(
         save_images and disk.replace_folder(target_folder, 'positives'),
@@ -73,6 +76,10 @@ def get_positive_pixel_centers(points_path, image_scope):
     points_proj4, centers = load_points(points_path)[:2]
     transform_point = get_transformPoint(points_proj4, image_scope.proj4)
     return [image_scope.to_pixel_xy(transform_point(*_)) for _ in centers]
+
+
+def trim_to_minimum(actual_maximum, desired_maximum):
+    return min(actual_maximum, desired_maximum or actual_maximum)
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):

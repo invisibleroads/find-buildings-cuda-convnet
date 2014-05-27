@@ -21,9 +21,12 @@ class GenericDataProvider(LabeledMemoryDataProvider):
     def get_plottable_data(self, data):
         pixel_height, pixel_width, band_count = self.batch_meta['array_shape']
         example_count = data.shape[1]
-        return np.require((data + self.data_mean).T.reshape(
+        return np.require(self.restore_data(data).T.reshape(
             example_count, band_count, pixel_height, pixel_width
         ).swapaxes(1, 3).swapaxes(1, 2) / 255.0, dtype=np.single)
+
+    def restore_data(self, data):
+        return data
 
 
 class ZeroMeanDataProvider(GenericDataProvider):
@@ -34,11 +37,32 @@ class ZeroMeanDataProvider(GenericDataProvider):
         GenericDataProvider.__init__(
             self, data_dir, batch_range, init_epoch, init_batchnum,
             dp_params, test)
-        self.data_mean = self.batch_meta['data_mean']
         for d in self.data_dic:
             d['data'] = np.require(
-                d['data'] - self.data_mean,
+                d['data'] - self.batch_meta['data_mean'],
                 dtype=np.single, requirements='C')
             d['labels'] = np.require(
                 d['labels'].reshape((1, len(d['labels']))),
                 dtype=np.single, requirements='C')
+
+    def restore_data(self, data):
+        data_mean = self.batch_meta['data_mean']
+        return data + data_mean
+
+
+class ZeroMeanUnitVarianceDataProvider(ZeroMeanDataProvider):
+
+    def __init__(
+            self, data_dir, batch_range, init_epoch=1, init_batchnum=None,
+            dp_params={}, test=False):
+        ZeroMeanDataProvider.__init__(
+            self, data_dir, batch_range, init_epoch, init_batchnum,
+            dp_params, test)
+        for d in self.data_dic:
+            d['data'] = np.require(
+                d['data'] / self.batch_meta['data_std'],
+                dtype=np.single, requirements='C')
+
+    def restore_data(self, data):
+        data_std = self.batch_meta['data_std']
+        return ZeroMeanDataProvider.restore_data(data) * data_std
