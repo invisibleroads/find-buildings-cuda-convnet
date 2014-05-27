@@ -37,7 +37,7 @@ def run(
 
 def save_meta(target_folder, vectors, label_names, pixel_centers, array_shape):
     target_path = os.path.join(target_folder, 'batches.meta')
-    vector_size = vectors.shape[0]
+    vector_size = vectors.shape[1]
     transform_vector = lambda x: x.reshape(vector_size, 1).astype(np.single)
     pickle.dump({
         'data_mean': transform_vector(vectors.mean(axis=0)),
