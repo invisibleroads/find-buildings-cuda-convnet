@@ -30,12 +30,15 @@ Evaluate classifiers on cost-effective lower resolution satellite images
     Train classifiers on lower resolution satellite images [14h]
 Reach cross-validation accuracy of 80%
     Apply different techniques to improve classifier performance [14h]
-        Experiment with zero mean and dividing by standard deviation
-        Experiment with dropout and extra hidden layers
-        Experiment with random translations of training set
-        Experiment with weight norm constraint
-        Experiment with autoencoders to pretrain neural network
-        Experiment with YUV colorspace
+        Apply primary techniques
+            Experiment with zero mean and dividing by standard deviation
+            Experiment with random translations of training set
+            Experiment with dropout and extra hidden layers
+            Experiment with weight norm constraint
+            Use early stopping
+        Apply secondary techniques
+            Experiment with autoencoders to pretrain neural network
+            Experiment with YUV colorspace
 Explore new libraries
     Write code example with https://code.google.com/p/pyresample/
     Write code example with https://github.com/mraspaud/mpop
