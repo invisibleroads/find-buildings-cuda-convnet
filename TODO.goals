@@ -23,15 +23,15 @@
             + Experiment with no dropout (control)
             + Experiment with one hidden layer (dropout_layers)
             + Experiment with two hidden layers
+        Experiment with random translations of training set
+            + Experiment with no random translations (control)
+            + Experiment with random translations (random_translations)
         = Evaluate experimental results
             = Write get_counts_from_predictions
                 = Run non-maximal suppression on predictions
                 Optimize radius using ROC curve
                 Experiment with different overlap_dimensions
 
-        Experiment with random translations of training set
-            + Experiment with no random translations (control)
-            Experiment with random translations (random_translations)
         Determine whether it is better to use all countries
             + Train with Myanmar and test on Myanmar (control)
             Train with all and test on Myanmar (all_countries)
