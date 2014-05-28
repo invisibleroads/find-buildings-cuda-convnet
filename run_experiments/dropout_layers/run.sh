@@ -40,6 +40,8 @@ get_batches_from_arrays \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE
 
-ccn-train options_one_layer.cfg
-ccn-train options_two_layers.cfg
+ccn-train layers0/options.cfg
+ccn-train layers1/options.cfg
+ccn-train layers1-fc5/options.cfg
+ccn-train layers2/options.cfg
 # ccn-predict options.cfg -f $OUTPUT_FOLDER/ConvNet__*
