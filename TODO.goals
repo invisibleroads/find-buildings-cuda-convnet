@@ -32,20 +32,20 @@
                 Optimize radius using ROC curve
                 Experiment with different overlap_dimensions
 
-        Determine whether it is better to use all countries
-            + Train with Myanmar and test on Myanmar (control)
-            Train with all and test on Myanmar (all_countries)
-                Write get_batches_from_datasets
         Compare different layer configurations
-            layers-conv-local-11pct.cfg
+            layers-conv-local-11pct.cfg (layer_parameters)
             layers-conv-local-13pct.cfg
             layers-18pct.cfg
             + layers-19pct.cfg (control)
             layers-80sec.cfg
+        Determine whether it is better to use all countries
+            + Train with Myanmar and test on Myanmar (control)
+            Train with all and test on Myanmar (all_countries)
+                Write get_batches_from_datasets
+    Run secondary experiments
         Use early stopping
             + Experiment with no early stopping (control)
             Experiment with early stopping (early_stopping)
-    Run secondary experiments
         Experiment with weight norm constraint
             + Experiment with no weight norm constraint (control)
             Experiment with weight norm constraint (weight_constraint)
