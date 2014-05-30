@@ -110,8 +110,10 @@ class ImageScope(SatelliteImage):
             x2, y2 = self.maximum_pixel_upper_left
         min_x, min_y = self.minimum_pixel_center
         max_x, max_y = self.maximum_pixel_center
-        pixel_x_iter = get_covering_xrange(x1, x2, min_x, max_x)
-        pixel_y_iter = get_covering_xrange(y1, y2, min_y, max_y)
+        pixel_x_iter = get_covering_xrange(
+            x1, x2, interval_pixel_width, min_x, max_x)
+        pixel_y_iter = get_covering_xrange(
+            y1, y2, interval_pixel_height, min_y, max_y)
         row_count = get_row_count(image_pixel_height, interval_pixel_height)
         for pixel_upper_left in product(pixel_x_iter, pixel_y_iter):
             tile_index = get_tile_index(
