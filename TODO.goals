@@ -1,53 +1,22 @@
-# US/Pacific 5/26/2014
+# US/Pacific 5/30/2014
 = Improve development classifier
     = Run primary experiments
         = Generate control results with 100k and excluded region
-            + Train with Myanmar 100k and test on Myanmar (control)
-            + Train with Myanmar and test on Myanmar (control)
-            + Experiment with zero mean (control)
-            + Experiment with no random translations (control)
-            + Experiment with no dropout (control)
-            + Experiment with no weight norm constraint (control)
-            + Experiment with no rnorm (control)
-            + Experiment with no local pooling (control)
-            + Experiment with no early stopping (control)
         Determine whether it is better to use more data (dataset_size)
-            + Train with Myanmar 50k and test on Myanmar
-            + Train with Myanmar 100k and test on Myanmar (control)
-            + Train with Myanmar 200k and test on Myanmar
         Experiment with zero mean and dividing by standard deviation
-            + Experiment with raw
-            + Experiment with zero mean (control)
-            + Experiment with zero mean and standard deviation (unit_variance)
         Experiment with dropout and extra hidden layers
-            + Experiment with no dropout (control)
-            + Experiment with one hidden layer (dropout_layers)
-            + Experiment with two hidden layers
         Experiment with random translations of training set
-            + Experiment with no random translations (control)
-            + Experiment with random translations (random_translations)
         Compare different layer configurations
-            + layers-conv-local-11pct.cfg (layer_parameters)
-            + layers-conv-local-13pct.cfg
-            + layers-18pct.cfg
-            + layers-19pct.cfg (control)
-            + layers-80sec.cfg
+        Determine whether it is better to use all countries
         = Evaluate experimental results
             = Write get_counts_from_predictions
                 = Run non-maximal suppression on predictions
                 Optimize radius using ROC curve
                 Experiment with different overlap_dimensions
-
-        Determine whether it is better to use all countries
-            Train with all and test on Myanmar (all_countries)
-                Write get_batches_from_datasets
-            + Train with Myanmar and test on Myanmar (control)
     Run secondary experiments
         Use early stopping
-            + Experiment with no early stopping (control)
             Experiment with early stopping (early_stopping)
         Experiment with weight norm constraint
-            + Experiment with no weight norm constraint (control)
             Experiment with weight norm constraint (weight_constraint)
         Experiment with autoencoders to pretrain neural network
         Experiment with YUV colorspace
