@@ -75,7 +75,8 @@ def get_examples_h5(target_folder):
 def get_positive_pixel_centers(points_path, image_scope):
     points_proj4, centers = load_points(points_path)[:2]
     transform_point = get_transformPoint(points_proj4, image_scope.proj4)
-    return [image_scope.to_pixel_xy(transform_point(*_)) for _ in centers]
+    return filter(image_scope.is_pixel_center, (
+        image_scope.to_pixel_xy(transform_point(*_)) for _ in centers))
 
 
 def trim_to_minimum(actual_maximum, desired_maximum):

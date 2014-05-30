@@ -19,8 +19,8 @@ def start(argv=sys.argv):
             type=script.parse_dimensions,
             help='dimensions of tile overlap in geographic units')
         starter.add_argument(
-            '--tile_indices', metavar='INTEGER,INTEGER,INTEGER',
-            type=script.parse_numbers,
+            '--tile_indices', metavar='INTEGER', nargs='+',
+            type=int,
             help='indices to extract')
         starter.add_argument(
             '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',

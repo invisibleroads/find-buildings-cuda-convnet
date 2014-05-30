@@ -3,7 +3,7 @@ import sys
 from crosscompute.libraries import script
 
 from ..libraries.markers import initialize_marker
-from .get_dataset_from_examples import DATASET_NAME
+from ..libraries.dataset import DATASET_NAME
 
 
 def start(argv=sys.argv):

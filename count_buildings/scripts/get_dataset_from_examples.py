@@ -6,10 +6,8 @@ from crosscompute.libraries import script
 from shapely.geometry import box
 
 from ..libraries import satellite_image
+from ..libraries.dataset import DATASET_NAME
 from .get_examples_from_points import EXAMPLES_NAME
-
-
-DATASET_NAME = 'dataset.h5'
 
 
 def start(argv=sys.argv):
