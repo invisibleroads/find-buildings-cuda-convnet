@@ -7,7 +7,6 @@ from crosscompute.libraries import script
 from .get_arrays_from_image import ARRAYS_NAME
 from .get_batches_from_datasets import save_meta, save_data
 from ..libraries.dataset import AbstractGroup
-from ..libraries.satellite_image import get_pixel_center_from_pixel_frame
 
 
 def start(argv=sys.argv):
@@ -21,7 +20,7 @@ def start(argv=sys.argv):
             help='maximum number of examples to include per batch')
         starter.add_argument(
             '--array_shape', metavar='HEIGHT,WIDTH,BAND_COUNT',
-            type=script.parse_dimensions,
+            type=script.parse_numbers,
             help='')
 
 
@@ -41,8 +40,8 @@ class ArraysGroup(AbstractGroup):
     def __init__(self, arrays_folders, array_shape=None):
         self.h5s = [
             h5py.File(os.path.join(x, ARRAYS_NAME)) for x in arrays_folders]
-        if array_shape:
-            self._array_shape = array_shape
+        if array_shape is not None:
+            self._array_shape = tuple(array_shape)
 
     def get_labels(self, keys):
         return np.zeros(len(keys))

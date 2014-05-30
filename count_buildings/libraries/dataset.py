@@ -37,7 +37,8 @@ class AbstractGroup(object):
                 selected_height, selected_width = pixel_height, pixel_width
             if band_count < selected_band_count:
                 selected_band_count = band_count
-        self._array_shape = selected_height, selected_width, selected_band_count
+        self._array_shape = [
+            selected_height, selected_width, selected_band_count]
         return self._array_shape
 
     @property
