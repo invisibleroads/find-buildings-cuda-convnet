@@ -27,6 +27,9 @@ def run(
     shuffle(keys)
     save_meta(target_folder, dataset_group, keys)
     save_data(target_folder, dataset_group, keys, batch_size)
+    return dict(
+        array_count=dataset_group.array_count,
+        array_shape=dataset_group.array_shape)
 
 
 def save_meta(target_folder, dataset_group, keys):
