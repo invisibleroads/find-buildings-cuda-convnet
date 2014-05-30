@@ -23,9 +23,10 @@ get_dataset_from_examples \
     --excluded_pixel_bounds $PIXEL_BOUNDS \
     --maximum_dataset_size 210k
 
-get_batches_from_dataset \
+get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
-    --dataset_folder $OUTPUT_FOLDER/training_dataset \
+    --dataset_folders \
+        $OUTPUT_FOLDER/training_dataset \
     --batch_size $BATCH_SIZE
 
 get_arrays_from_image \

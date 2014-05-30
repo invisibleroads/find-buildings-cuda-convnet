@@ -30,9 +30,10 @@ get_arrays_from_image \
     --tile_dimensions $EXAMPLE_DIMENSIONS \
     --included_pixel_bounds $PIXEL_BOUNDS
 
-get_batches_from_dataset \
+get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
-    --dataset_folder $OUTPUT_FOLDER/training_dataset \
+    --dataset_folders \
+        $OUTPUT_FOLDER/training_dataset \
     --batch_size $BATCH_SIZE
 
 get_batches_from_arrays \
