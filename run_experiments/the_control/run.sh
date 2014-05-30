@@ -13,15 +13,15 @@ get_examples_from_points \
     --image_path $IMAGE_PATH \
     --points_path $POINTS_PATH \
     --example_dimensions $EXAMPLE_DIMENSIONS \
-    --maximum_positive_count 110k \
-    --maximum_negative_count 110k
+    --maximum_positive_count 210k \
+    --maximum_negative_count 210k
 
 get_dataset_from_examples \
     --target_folder $OUTPUT_FOLDER/training_dataset \
     --random_seed $RANDOM_SEED \
     --examples_folder $OUTPUT_FOLDER/examples \
     --excluded_pixel_bounds $PIXEL_BOUNDS \
-    --maximum_dataset_size 110k
+    --maximum_dataset_size 210k
 
 get_arrays_from_image \
     --target_folder $OUTPUT_FOLDER/test_arrays \
@@ -41,5 +41,5 @@ get_batches_from_arrays \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE
 
-ccn-train options.cfg
+# ccn-train options.cfg
 # ccn-predict options.cfg -f $OUTPUT_FOLDER/ConvNet__*

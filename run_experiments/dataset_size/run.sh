@@ -41,6 +41,6 @@ get_batches_from_arrays \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE
 
-ccn-train options_50k.cfg
-ccn-train options_200k.cfg
+# ccn-train options_50k.cfg
+# ccn-train options_200k.cfg
 # ccn-predict options.cfg -f $OUTPUT_FOLDER/ConvNet__*

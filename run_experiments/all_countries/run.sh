@@ -24,14 +24,14 @@ get_examples_from_points \
     --image_path $IMAGE_PATH \
     --points_path $POINTS_PATH \
     --example_dimensions $EXAMPLE_DIMENSIONS \
-    --maximum_positive_count 110k \
-    --maximum_negative_count 110k
+    --maximum_positive_count 210k \
+    --maximum_negative_count 210k
 get_dataset_from_examples \
     --target_folder $OUTPUT_FOLDER/training_dataset/$COUNTRY_IMAGE \
     --random_seed $RANDOM_SEED \
     --examples_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
     --excluded_pixel_bounds $PIXEL_BOUNDS \
-    --maximum_dataset_size 110k
+    --maximum_dataset_size 210k
 done
 
 get_batches_from_datasets \
