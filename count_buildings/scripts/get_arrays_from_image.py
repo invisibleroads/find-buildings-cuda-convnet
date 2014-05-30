@@ -4,7 +4,10 @@ import sys
 from crosscompute.libraries import script
 
 from .get_tiles_from_image import save_image_dimensions
-from ..libraries import satellite_image
+from ..libraries.satellite_image import ImageScope
+from ..libraries.satellite_image import SatelliteImage
+from ..libraries.satellite_image import get_pixel_center_from_pixel_frame
+from ..libraries.satellite_image import get_pixel_frame_from_pixel_bounds
 
 
 ARRAYS_NAME = 'arrays.h5'
@@ -44,10 +47,10 @@ def run(
 
 def save_pixel_bounds(
         target_folder, image_path, included_pixel_bounds):
-    pixel_frame = satellite_image.get_pixel_frame_from_pixel_bounds(
+    pixel_frame = get_pixel_frame_from_pixel_bounds(
         included_pixel_bounds)
     tile_pixel_dimensions = pixel_frame[1]
-    image = satellite_image.SatelliteImage(image_path)
+    image = SatelliteImage(image_path)
 
     tile_dimensions = image.to_dimensions(tile_pixel_dimensions)
     arrays, pixel_centers = get_target_pack(
@@ -63,7 +66,7 @@ def save_arrays(
         target_folder, image_path,
         tile_dimensions, overlap_dimensions,
         included_pixel_bounds):
-    image_scope = satellite_image.ImageScope(image_path, tile_dimensions)
+    image_scope = ImageScope(image_path, tile_dimensions)
     tile_pixel_dimensions = image_scope.scope_pixel_dimensions
     tile_packs = list(image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds))
@@ -83,7 +86,7 @@ def save_arrays(
 
 
 def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):
-    image = satellite_image.SatelliteImage(image_path)
+    image = SatelliteImage(image_path)
     tile_pixel_dimensions = image.to_pixel_dimensions(tile_dimensions)
     tile_pixel_width, tile_pixel_height = tile_pixel_dimensions
     arrays_h5 = get_arrays_h5(target_folder)
