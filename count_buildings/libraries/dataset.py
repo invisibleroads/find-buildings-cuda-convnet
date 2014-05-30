@@ -11,18 +11,14 @@ from . import disk
 DATASET_NAME = 'dataset.h5'
 
 
-class DatasetGroup(object):
-
-    def __init__(self, dataset_folders):
-        self.dataset_h5s = [
-            h5py.File(os.path.join(x, DATASET_NAME)) for x in dataset_folders]
+class AbstractGroup(object):
 
     def get_keys(self):
         keys = []
-        for dataset_index, dataset_h5 in enumerate(self.dataset_h5s):
+        for h5_index, h5 in enumerate(self.h5s):
             keys.extend((
-                dataset_index, array_index
-            ) for array_index in xrange(len(dataset_h5['arrays'])))
+                h5_index, array_index
+            ) for array_index in xrange(len(h5['arrays'])))
         return keys
 
     @property
@@ -34,8 +30,8 @@ class DatasetGroup(object):
         selected_height = np.inf
         selected_width = np.inf
         selected_band_count = np.inf
-        for dataset_index, dataset_h5 in enumerate(self.dataset_h5s):
-            arrays = dataset_h5['arrays']
+        for h5_index, h5 in enumerate(self.h5s):
+            arrays = h5['arrays']
             pixel_height, pixel_width, band_count = arrays.shape[1:]
             if pixel_height * pixel_width < selected_height * selected_width:
                 selected_height, selected_width = pixel_height, pixel_width
@@ -51,8 +47,8 @@ class DatasetGroup(object):
         except AttributeError:
             pass
         array_count = 0
-        for dataset_index, dataset_h5 in enumerate(self.dataset_h5s):
-            arrays = dataset_h5['arrays']
+        for h5_index, h5 in enumerate(self.h5s):
+            arrays = h5['arrays']
             array_count += len(arrays)
         self._array_count = array_count
         return self._array_count
@@ -64,8 +60,8 @@ class DatasetGroup(object):
         except AttributeError:
             pass
         array_sum = 0
-        for dataset_index, dataset_h5 in enumerate(self.dataset_h5s):
-            arrays = dataset_h5['arrays']
+        for h5_index, h5 in enumerate(self.h5s):
+            arrays = h5['arrays']
             if arrays.shape[1:] == self.array_shape:
                 array_sum += np.sum(arrays, axis=0)
             else:
@@ -82,8 +78,8 @@ class DatasetGroup(object):
             pass
         get_squared_difference = lambda x: (x - self.array_mean) ** 2
         squared_difference_sum = 0
-        for dataset_index, dataset_h5 in enumerate(self.dataset_h5s):
-            arrays = dataset_h5['arrays']
+        for h5_index, h5 in enumerate(self.h5s):
+            arrays = h5['arrays']
             if arrays.shape[1:] == self.array_shape:
                 squared_difference_sum += np.sum(
                     get_squared_difference(arrays), axis=0)
@@ -97,34 +93,43 @@ class DatasetGroup(object):
 
     def get_pixel_centers(self, keys):
         pixel_centers = []
-        for dataset_index, array_index in keys:
-            dataset_h5 = self.dataset_h5s[dataset_index]
-            pixel_center = dataset_h5['pixel_centers'][array_index]
+        for h5_index, array_index in keys:
+            h5 = self.h5s[h5_index]
+            pixel_center = h5['pixel_centers'][array_index]
             pixel_centers.append(pixel_center)
         return pixel_centers
 
     def get_data(self, keys):
         vectors = []
-        for dataset_index, array_index in keys:
-            dataset_h5 = self.dataset_h5s[dataset_index]
-            array = dataset_h5['arrays'][array_index]
+        for h5_index, array_index in keys:
+            h5 = self.h5s[h5_index]
+            array = h5['arrays'][array_index]
             vectors.append(get_vector_from_array(self.resize_array(array)))
         return np.array(vectors).T
 
-    def get_labels(self, keys):
-        labels = []
-        for dataset_index, array_index in keys:
-            dataset_h5 = self.dataset_h5s[dataset_index]
-            label = dataset_h5['labels'][array_index]
-            labels.append(label)
-        return labels
-
     def resize_array(self, array):
         pixel_height, pixel_width, band_count = self.array_shape
+        assert band_count <= array.shape[2]
         array = array[:, :, :band_count]
         if array.shape == self.array_shape:
             return array
+        assert pixel_height <= array.shape[0] and pixel_width <= array.shape[1]
         return resize(array, (pixel_height, pixel_width)) * 255
+
+
+class DatasetGroup(AbstractGroup):
+
+    def __init__(self, dataset_folders):
+        self.h5s = [
+            h5py.File(os.path.join(x, DATASET_NAME)) for x in dataset_folders]
+
+    def get_labels(self, keys):
+        labels = []
+        for h5_index, array_index in keys:
+            h5 = self.h5s[h5_index]
+            label = h5['labels'][array_index]
+            labels.append(label)
+        return labels
 
 
 @decorator

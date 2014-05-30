@@ -44,20 +44,19 @@ def run(
 
 def save_pixel_bounds(
         target_folder, image_path, included_pixel_bounds):
-    pixel_frame = [
-        pixel_upper_left, pixel_dimensions
-    ] = satellite_image.get_pixel_frame_from_pixel_bounds(
+    pixel_frame = satellite_image.get_pixel_frame_from_pixel_bounds(
         included_pixel_bounds)
+    tile_pixel_dimensions = pixel_frame[1]
     image = satellite_image.SatelliteImage(image_path)
 
-    tile_dimensions = image.to_dimensions(pixel_dimensions)
-    arrays, pixel_upper_lefts = get_target_pack(
+    tile_dimensions = image.to_dimensions(tile_pixel_dimensions)
+    arrays, pixel_centers = get_target_pack(
         target_folder, image_path, tile_dimensions, tile_count=1)
     arrays[0, :, :, :] = image.get_array_from_pixel_frame(pixel_frame)
-    pixel_upper_lefts[0, :] = pixel_upper_left
+    pixel_centers[0, :] = get_pixel_center_from_pixel_frame(pixel_frame)
     return dict(
         tile_dimensions=tile_dimensions,
-        tile_pixel_dimensions=pixel_dimensions)
+        tile_pixel_dimensions=tile_pixel_dimensions)
 
 
 def save_arrays(
@@ -65,17 +64,19 @@ def save_arrays(
         tile_dimensions, overlap_dimensions,
         included_pixel_bounds):
     image_scope = satellite_image.ImageScope(image_path, tile_dimensions)
+    tile_pixel_dimensions = image_scope.scope_pixel_dimensions
     tile_packs = list(image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds))
     array_count = len(tile_packs)
-    arrays, pixel_upper_lefts = get_target_pack(
+    arrays, pixel_centers = get_target_pack(
         target_folder, image_path, tile_dimensions, array_count)
     for array_index, (tile_index, pixel_upper_left) in enumerate(tile_packs):
         array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
         arrays[array_index, :, :, :] = array
-        pixel_upper_lefts[array_index, :] = pixel_upper_left
+        pixel_centers[array_index, :] = get_pixel_center_from_pixel_frame((
+            pixel_upper_left, tile_pixel_dimensions))
     return dict(
-        tile_pixel_dimensions=image_scope.scope_pixel_dimensions,
+        tile_pixel_dimensions=tile_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(
             overlap_dimensions),
         array_count=array_count)
@@ -90,13 +91,13 @@ def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):
         'arrays', shape=(
             tile_count, tile_pixel_height, tile_pixel_width,
             image.band_count), dtype=image.array_dtype)
-    pixel_upper_lefts = arrays_h5.create_dataset(
-        'pixel_upper_lefts', shape=(
+    pixel_centers = arrays_h5.create_dataset(
+        'pixel_centers', shape=(
             tile_count, 2), dtype=image.pixel_dtype)
-    pixel_upper_lefts.attrs['calibration_pack'] = image.calibration_pack
-    pixel_upper_lefts.attrs['proj4'] = image.proj4
+    pixel_centers.attrs['calibration_pack'] = image.calibration_pack
+    pixel_centers.attrs['proj4'] = image.proj4
     arrays_h5.create_dataset('labels', shape=(tile_count,), dtype=bool)
-    return arrays, pixel_upper_lefts
+    return arrays, pixel_centers
 
 
 def get_arrays_h5(target_folder):
