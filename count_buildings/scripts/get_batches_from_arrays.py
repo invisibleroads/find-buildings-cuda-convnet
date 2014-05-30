@@ -40,7 +40,7 @@ class ArraysGroup(AbstractGroup):
 
     def __init__(self, arrays_folders, array_shape=None):
         self.h5s = [
-            h5py.File(os.path.join(x, ARRAYS_NAME)) for x in dataset_folders]
+            h5py.File(os.path.join(x, ARRAYS_NAME)) for x in arrays_folders]
         if array_shape:
             self._array_shape = array_shape
 
