@@ -30,9 +30,10 @@ get_arrays_from_image \
     --tile_dimensions $EXAMPLE_DIMENSIONS \
     --included_pixel_bounds $PIXEL_BOUNDS
 
-get_batches_from_dataset \
+get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
-    --dataset_folder $OUTPUT_FOLDER/training_dataset \
+    --dataset_folders \
+        $OUTPUT_FOLDER/training_dataset \
     --batch_size $BATCH_SIZE
 
 get_batches_from_arrays \
@@ -41,7 +42,13 @@ get_batches_from_arrays \
     --batch_size $BATCH_SIZE
 
 ccn-train layers0/options.cfg
+ccn-train layers0-d0.1/options.cfg
+ccn-train layers0-d0.2/options.cfg
+ccn-train layers0-d0.5/options.cfg
 ccn-train layers1/options.cfg
 ccn-train layers1-fc5/options.cfg
+ccn-train layers1-fc64/options.cfg
 ccn-train layers2/options.cfg
+ccn-train layers2-fc5/options.cfg
+ccn-train layers2-fc64/options.cfg
 # ccn-predict options.cfg -f $OUTPUT_FOLDER/ConvNet__*
