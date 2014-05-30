@@ -37,11 +37,7 @@ def run(
 
 class ArraysGroup(AbstractGroup):
 
-    def __init__(self, arrays_folders, array_shape=None):
-        self.h5s = [
-            h5py.File(os.path.join(x, ARRAYS_NAME)) for x in arrays_folders]
-        if array_shape is not None:
-            self._array_shape = tuple(array_shape)
+    H5_NAME = ARRAYS_NAME
 
     def get_labels(self, keys):
         return np.zeros(len(keys))

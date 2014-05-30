@@ -2,8 +2,8 @@
 = Improve development classifier
     = Run primary experiments
         + Generate control results with 100k and excluded region
-        Determine whether it is better to use more data (dataset_size)
-        Experiment with zero mean and dividing by standard deviation
+        + Determine whether it is better to use more data (dataset_size)
+        + Experiment with zero mean and dividing by standard deviation
         Experiment with dropout and extra hidden layers
         Experiment with random translations of training set
         Compare different layer configurations

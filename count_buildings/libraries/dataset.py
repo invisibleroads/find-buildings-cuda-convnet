@@ -13,6 +13,12 @@ DATASET_NAME = 'dataset.h5'
 
 class AbstractGroup(object):
 
+    def __init__(self, h5_folders, array_shape=None):
+        self.h5s = [
+            h5py.File(os.path.join(x, self.H5_NAME)) for x in h5_folders]
+        if array_shape is not None:
+            self._array_shape = tuple(array_shape)
+
     def get_keys(self):
         keys = []
         for h5_index, h5 in enumerate(self.h5s):
@@ -120,9 +126,7 @@ class AbstractGroup(object):
 
 class DatasetGroup(AbstractGroup):
 
-    def __init__(self, dataset_folders):
-        self.h5s = [
-            h5py.File(os.path.join(x, DATASET_NAME)) for x in dataset_folders]
+    H5_NAME = DATASET_NAME
 
     def get_labels(self, keys):
         labels = []

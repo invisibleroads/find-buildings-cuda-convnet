@@ -18,11 +18,15 @@ def start(argv=sys.argv):
             '--batch_size', metavar='SIZE', required=True,
             type=script.parse_size,
             help='maximum number of examples to include per batch')
+        starter.add_argument(
+            '--array_shape', metavar='HEIGHT,WIDTH,BAND_COUNT',
+            type=script.parse_numbers,
+            help='')
 
 
 def run(
-        target_folder, dataset_folders, batch_size):
-    dataset_group = DatasetGroup(dataset_folders)
+        target_folder, dataset_folders, batch_size, array_shape):
+    dataset_group = DatasetGroup(dataset_folders, array_shape)
     keys = dataset_group.get_keys()
     shuffle(keys)
     save_meta(target_folder, dataset_group, keys)
