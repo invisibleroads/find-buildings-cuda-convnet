@@ -15,6 +15,7 @@ uganda0
 uganda1
 "
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
+echo $COUNTRY_IMAGE
 IMAGE_PATH=~/Links/satellite-images/$COUNTRY_IMAGE
 POINTS_PATH=~/Links/building-locations/$COUNTRY_IMAGE
 get_examples_from_points \
