@@ -22,8 +22,8 @@ get_marker_from_dataset =\
     count_buildings.scripts.get_marker_from_dataset:start
 get_arrays_from_image =\
     count_buildings.scripts.get_arrays_from_image:start
-get_batches_from_dataset =\
-    count_buildings.scripts.get_batches_from_dataset:start
+get_batches_from_datasets =\
+    count_buildings.scripts.get_batches_from_datasets:start
 get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
 get_predictions_from_arrays =\
@@ -35,7 +35,7 @@ get_counts_from_predictions =\
 
 setup(
     name='count_buildings',
-    version='0.0.1',
+    version='0.0.2',
     description='count_buildings',
     long_description=DESCRIPTION,
     classifiers=[

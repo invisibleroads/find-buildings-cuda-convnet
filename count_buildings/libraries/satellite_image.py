@@ -164,16 +164,28 @@ class ImageScope(SatelliteImage):
             pixel_center, self.scope_pixel_dimensions)
 
     def get_random_pixel_center(self):
-        minimum_pixel_center = get_pixel_center_from_pixel_frame((
-            (0, 0),
-            self.scope_pixel_dimensions))
-        maximum_pixel_center = get_pixel_center_from_pixel_frame((
-            self.pixel_dimensions - self.scope_pixel_dimensions,
-            self.scope_pixel_dimensions))
+        minimum_pixel_center = self.get_minimum_pixel_center()
+        maximum_pixel_center = self.get_maximum_pixel_center()
         return np.array([
             random.randint(minimum_pixel_center[0], maximum_pixel_center[0]),
             random.randint(minimum_pixel_center[1], maximum_pixel_center[1]),
         ])
+
+    def is_pixel_center(self, pixel_center):
+        x, y = pixel_center
+        x1, y1 = self.get_minimum_pixel_center()
+        x2, y2 = self.get_maximum_pixel_center()
+        return x1 <= x and x <= x2 and y1 <= y and y <= y2
+
+    def get_minimum_pixel_center(self):
+        return get_pixel_center_from_pixel_frame((
+            (0, 0),
+            self.scope_pixel_dimensions))
+
+    def get_maximum_pixel_center(self):
+        return get_pixel_center_from_pixel_frame((
+            self.pixel_dimensions - self.scope_pixel_dimensions,
+            self.scope_pixel_dimensions))
 
 
 def _get_extreme_values(image):
@@ -182,8 +194,12 @@ def _get_extreme_values(image):
     bands = [image.GetRasterBand(x + 1) for x in xrange(band_count)]
     minimums = [x.GetMinimum() for x in bands]
     maximums = [x.GetMaximum() for x in bands]
-    values = [x for x in minimums + maximums if x is not None]
-    return min(values), max(values)
+    try:
+        values = [x for x in minimums + maximums if x is not None]
+        return min(values), max(values)
+    except ValueError:
+        values = [band.ComputeRasterMinMax() for band in bands]
+        return np.min(values), np.max(values)
 
 
 def get_pixel_bounds_from_pixel_center(

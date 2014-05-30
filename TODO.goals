@@ -26,22 +26,22 @@
         Experiment with random translations of training set
             + Experiment with no random translations (control)
             + Experiment with random translations (random_translations)
+        Compare different layer configurations
+            + layers-conv-local-11pct.cfg (layer_parameters)
+            + layers-conv-local-13pct.cfg
+            + layers-18pct.cfg
+            + layers-19pct.cfg (control)
+            + layers-80sec.cfg
         = Evaluate experimental results
             = Write get_counts_from_predictions
                 = Run non-maximal suppression on predictions
                 Optimize radius using ROC curve
                 Experiment with different overlap_dimensions
 
-        Compare different layer configurations
-            layers-conv-local-11pct.cfg (layer_parameters)
-            layers-conv-local-13pct.cfg
-            layers-18pct.cfg
-            + layers-19pct.cfg (control)
-            layers-80sec.cfg
         Determine whether it is better to use all countries
-            + Train with Myanmar and test on Myanmar (control)
             Train with all and test on Myanmar (all_countries)
                 Write get_batches_from_datasets
+            + Train with Myanmar and test on Myanmar (control)
     Run secondary experiments
         Use early stopping
             + Experiment with no early stopping (control)
