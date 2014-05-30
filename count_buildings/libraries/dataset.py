@@ -120,11 +120,11 @@ class DatasetGroup(object):
         return labels
 
     def resize_array(self, array):
+        pixel_height, pixel_width, band_count = self.array_shape
         array = array[:, :, :band_count]
         if array.shape == self.array_shape:
             return array
-        pixel_height, pixel_width, band_count = self.array_shape
-        return resize(array[:, :, :band_count], (pixel_height, pixel_width)) * 255
+        return resize(array, (pixel_height, pixel_width)) * 255
 
 
 @decorator

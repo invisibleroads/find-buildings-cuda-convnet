@@ -8,7 +8,7 @@
         Experiment with random translations of training set
         Compare different layer configurations
         Determine whether it is better to use all countries
-        = Evaluate experimental results
+        Evaluate experimental results
             = Write get_counts_from_predictions
                 = Run non-maximal suppression on predictions
                 Optimize radius using ROC curve
