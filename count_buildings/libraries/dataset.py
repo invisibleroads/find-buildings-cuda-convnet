@@ -120,7 +120,9 @@ class DatasetGroup(object):
         return labels
 
     def resize_array(self, array):
-        import ipdb; ipdb.set_trace()
+        array = array[:, :, :band_count]
+        if array.shape == self.array_shape:
+            return array
         pixel_height, pixel_width, band_count = self.array_shape
         return resize(array[:, :, :band_count], (pixel_height, pixel_width)) * 255
 
