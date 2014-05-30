@@ -10,6 +10,9 @@ from ..libraries.markers import load_marker
 from .get_arrays_from_image import ARRAYS_NAME
 
 
+PREDICTIONS_NAME = 'predictions.csv'
+
+
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(

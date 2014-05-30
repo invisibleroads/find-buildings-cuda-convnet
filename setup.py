@@ -28,8 +28,8 @@ get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
 get_predictions_from_arrays =\
     count_buildings.scripts.get_predictions_from_arrays:start
-get_counts_from_predictions =\
-    count_buildings.scripts.get_counts_from_predictions:start
+get_counts_from_probabilities =\
+    count_buildings.scripts.get_counts_from_probabilities:start
 """
 
 

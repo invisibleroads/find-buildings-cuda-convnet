@@ -106,10 +106,12 @@ class ImageScope(SatelliteImage):
         try:
             x1, y1, x2, y2 = targeted_pixel_bounds
         except TypeError:
-            x1, y1 = 0, 0
-            x2, y2 = self.pixel_dimensions
-        pixel_x_iter = get_covering_xrange(x1, x2, interval_pixel_width)
-        pixel_y_iter = get_covering_xrange(y1, y2, interval_pixel_height)
+            x1, y1 = self.minimum_pixel_upper_left
+            x2, y2 = self.maximum_pixel_upper_left
+        min_x, min_y = self.minimum_pixel_center
+        max_x, max_y = self.maximum_pixel_center
+        pixel_x_iter = get_covering_xrange(x1, x2, min_x, max_x)
+        pixel_y_iter = get_covering_xrange(y1, y2, min_y, max_y)
         row_count = get_row_count(image_pixel_height, interval_pixel_height)
         for pixel_upper_left in product(pixel_x_iter, pixel_y_iter):
             tile_index = get_tile_index(
@@ -164,28 +166,48 @@ class ImageScope(SatelliteImage):
             pixel_center, self.scope_pixel_dimensions)
 
     def get_random_pixel_center(self):
-        minimum_pixel_center = self.get_minimum_pixel_center()
-        maximum_pixel_center = self.get_maximum_pixel_center()
+        x1, y1 = self.minimum_pixel_center
+        x2, y2 = self.maximum_pixel_center
         return np.array([
-            random.randint(minimum_pixel_center[0], maximum_pixel_center[0]),
-            random.randint(minimum_pixel_center[1], maximum_pixel_center[1]),
+            random.randint(x1, x2 + 1),
+            random.randint(y1, y2 + 1),
         ])
 
     def is_pixel_center(self, pixel_center):
         x, y = pixel_center
-        x1, y1 = self.get_minimum_pixel_center()
-        x2, y2 = self.get_maximum_pixel_center()
-        return x1 <= x and x <= x2 and y1 <= y and y <= y2
+        min_x, min_y = self.minimum_pixel_center
+        max_x, max_y = self.maximum_pixel_center
+        is_x = min_x <= x and x <= max_x
+        is_y = min_y <= y and y <= max_y
+        return is_x and is_y
 
-    def get_minimum_pixel_center(self):
+    @property
+    def minimum_pixel_center(self):
         return get_pixel_center_from_pixel_frame((
-            (0, 0),
-            self.scope_pixel_dimensions))
+            self.minimum_pixel_upper_left, self.scope_pixel_dimensions))
 
-    def get_maximum_pixel_center(self):
+    @property
+    def maximum_pixel_center(self):
+        'Get maximum pixel_center that will return full array'
         return get_pixel_center_from_pixel_frame((
-            self.pixel_dimensions - self.scope_pixel_dimensions,
-            self.scope_pixel_dimensions))
+            self.maximum_pixel_upper_left, self.scope_pixel_dimensions))
+
+    def is_pixel_upper_left(self, pixel_upper_left):
+        x, y = pixel_upper_left
+        min_x, min_y = self.minimum_pixel_upper_left
+        max_x, max_y = self.maximum_pixel_upper_left
+        is_x = min_x <= x and x <= max_x
+        is_y = min_y <= y and y <= max_y
+        return is_x and is_y
+
+    @property
+    def minimum_pixel_upper_left(self):
+        return 0, 0
+
+    @property
+    def maximum_pixel_upper_left(self):
+        'Get maximum pixel_upper_left that will return full array'
+        return self.pixel_dimensions - self.scope_pixel_dimensions
 
 
 def _get_extreme_values(image):
@@ -237,10 +259,10 @@ def get_pixel_center_from_pixel_frame(pixel_frame):
     return pixel_upper_left + np.array(pixel_dimensions) / 2
 
 
-def get_covering_xrange(a, b, interval):
+def get_covering_xrange(a, b, interval, minimum, maximum):
     a_cover = int(math.ceil(-1 + a / float(interval)) * interval)
     b_cover = int(math.floor(+1 + b / float(interval)) * interval)
-    return xrange(max(a_cover, 0), b_cover, interval)
+    return xrange(max(a_cover, minimum), min(b_cover, maximum + 1), interval)
 
 
 def get_tile_index(pixel_upper_left, interval_pixel_dimensions, row_count):
