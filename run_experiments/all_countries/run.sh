@@ -33,7 +33,6 @@ get_dataset_from_examples \
     --excluded_pixel_bounds $PIXEL_BOUNDS \
     --maximum_dataset_size 210k
 done
-
 get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
     --dataset_folders \
@@ -46,6 +45,13 @@ get_batches_from_datasets \
         $OUTPUT_FOLDER/training_dataset/uganda1 \
     --batch_size $BATCH_SIZE
 
+get_batches_from_datasets \
+    --target_folder $OUTPUT_FOLDER/validation_batches \
+    --dataset_folders \
+        $OUTPUT_FOLDER/training_dataset/myanmar0 \
+    --batch_size $BATCH_SIZE \
+    --array_shape 17,17,3
+
 COUNTRY_IMAGE=myanmar0
 IMAGE_PATH=~/Links/satellite-images/$COUNTRY_IMAGE
 get_arrays_from_image \
@@ -57,7 +63,8 @@ get_arrays_from_image \
 get_batches_from_arrays \
     --target_folder $OUTPUT_FOLDER/test_batches \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
-    --batch_size $BATCH_SIZE
+    --batch_size $BATCH_SIZE \
+    --array_shape 17,17,3
 
 # ccn-train options.cfg
 # ccn-predict options.cfg -f $OUTPUT_FOLDER/ConvNet__*
