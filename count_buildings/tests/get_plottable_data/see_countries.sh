@@ -1,4 +1,3 @@
-OUTPUT_FOLDER=/tmp/see_countries
 COUNTRY_IMAGES="
 ethiopia0
 mali0
@@ -10,9 +9,14 @@ uganda1
 "
 IMAGE_FOLDER=~/Links/satellite-images
 POINTS_FOLDER=~/Links/building-locations
-EXAMPLE_DIMENSIONS=19,19
 EXAMPLE_COUNT=10
+EXAMPLE_DIMENSIONS=$1
+OUTPUT_FOLDER=/tmp/see_countries/$EXAMPLE_DIMENSIONS
 
+if [ -z "$EXAMPLE_DIMENSIONS" ]; then
+    echo 'Please specify example dimensions'
+    exit 1
+fi
 
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
     get_examples_from_points \
