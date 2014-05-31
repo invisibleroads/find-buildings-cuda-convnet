@@ -171,8 +171,8 @@ class ImageScope(SatelliteImage):
         x1, y1 = self.minimum_pixel_center
         x2, y2 = self.maximum_pixel_center
         return np.array([
-            random.randint(x1, x2 + 1),
-            random.randint(y1, y2 + 1),
+            random.randint(x1, x2),
+            random.randint(y1, y2),
         ])
 
     def is_pixel_center(self, pixel_center):
