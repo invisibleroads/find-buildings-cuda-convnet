@@ -1,4 +1,4 @@
-OUTPUT_FOLDER=~/Experiments/primary/`basename $(dirname $(pwd)/$0)`
+OUTPUT_FOLDER=~/Experiments/primary/all_countries/example_dimensions/`basename $(dirname $(pwd)/$0)`
 PIXEL_BOUNDS=13260,2320,14060,2920
 EXAMPLE_DIMENSIONS=10x10
 OVERLAP_DIMENSIONS=5x5
