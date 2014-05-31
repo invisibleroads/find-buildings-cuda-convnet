@@ -30,28 +30,28 @@ uganda1
 "
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
     echo $COUNTRY_IMAGE
-    get_examples_from_points \
-        --target_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
-        --image_path ~/Links/satellite-images/$COUNTRY_IMAGE \
-        --points_path ~/Links/building-locations/$COUNTRY_IMAGE \
-        --example_dimensions 100x50 \
-        --maximum_positive_count 1 \
-        --maximum_negative_count 1
-    python plot_example.py $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE
-    get_dataset_from_examples \
-        --target_folder $OUTPUT_FOLDER/dataset/$COUNTRY_IMAGE \
-        --examples_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE
-    python plot_dataset.py $OUTPUT_FOLDER/dataset/$COUNTRY_IMAGE
+    # get_examples_from_points \
+        # --target_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
+        # --image_path ~/Links/satellite-images/$COUNTRY_IMAGE \
+        # --points_path ~/Links/building-locations/$COUNTRY_IMAGE \
+        # --example_dimensions 100x50 \
+        # --maximum_positive_count 1 \
+        # --maximum_negative_count 1
+    # python plot_example.py $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE
+    # get_dataset_from_examples \
+        # --target_folder $OUTPUT_FOLDER/dataset/$COUNTRY_IMAGE \
+        # --examples_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE
+    python plot_dataset.py $OUTPUT_FOLDER/dataset/$COUNTRY_IMAGE $COUNTRY_IMAGE
 done
-get_batches_from_datasets \
-    --target_folder $OUTPUT_FOLDER/get_batches_from_datasets \
-    --dataset_folders \
-        $OUTPUT_FOLDER/dataset/ethiopia0 \
-        $OUTPUT_FOLDER/dataset/myanmar0 \
-        $OUTPUT_FOLDER/mali0 \
-        $OUTPUT_FOLDER/senegal0 \
-        $OUTPUT_FOLDER/tanzania0 \
-        $OUTPUT_FOLDER/uganda0 \
-        $OUTPUT_FOLDER/uganda1 \
-    --batch_size 1k
-python plot_batches_from_datasets.py
+# get_batches_from_datasets \
+    # --target_folder $OUTPUT_FOLDER/get_batches_from_datasets \
+    # --dataset_folders \
+        # $OUTPUT_FOLDER/dataset/ethiopia0 \
+        # $OUTPUT_FOLDER/dataset/myanmar0 \
+        # $OUTPUT_FOLDER/mali0 \
+        # $OUTPUT_FOLDER/senegal0 \
+        # $OUTPUT_FOLDER/tanzania0 \
+        # $OUTPUT_FOLDER/uganda0 \
+        # $OUTPUT_FOLDER/uganda1 \
+    # --batch_size 1k
+# python plot_batches_from_datasets.py
