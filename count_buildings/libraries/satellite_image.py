@@ -108,8 +108,8 @@ class ImageScope(SatelliteImage):
         except TypeError:
             x1, y1 = self.minimum_pixel_upper_left
             x2, y2 = self.maximum_pixel_upper_left
-        min_x, min_y = self.minimum_pixel_center
-        max_x, max_y = self.maximum_pixel_center
+        min_x, min_y = self.minimum_pixel_upper_left
+        max_x, max_y = self.maximum_pixel_upper_left
         pixel_x_iter = get_covering_xrange(
             x1, x2, interval_pixel_width, min_x, max_x)
         pixel_y_iter = get_covering_xrange(

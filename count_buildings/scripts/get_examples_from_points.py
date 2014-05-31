@@ -135,6 +135,8 @@ def save_negative_examples(
     negative_pixel_center_iter = yield_negative_pixel_center(
         image_scope, positive_pixel_centers)
     for negative_index in xrange(negative_count):
+        if negative_index == 1420:
+            import ipdb; ipdb.set_trace()
         pixel_center = negative_pixel_center_iter.next()
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
