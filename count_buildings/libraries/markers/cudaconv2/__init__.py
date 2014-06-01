@@ -184,7 +184,7 @@ class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
             for c in xrange(x.shape[1]):  # loop over cases
                 startY = np.random.randint(0, self.border_size * 2 + 1)
                 startX = np.random.randint(0, self.border_size * 2 + 1)
-                endY = startX + self.inner_width
+                endY = startY + self.inner_height
                 endX = startX + self.inner_width
                 pic = y[:, startY:endY, startX:endX, c]
                 if np.random.randint(2) == 0:  # flip with 50% probability

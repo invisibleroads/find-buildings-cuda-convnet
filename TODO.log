@@ -1,4 +1,12 @@
-# UTC 05/30/2014
+# UTC 05/31/2014
++ Generate control results with 100k and excluded region [05/31/2014]
++ Determine whether it is better to use more data (dataset_size) [05/31/2014]
++ Experiment with zero mean and dividing by standard deviation [05/31/2014]
++ Experiment with dropout and extra hidden layers [05/31/2014]
++ Experiment with random translations of training set [05/31/2014]
++ Compare different layer configurations [05/31/2014]
++ Determine whether it is better to use all countries [05/31/2014]
++ Record precision and recall [05/31/2014]
 + Train with Myanmar 100k and test on Myanmar (control) [05/30/2014]
 + Train with Myanmar and test on Myanmar (control) [05/30/2014]
 + Experiment with zero mean (control) [05/30/2014]
