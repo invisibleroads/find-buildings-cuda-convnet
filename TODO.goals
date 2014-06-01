@@ -1,12 +1,26 @@
-# US/Pacific 5/31/2014
-= Improve development classifier
-    = Run primary experiments
-        = Evaluate experimental results
-            = Write get_counts_from_predictions
-                = Run non-maximal suppression on predictions
-                Optimize radius using ROC curve
-                Experiment with different overlap_dimensions
+# US/Pacific 6/1/2014
+Release production classifier
+    Write script to predict a large image in chunks
+        Write get_probabilities_from_image
+    = Make myanmar0 classifier
+        = Make partial classifier
+        Make full classifier
+    Make generic classifier
+    Make ethiopia0 classifier
+    Make mali0 classifier
+    Make senegal0 classifier
+    Make tanzania0 classifier
+    Make uganda0 classifier
+    Make uganda1 classifier
+    Send access credentials to all tools, valid with no membership fee for one year
+        Experiment with boto
+        Add payment
+        Experiment with message queues
+        Mask paths in run.pkl
+        Feature Modi Research Group logo and link on tool webpage
+Improve development classifier
     Run secondary experiments
+        Experiment with different overlap_dimensions
         Use early stopping
             Experiment with early stopping (early_stopping)
         Experiment with weight norm constraint
@@ -16,14 +30,6 @@
         Write bash script to train and run SGDClassifier
             = Write get_dataset_from_datasets
     Record execution time
-Release production classifier
-    Combine best techniques from primary experiments
-    Send access credentials to all tools, valid with no membership fee for one year
-        Experiment with boto
-        Add payment
-        Experiment with message queues
-        Mask paths in run.pkl
-        Feature Modi Research Group logo and link on tool webpage
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Evaluate new libraries for image recognition [6h]
@@ -41,4 +47,6 @@ Explore new libraries
     Write code example with https://pypi.python.org/pypi/OWSLib
     Work through tutorials on http://www.pytroll.org/
     Write code example with cartopy
+Make scripts easier to use
+    Add progress bars
 Evaluate classifiers on cost-effective lower resolution satellite images

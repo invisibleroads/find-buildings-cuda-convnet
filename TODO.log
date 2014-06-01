@@ -1,4 +1,9 @@
-# UTC 05/31/2014
+# UTC 06/01/2014
++ Run primary experiments [06/01/2014]
++ Evaluate experimental results [06/01/2014]
++ Write get_counts_from_predictions [06/01/2014]
++ Run non-maximal suppression on predictions [06/01/2014]
++ Optimize radius [06/01/2014]
 + Generate control results with 100k and excluded region [05/31/2014]
 + Determine whether it is better to use more data (dataset_size) [05/31/2014]
 + Experiment with zero mean and dividing by standard deviation [05/31/2014]
