@@ -1,6 +1,6 @@
-TARGET_PATH=~/Experiments/primary/classifiers.gz
+TARGET_PATH=~/Experiments/in_production/classifiers.gz
 SOURCE_FOLDERS="
-$HOME/Experiments/primary
+$HOME/Experiments/in_production
 $HOME/Projects/count-buildings
 "
 
