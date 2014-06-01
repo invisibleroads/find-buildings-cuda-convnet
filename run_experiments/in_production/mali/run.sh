@@ -25,7 +25,7 @@ done
 
 DATASET_FOLDERS=""
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_batches/$COUNTRY_IMAGE"
+    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$COUNTRY_IMAGE"
 done
 get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
