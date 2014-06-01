@@ -1,17 +1,15 @@
 # US/Pacific 6/1/2014
 Release production classifier
-    Write script to predict a large image in chunks
-        Write get_probabilities_from_image
-    = Make myanmar0 classifier
-        = Make partial classifier
-        Make full classifier
+    = Write script to predict a large image in chunks
+        = Write get_probabilities_from_image
+    Make myanmar classifier
+    Make ethiopia classifier
+    Make mali classifier
+    Make senegal classifier
+    Make tanzania classifier
+    Make uganda classifier
     Make generic classifier
-    Make ethiopia0 classifier
-    Make mali0 classifier
-    Make senegal0 classifier
-    Make tanzania0 classifier
-    Make uganda0 classifier
-    Make uganda1 classifier
+        Use all training batches
     Send access credentials to all tools, valid with no membership fee for one year
         Experiment with boto
         Add payment
@@ -20,6 +18,7 @@ Release production classifier
         Feature Modi Research Group logo and link on tool webpage
     Ask Shaky to include infrared band next time when pan-sharpening
 Improve development classifier
+    = Rerun all_countries experiments using all training batches
     Run secondary experiments
         = Test whether we should set all wc=0 for Cropped
         Experiment with different overlap_dimensions
