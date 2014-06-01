@@ -5,30 +5,31 @@ BATCH_SIZE=10k
 RANDOM_SEED=crosscompute
 
 COUNTRY_IMAGES="
-ethiopia0@
-mali0@
-myanmar0@
-senegal0@
-tanzania0@
-uganda0@
-uganda1@
+ethiopia0
+mali0
+myanmar0
+senegal0
+tanzania0
+uganda0
+uganda1
 "
 DATASET_FOLDERS=""
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_210k/$COUNTRY_IMAGE"
+    DATASET_FOLDERS="$DATASET_FOLDERS /home/ec2-user/Experiments/in_production/$COUNTRY_IMAGE/training_dataset_210k/$COUNTRY_IMAGE"
 done
 get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches_210k \
     --dataset_folders $DATASET_FOLDERS \
-    --batch_size $BATCH_SIZE
+    --batch_size $BATCH_SIZE \
+    --array_shape 20,20,3
 
-DATASET_FOLDERS=""
-for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$COUNTRY_IMAGE"
-done
-get_batches_from_datasets \
-    --target_folder $OUTPUT_FOLDER/training_batches \
-    --dataset_folders $DATASET_FOLDERS \
-    --batch_size $BATCH_SIZE
+# DATASET_FOLDERS=""
+# for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
+    # DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$COUNTRY_IMAGE"
+# done
+# get_batches_from_datasets \
+    # --target_folder $OUTPUT_FOLDER/training_batches \
+    # --dataset_folders $DATASET_FOLDERS \
+    # --batch_size $BATCH_SIZE
 
 ccn-train options.cfg
