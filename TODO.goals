@@ -20,6 +20,7 @@ Release production classifier
         Feature Modi Research Group logo and link on tool webpage
 Improve development classifier
     Run secondary experiments
+        = Test whether we should set all wc=0 for Cropped
         Experiment with different overlap_dimensions
         Use early stopping
             Experiment with early stopping (early_stopping)
