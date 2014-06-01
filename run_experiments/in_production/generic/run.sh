@@ -1,36 +1,20 @@
 OUTPUT_FOLDER=~/Experiments/in_production/`basename $(dirname $(pwd)/$0)`
-EXAMPLE_DIMENSIONS=12x12
-OVERLAP_DIMENSIONS=5x5
 BATCH_SIZE=10k
-RANDOM_SEED=crosscompute
 
-COUNTRY_IMAGES="
-ethiopia0
-mali0
-myanmar0
-senegal0
-tanzania0
-uganda0
-uganda1
-"
-DATASET_FOLDERS=""
-for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    BASE_FOLDER=~/Experiments/in_production
-    DATASET_FOLDERS="$DATASET_FOLDERS $BASE_FOLDER/$COUNTRY_IMAGE/training_dataset_210k/$COUNTRY_IMAGE"
-done
+BASE_FOLDER=~/Experiments/in_production
+BATCH_FOLDER_NAME=training_batches_210k
+DATASET_FOLDER_NAME=training_dataset_210k
 get_batches_from_datasets \
-    --target_folder $OUTPUT_FOLDER/training_batches_210k \
-    --dataset_folders $DATASET_FOLDERS \
+    --target_folder $OUTPUT_FOLDER/$BATCH_FOLDER_NAME \
+    --dataset_folders \
+        $BASE_FOLDER/ethiopia/$DATASET_FOLDER_NAME/ethiopia0 \
+        $BASE_FOLDER/mali/$DATASET_FOLDER_NAME/mali0 \
+        $BASE_FOLDER/myanmar/$DATASET_FOLDER_NAME/myanmar0 \
+        $BASE_FOLDER/senegal/$DATASET_FOLDER_NAME/senegal0 \
+        $BASE_FOLDER/tanzania/$DATASET_FOLDER_NAME/tanzania0 \
+        $BASE_FOLDER/uganda/$DATASET_FOLDER_NAME/uganda0 \
+        $BASE_FOLDER/uganda/$DATASET_FOLDER_NAME/uganda1 \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 
-# DATASET_FOLDERS=""
-# for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    # DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$COUNTRY_IMAGE"
-# done
-# get_batches_from_datasets \
-    # --target_folder $OUTPUT_FOLDER/training_batches \
-    # --dataset_folders $DATASET_FOLDERS \
-    # --batch_size $BATCH_SIZE
-
-ccn-train options.cfg
+# ccn-train options.cfg
