@@ -13,6 +13,14 @@ tanzania0@
 uganda0@
 uganda1@
 "
+DATASET_FOLDERS=""
+for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
+    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_210k/$COUNTRY_IMAGE"
+done
+get_batches_from_datasets \
+    --target_folder $OUTPUT_FOLDER/training_batches_210k \
+    --dataset_folders $DATASET_FOLDERS \
+    --batch_size $BATCH_SIZE
 
 DATASET_FOLDERS=""
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
