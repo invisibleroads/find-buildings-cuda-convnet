@@ -50,11 +50,11 @@ def run(
         points_path, image_scope)
 
     positive_count = trim_to_minimum(
-        maximum_positive_count,
-        len(positive_pixel_centers))
+        len(positive_pixel_centers),
+        maximum_positive_count)
     negative_count = trim_to_minimum(
-        maximum_negative_count,
-        estimate_negative_count(image_scope, positive_pixel_centers))
+        estimate_negative_count(image_scope, positive_pixel_centers),
+        maximum_negative_count)
 
     save_positive_examples(
         save_images and disk.replace_folder(target_folder, 'positives'),

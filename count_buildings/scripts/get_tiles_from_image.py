@@ -47,7 +47,8 @@ def save_image_dimensions(image_path):
     image = satellite_image.SatelliteImage(image_path)
     return dict(
         image_dimensions=image.to_dimensions(image.pixel_dimensions),
-        image_pixel_dimensions=image.pixel_dimensions)
+        image_pixel_dimensions=image.pixel_dimensions,
+        image_band_count=image.band_count)
 
 
 def save_pixel_bounds(

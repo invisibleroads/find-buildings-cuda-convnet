@@ -5,7 +5,7 @@ OVERLAP_DIMENSIONS=5x5
 BATCH_SIZE=10k
 RANDOM_SEED=myanmar
 
-COUNTRY_IMAGES="
+COUNTRY_IMAGES=${1:-"
 ethiopia0
 mali0
 myanmar0
@@ -13,7 +13,7 @@ senegal0
 tanzania0
 uganda0
 uganda1
-"
+"}
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
 echo $COUNTRY_IMAGE
 IMAGE_PATH=~/Links/satellite-images/$COUNTRY_IMAGE
