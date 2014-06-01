@@ -1,5 +1,5 @@
 # US/Pacific 6/1/2014
-Release production classifier
+= Release production classifier
     = Write script to predict a large image in chunks
         = Write get_probabilities_from_image
     Make myanmar classifier
@@ -9,7 +9,7 @@ Release production classifier
     Make tanzania classifier
     Make uganda classifier
     Make generic classifier
-        Use all training batches
+        = Use all training batches
     Send access credentials to all tools, valid with no membership fee for one year
         Experiment with boto
         Add payment

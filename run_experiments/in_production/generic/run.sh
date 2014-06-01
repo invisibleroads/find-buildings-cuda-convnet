@@ -1,4 +1,4 @@
-export OUTPUT_FOLDER=~/Experiments/in_production/`basename $(dirname $(pwd)/$0)`
+OUTPUT_FOLDER=~/Experiments/in_production/`basename $(dirname $(pwd)/$0)`
 EXAMPLE_DIMENSIONS=12x12
 OVERLAP_DIMENSIONS=5x5
 BATCH_SIZE=10k
@@ -15,7 +15,8 @@ uganda1
 "
 DATASET_FOLDERS=""
 for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
-    DATASET_FOLDERS="$DATASET_FOLDERS /home/ec2-user/Experiments/in_production/$COUNTRY_IMAGE/training_dataset_210k/$COUNTRY_IMAGE"
+    BASE_FOLDER=~/Experiments/in_production
+    DATASET_FOLDERS="$DATASET_FOLDERS $BASE_FOLDER/$COUNTRY_IMAGE/training_dataset_210k/$COUNTRY_IMAGE"
 done
 get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches_210k \
