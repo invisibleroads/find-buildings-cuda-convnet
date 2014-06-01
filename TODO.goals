@@ -50,4 +50,5 @@ Explore new libraries
     Write code example with cartopy
 Make scripts easier to use
     Add progress bars
+    Let options.cfg read environment variables
 Evaluate classifiers on cost-effective lower resolution satellite images
