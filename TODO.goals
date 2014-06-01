@@ -18,6 +18,7 @@ Release production classifier
         Experiment with message queues
         Mask paths in run.pkl
         Feature Modi Research Group logo and link on tool webpage
+    Ask Shaky to include infrared band next time when pan-sharpening
 Improve development classifier
     Run secondary experiments
         = Test whether we should set all wc=0 for Cropped
