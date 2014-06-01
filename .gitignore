@@ -2,4 +2,6 @@
 *.pyc
 *.egg-info
 *.lprof
+*.log
 .ipynb_checkpoints
+ConvNet__*
