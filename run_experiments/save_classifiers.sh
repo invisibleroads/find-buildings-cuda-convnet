@@ -1,7 +1,7 @@
 TARGET_PATH=~/Experiments/primary/classifiers.gz
 SOURCE_FOLDERS="
-~/Experiments/primary
-~/Projects/count-buildings
+$HOME/Experiments/primary
+$HOME/Projects/count-buildings
 "
 
 rm $TARGET_PATH
