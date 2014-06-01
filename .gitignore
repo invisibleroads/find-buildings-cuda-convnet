@@ -3,5 +3,6 @@
 *.egg-info
 *.lprof
 *.log
+*.tmp
 .ipynb_checkpoints
 ConvNet__*
