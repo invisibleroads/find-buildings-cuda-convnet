@@ -26,19 +26,23 @@ def start(argv=sys.argv):
             '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
             help='ignore specified bounds')
+        starter.add_argument(
+            '--batch_size', metavar='SIZE',
+            type=script.parse_size,
+            help='ensure dataset size is divisible by batch size')
 
 
 def run(
         target_folder, examples_folder, maximum_dataset_size,
-        preserve_ratio, excluded_pixel_bounds):
+        preserve_ratio, excluded_pixel_bounds, batch_size):
     examples_h5 = h5py.File(os.path.join(examples_folder, EXAMPLES_NAME), 'r')
     positive_indices = get_indices(
         examples_h5['positive'], maximum_dataset_size, excluded_pixel_bounds)
     negative_indices = get_indices(
         examples_h5['negative'], maximum_dataset_size, excluded_pixel_bounds)
     positive_count, negative_count = adjust_counts(
-        len(positive_indices),
-        len(negative_indices), maximum_dataset_size, preserve_ratio)
+        len(positive_indices), len(negative_indices),
+        maximum_dataset_size, preserve_ratio, batch_size)
     dataset_h5 = get_dataset_h5(target_folder)
     save_dataset(
         dataset_h5, examples_h5,
@@ -68,9 +72,12 @@ def get_indices(examples, maximum_dataset_size, excluded_pixel_bounds):
 
 
 def adjust_counts(
-        positive_count, negative_count, maximum_dataset_size, preserve_ratio):
+        positive_count, negative_count,
+        maximum_dataset_size, preserve_ratio, batch_size):
     example_count = positive_count + negative_count
     dataset_size = min(maximum_dataset_size or example_count, example_count)
+    if batch_size:
+        dataset_size = (dataset_size / batch_size) * batch_size
     if dataset_size == example_count:
         preserve_ratio = True
     if preserve_ratio:

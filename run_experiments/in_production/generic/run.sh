@@ -17,4 +17,4 @@ get_batches_from_datasets \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 
-# ccn-train options.cfg
+ccn-train options.cfg
