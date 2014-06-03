@@ -114,7 +114,9 @@ def get_actual_count(image, points_path, pixel_bounds):
 
 def save_pixel_centers(target_path, pixel_centers, image):
     centers = [image.to_xy(_) for _ in pixel_centers]
-    return geometryIO.save_points(target_path, image.proj4, centers)
+    if not centers:
+        return
+    geometryIO.save_points(target_path, image.proj4, centers)
 
 
 def determine_pixel_radius(probability_packs, actual_count):
