@@ -2,14 +2,12 @@
 = Get building counts on Nigeria 2007
     Use 210k generic
         Determine ideal radius for each country
-            = Update get_counts_from_probabilities to get actual_count from points_path
+            + Update get_counts_from_probabilities to get actual_count from points_path
     = Use n-1 generic
         = Train n-1 generic
             = Make full training_dataset for each country
-                + Backup examples for each country
                 = Backup datasets for each country
-                Backup training_batches for each country and generic
-                Backup training_batches_210k for each country and generic
+                Backup training_batches for generic
     Use full generic
         Train full generic
     Write script to predict a large image in chunks
@@ -17,7 +15,7 @@ Release production classifier
     Backup production classifiers
         Backup 210k country classifiers
         Backup n-1 country classifiers
-            Build n-1 myanmar classifier
+            _ Build n-1 myanmar classifier
         Backup full country classifiers
     Send access credentials to all tools, valid with no membership fee for one year
         Experiment with boto
@@ -26,7 +24,6 @@ Release production classifier
         Mask paths in run.pkl
         Feature Modi Research Group logo and link on tool webpage
 Improve development classifier
-    _ Rerun all_countries experiments using all training batches
     = Test whether we should set all wc=0 for Cropped
     Experiment with different overlap_dimensions
     Use early stopping
@@ -35,8 +32,6 @@ Improve development classifier
         Experiment with weight norm constraint (weight_constraint)
     Experiment with autoencoders to pretrain neural network
     Experiment with YUV colorspace
-    _ Write bash script to train and run SGDClassifier
-        _ Write get_dataset_from_datasets
     Record execution time
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]

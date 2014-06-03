@@ -24,7 +24,7 @@ def start(argv=sys.argv):
         starter.add_argument(
             '--image_path', metavar='PATH', required=True,
             help='satellite image')
-        starter_add_argument(
+        starter.add_argument(
             '--points_path', metavar='PATH',
             help='')
         starter.add_argument(
@@ -58,8 +58,13 @@ def run(
         best_pixel_radius, best_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count)
         save_pixel_centers(target_path, best_pixel_centers, image)
+        estimated_count = len(best_pixel_centers)
+        percent_error = 100 * (
+            estimated_count - actual_count) / float(actual_count)
         return dict(
-            estimated_count=len(best_pixel_centers),
+            percent_error=percent_error,
+            actual_count=actual_count,
+            estimated_count=estimated_count,
             estimated_radius=min(image.to_dimensions((
                 best_pixel_radius, best_pixel_radius))))
     else:
@@ -86,12 +91,23 @@ def get_pixel_bounds(probabilities_folder):
     probabilities_path = os.path.join(probabilities_folder, PROBABILITIES_CSV)
     probabilities_table = read_csv(probabilities_path)
     xys = probabilities_table[['pixel_center_x', 'pixel_center_y']]
-
-    return pixel_bounds
+    return [
+        min(xys.pixel_center_x), min(xys.pixel_center_y),
+        max(xys.pixel_center_x), max(xys.pixel_center_y)]
 
 
 def get_actual_count(image, points_path, pixel_bounds):
-    return actual_count
+    points_proj4, xys = geometryIO.load_points(points_path)[:2]
+    pixel_xys = [image.to_pixel_xy(_) for _ in xys]
+    min_pixel_x, min_pixel_y, max_pixel_x, max_pixel_y = pixel_bounds
+    included_pixel_xys = set()
+    for pixel_x, pixel_y in pixel_xys:
+        in_x = min_pixel_x <= pixel_x and pixel_x <= max_pixel_x
+        in_y = min_pixel_y <= pixel_y and pixel_y <= max_pixel_y
+        if not in_x or not in_y:
+            continue
+        included_pixel_xys.add((pixel_x, pixel_y))
+    return len(included_pixel_xys)
 
 
 def save_pixel_centers(target_path, pixel_centers, image):
