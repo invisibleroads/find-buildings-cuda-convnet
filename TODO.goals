@@ -2,12 +2,12 @@
 = Get building counts on Nigeria 2007
     Use 210k generic
         Determine ideal radius for each country
-            = Update get_counts_from_probabilities to get actual_count from points_path
+            + Update get_counts_from_probabilities to get actual_count from points_path
     = Use n-1 generic
         = Train n-1 generic
             = Make full training_dataset for each country
                 = Backup datasets for each country
-                Backup training_batches for each country and generic
+                Backup training_batches for generic
     Use full generic
         Train full generic
     Write script to predict a large image in chunks
@@ -15,7 +15,7 @@ Release production classifier
     Backup production classifiers
         Backup 210k country classifiers
         Backup n-1 country classifiers
-            Build n-1 myanmar classifier
+            _ Build n-1 myanmar classifier
         Backup full country classifiers
     Send access credentials to all tools, valid with no membership fee for one year
         Experiment with boto
