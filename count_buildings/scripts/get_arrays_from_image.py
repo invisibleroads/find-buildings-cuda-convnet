@@ -34,7 +34,8 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, image_path,
-        tile_dimensions, overlap_dimensions, included_pixel_bounds):
+        tile_dimensions, overlap_dimensions,
+        included_pixel_bounds):
     if tile_dimensions is None and included_pixel_bounds is None:
         return save_image_dimensions(image_path)
     elif tile_dimensions is None:
@@ -64,8 +65,7 @@ def save_pixel_bounds(
 
 def save_arrays(
         target_folder, image_path,
-        tile_dimensions, overlap_dimensions,
-        included_pixel_bounds):
+        tile_dimensions, overlap_dimensions, included_pixel_bounds):
     image_scope = ImageScope(image_path, tile_dimensions)
     tile_pixel_dimensions = image_scope.scope_pixel_dimensions
     tile_packs = list(image_scope.yield_tile_pack(

@@ -83,9 +83,8 @@ class AbstractGroup(object):
         squared_difference_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
-            squared_difference_sum += reduce(operator.add, (
-                self.resize_array(x) - self.array_mean
-            ) ** 2 for x in arrays)
+            squared_difference_sum += reduce(operator.add, ((
+                self.resize_array(x) - self.array_mean) ** 2 for x in arrays))
         variance = squared_difference_sum / float(self.array_count)
         self._array_sd = np.sqrt(variance)
         return self._array_sd
