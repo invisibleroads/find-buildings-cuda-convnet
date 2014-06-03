@@ -1,31 +1,18 @@
-# US/Pacific 6/2/2014
+# US/Pacific 6/3/2014
 = Get building counts on Nigeria 2007
     Use 210k generic
-        Determine ideal radius for each country
-            + Update get_counts_from_probabilities to get actual_count from points_path
+        = Determine ideal radius for each country
+            Write script to predict a large image
+        Does generic perform better than country-specific
     = Use n-1 generic
         = Train n-1 generic
-            = Make full training_dataset for each country
-                = Backup datasets for each country
-                Backup training_batches for generic
+            = Backup training_batches for generic
+            + Make full training_dataset for each country
     Use full generic
         Train full generic
-    Write script to predict a large image in chunks
-Release production classifier
-    Backup production classifiers
-        Backup 210k country classifiers
-        Backup n-1 country classifiers
-            _ Build n-1 myanmar classifier
-        Backup full country classifiers
-    Send access credentials to all tools, valid with no membership fee for one year
-        Experiment with boto
-        Add payment
-        Experiment with message queues
-        Mask paths in run.pkl
-        Feature Modi Research Group logo and link on tool webpage
 Improve development classifier
     = Test whether we should set all wc=0 for Cropped
-    Experiment with different overlap_dimensions
+        + Use cifar
     Use early stopping
         Experiment with early stopping (early_stopping)
     Experiment with weight norm constraint
@@ -33,6 +20,12 @@ Improve development classifier
     Experiment with autoencoders to pretrain neural network
     Experiment with YUV colorspace
     Record execution time
+    Experiment with different overlap_dimensions
+Release production classifier
+    Backup production classifiers
+        Backup 210k country classifiers
+        Backup n-1 country classifiers
+        Backup full country classifiers
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Evaluate new libraries for image recognition [6h]
@@ -53,4 +46,10 @@ Explore new libraries
 Make scripts easier to use
     Add progress bars
     Let options.cfg read environment variables
+Send access credentials to all tools, valid with no membership fee for one year
+    Experiment with boto
+    Add payment
+    Experiment with message queues
+    Mask paths in run.pkl
+    Feature Modi Research Group logo and link on tool webpage
 Evaluate classifiers on cost-effective lower resolution satellite images

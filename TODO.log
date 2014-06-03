@@ -1,4 +1,6 @@
 # UTC 06/03/2014
++ Update get_counts_from_probabilities to get actual_count from points_path [06/03/2014]
++ Backup datasets for each country [06/03/2014]
 + Backup examples for each country [06/03/2014]
 + Backup training_batches_210k for each country and generic [06/03/2014]
 + Make myanmar classifier [06/03/2014]
