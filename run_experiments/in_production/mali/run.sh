@@ -11,12 +11,12 @@ for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
 echo $COUNTRY_IMAGE
 IMAGE_PATH=~/Links/satellite-images/$COUNTRY_IMAGE
 POINTS_PATH=~/Links/building-locations/$COUNTRY_IMAGE
-get_examples_from_points \
-    --target_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
-    --random_seed $RANDOM_SEED \
-    --image_path $IMAGE_PATH \
-    --points_path $POINTS_PATH \
-    --example_dimensions $EXAMPLE_DIMENSIONS
+# get_examples_from_points \
+    # --target_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
+    # --random_seed $RANDOM_SEED \
+    # --image_path $IMAGE_PATH \
+    # --points_path $POINTS_PATH \
+    # --example_dimensions $EXAMPLE_DIMENSIONS
 # get_dataset_from_examples \
     # --target_folder $OUTPUT_FOLDER/training_dataset_210k/$COUNTRY_IMAGE \
     # --random_seed $RANDOM_SEED \

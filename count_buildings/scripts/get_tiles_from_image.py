@@ -26,21 +26,28 @@ def start(argv=sys.argv):
             '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
             help='target specified bounds')
+        starter.add_argument(
+            '--list_pixel_bounds', action='store_true',
+            help='')
 
 
 def run(
         target_folder, image_path,
         tile_dimensions, overlap_dimensions, tile_indices,
-        included_pixel_bounds):
+        included_pixel_bounds, list_pixel_bounds):
     if tile_dimensions is None and included_pixel_bounds is None:
         return save_image_dimensions(image_path)
     elif tile_dimensions is None:
         return save_pixel_bounds(
             target_folder, image_path, included_pixel_bounds)
+    elif list_pixel_bounds:
+        return print_pixel_bounds(
+            image_path, tile_dimensions, overlap_dimensions, tile_indices,
+            included_pixel_bounds)
     return save_tiles(
         target_folder, image_path,
         tile_dimensions, overlap_dimensions, tile_indices,
-        included_pixel_bounds)
+        included_pixel_bounds, list_pixel_bounds)
 
 
 def save_image_dimensions(image_path):
@@ -66,10 +73,24 @@ def save_pixel_bounds(
         tile_pixel_dimensions=pixel_dimensions)
 
 
+def print_pixel_bounds(
+        image_path, tile_dimensions, overlap_dimensions, tile_indices,
+        included_pixel_bounds):
+    image_scope = satellite_image.ImageScope(image_path, tile_dimensions)
+    tile_packs = image_scope.yield_tile_pack(
+        overlap_dimensions, included_pixel_bounds, tile_indices)
+    for tile_indices, pixel_upper_left in tile_packs:
+        print '%s,%s,%s,%s' % (
+            pixel_upper_left[0],
+            pixel_upper_left[1],
+            pixel_upper_left[0] + image_scope.scope_pixel_dimensions[0],
+            pixel_upper_left[1] + image_scope.scope_pixel_dimensions[1])
+
+
 def save_tiles(
         target_folder, image_path,
         tile_dimensions, overlap_dimensions, tile_indices,
-        included_pixel_bounds):
+        included_pixel_bounds, list_pixel_bounds):
     image_scope = satellite_image.ImageScope(image_path, tile_dimensions)
     tile_packs = image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds, tile_indices)

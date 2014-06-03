@@ -6,5 +6,5 @@ senegal
 "
 for CLASSIFIER in $CLASSIFIERS; do
     cd $BASE_FOLDER/$CLASSIFIER
-    ccn-train options.cfg
+    bash run.sh
 done
