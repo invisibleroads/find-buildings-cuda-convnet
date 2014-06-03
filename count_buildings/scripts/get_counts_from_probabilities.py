@@ -6,6 +6,7 @@ import sys
 from count_buildings.libraries.kdtree import KDTree
 from count_buildings.libraries.satellite_image import SatelliteImage
 from crosscompute.libraries import script
+from geometryIO import get_transformPoint
 from itertools import combinations
 from pandas import read_csv
 from scipy.spatial.distance import euclidean
@@ -98,7 +99,8 @@ def get_pixel_bounds(probabilities_folder):
 
 def get_actual_count(image, points_path, pixel_bounds):
     points_proj4, xys = geometryIO.load_points(points_path)[:2]
-    pixel_xys = [image.to_pixel_xy(_) for _ in xys]
+    transform_point = get_transformPoint(points_proj4, image.proj4)
+    pixel_xys = [image.to_pixel_xy(transform_point(_)) for _ in xys]
     min_pixel_x, min_pixel_y, max_pixel_x, max_pixel_y = pixel_bounds
     included_pixel_xys = set()
     for pixel_x, pixel_y in pixel_xys:
