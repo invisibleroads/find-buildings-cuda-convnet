@@ -29,10 +29,11 @@ def run(
     arrays_group = ArraysGroup([arrays_folder], array_shape)
     keys = arrays_group.get_keys()
     save_meta(target_folder, arrays_group, keys)
-    save_data(target_folder, arrays_group, keys, batch_size)
+    batch_count = save_data(target_folder, arrays_group, keys, batch_size)
     return dict(
         array_count=arrays_group.array_count,
-        array_shape=arrays_group.array_shape)
+        array_shape=arrays_group.array_shape,
+        batch_count=batch_count)
 
 
 class ArraysGroup(AbstractGroup):

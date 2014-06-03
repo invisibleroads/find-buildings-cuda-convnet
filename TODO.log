@@ -1,4 +1,11 @@
-# UTC 06/01/2014
+# UTC 06/03/2014
++ Make myanmar classifier [06/03/2014]
++ Make ethiopia classifier [06/03/2014]
++ Make mali classifier [06/03/2014]
++ Make senegal classifier [06/03/2014]
++ Make tanzania classifier [06/03/2014]
++ Make uganda classifier [06/03/2014]
++ Ask Shaky to include infrared band next time when pan-sharpening [06/03/2014]
 + Run primary experiments [06/01/2014]
 + Evaluate experimental results [06/01/2014]
 + Write get_counts_from_predictions [06/01/2014]

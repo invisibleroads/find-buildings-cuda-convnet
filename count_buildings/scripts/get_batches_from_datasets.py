@@ -30,10 +30,11 @@ def run(
     keys = dataset_group.get_keys()
     shuffle(keys)
     save_meta(target_folder, dataset_group, keys)
-    save_data(target_folder, dataset_group, keys, batch_size)
+    batch_count = save_data(target_folder, dataset_group, keys, batch_size)
     return dict(
         array_count=dataset_group.array_count,
-        array_shape=dataset_group.array_shape)
+        array_shape=dataset_group.array_shape,
+        batch_count=batch_count)
 
 
 def save_meta(target_folder, dataset_group, keys):
@@ -62,12 +63,11 @@ def save_data(target_folder, dataset_group, keys, batch_size):
     start_indices = xrange(0, len(keys), batch_size)
     for batch_index, start_index in enumerate(start_indices):
         selected_keys = keys[start_index:start_index + batch_size]
-
         data = dataset_group.get_data(selected_keys)
         labels = dataset_group.get_labels(selected_keys)
-
         pickle.dump({
             'ids': range(start_index, start_index + len(selected_keys)),
             'data': data.astype(np.single),
             'labels': [1 if x else 0 for x in labels],
         }, open(target_path_template % batch_index, 'w'), protocol=-1)
+    return len(start_indices)
