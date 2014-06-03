@@ -24,6 +24,9 @@ def start(argv=sys.argv):
         starter.add_argument(
             '--image_path', metavar='PATH', required=True,
             help='satellite image')
+        starter_add_argument(
+            '--points_path', metavar='PATH',
+            help='')
         starter.add_argument(
             '--actual_count', metavar='INTEGER',
             type=int,
@@ -35,18 +38,22 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, probabilities_folder, image_path, actual_count,
-        actual_radius):
+        target_folder, probabilities_folder,
+        image_path, points_path, actual_count, actual_radius):
     probability_packs = get_probability_packs(probabilities_folder)
     image = SatelliteImage(image_path)
-    if not actual_count and not actual_radius:
+    if not points_path and not actual_count and not actual_radius:
         target_path = os.path.join(target_folder, PROBABILITIES_SHP)
         pixel_centers = probability_packs[[
             'pixel_center_x', 'pixel_center_y']].values
         save_pixel_centers(target_path, pixel_centers, image)
         return dict(
             probability_count=len(pixel_centers))
-    elif actual_count:
+    elif points_path:
+        pixel_bounds = get_pixel_bounds(probabilities_folder)
+        actual_count = get_actual_count(image, points_path, pixel_bounds)
+
+    if actual_count:
         target_path = os.path.join(target_folder, COUNTS_SHP)
         best_pixel_radius, best_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count)
@@ -73,6 +80,18 @@ def get_probability_packs(probabilities_folder):
     predictions = probabilities_table[
         probabilities_table['1'] > probabilities_table['0']]
     return predictions[['1', 'pixel_center_x', 'pixel_center_y']]
+
+
+def get_pixel_bounds(probabilities_folder):
+    probabilities_path = os.path.join(probabilities_folder, PROBABILITIES_CSV)
+    probabilities_table = read_csv(probabilities_path)
+    xys = probabilities_table[['pixel_center_x', 'pixel_center_y']]
+
+    return pixel_bounds
+
+
+def get_actual_count(image, points_path, pixel_bounds):
+    return actual_count
 
 
 def save_pixel_centers(target_path, pixel_centers, image):

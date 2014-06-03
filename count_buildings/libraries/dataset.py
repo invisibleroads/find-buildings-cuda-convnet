@@ -69,11 +69,8 @@ class AbstractGroup(object):
         array_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
-            if arrays.shape[1:] == self.array_shape:
-                array_sum += np.sum(arrays, axis=0)
-            else:
-                array_sum += reduce(operator.add, (
-                    self.resize_array(x) for x in arrays))
+            array_sum += reduce(operator.add, (
+                self.resize_array(x) for x in arrays))
         self._array_mean = array_sum / float(self.array_count)
         return self._array_mean
 
@@ -83,17 +80,12 @@ class AbstractGroup(object):
             return self._array_sd
         except AttributeError:
             pass
-        get_squared_difference = lambda x: (x - self.array_mean) ** 2
         squared_difference_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
-            if arrays.shape[1:] == self.array_shape:
-                squared_difference_sum += np.sum(
-                    get_squared_difference(arrays), axis=0)
-            else:
-                squared_difference_sum += reduce(operator.add, (
-                    get_squared_difference(
-                        self.resize_array(x)) for x in arrays))
+            squared_difference_sum += reduce(operator.add, (
+                self.resize_array(x) - self.array_mean
+            ) ** 2 for x in arrays)
         variance = squared_difference_sum / float(self.array_count)
         self._array_sd = np.sqrt(variance)
         return self._array_sd

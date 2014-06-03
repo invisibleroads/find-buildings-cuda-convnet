@@ -1,13 +1,13 @@
 # US/Pacific 6/1/2014
 = Release production classifier
     = Write script to predict a large image in chunks
-        = Write get_probabilities_from_image
-    Make myanmar classifier
-    Make ethiopia classifier
-    Make mali classifier
-    Make senegal classifier
-    Make tanzania classifier
-    Make uganda classifier
+        _ Write get_probabilities_from_image
+    + Make myanmar classifier
+    + Make ethiopia classifier
+    + Make mali classifier
+    + Make senegal classifier
+    + Make tanzania classifier
+    + Make uganda classifier
     Make generic classifier
         = Use all training batches
     Send access credentials to all tools, valid with no membership fee for one year
@@ -16,7 +16,7 @@
         Experiment with message queues
         Mask paths in run.pkl
         Feature Modi Research Group logo and link on tool webpage
-    Ask Shaky to include infrared band next time when pan-sharpening
+    + Ask Shaky to include infrared band next time when pan-sharpening
 Improve development classifier
     = Rerun all_countries experiments using all training batches
     Run secondary experiments
