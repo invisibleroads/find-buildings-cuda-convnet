@@ -2,8 +2,8 @@ OUTPUT_FOLDER=~/Experiments/in_production/`basename $(dirname $(pwd)/$0)`
 BATCH_SIZE=10k
 
 BASE_FOLDER=~/Experiments/in_production
-BATCH_FOLDER_NAME=training_batches_210k
-DATASET_FOLDER_NAME=training_dataset_210k
+BATCH_FOLDER_NAME=training_batches
+DATASET_FOLDER_NAME=training_dataset
 get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/$BATCH_FOLDER_NAME \
     --dataset_folders \
@@ -17,4 +17,4 @@ get_batches_from_datasets \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 
-ccn-train options.cfg
+# ccn-train options.cfg
