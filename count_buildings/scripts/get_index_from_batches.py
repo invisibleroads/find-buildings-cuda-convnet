@@ -1,6 +1,8 @@
+import os
 import re
 import sys
 from glob import glob
+from crosscompute.libraries import script
 
 
 def start(argv=sys.argv):
@@ -12,7 +14,7 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, batches_folder):
-    pattern_number = re.compile(r'\d+')
+    pattern_number = re.compile(r'(\d+)')
     max_index = 0
     for name in glob(os.path.join(batches_folder, 'data_batch_*')):
         index = int(pattern_number.search(name).group(1))
