@@ -54,7 +54,7 @@ def run(
         pixel_bounds = get_pixel_bounds(probabilities_folder)
         actual_count = get_actual_count(image, points_path, pixel_bounds)
 
-    if actual_count:
+    if actual_count is not None:
         target_path = os.path.join(target_folder, COUNTS_SHP)
         best_pixel_radius, best_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count)
