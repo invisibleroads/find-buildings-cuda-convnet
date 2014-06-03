@@ -61,7 +61,8 @@ def run(
         save_pixel_centers(target_path, best_pixel_centers, image)
         estimated_count = len(best_pixel_centers)
         percent_error = 100 * (
-            estimated_count - actual_count) / float(actual_count)
+            estimated_count - actual_count
+        ) / float(actual_count) if actual_count else np.inf
         return dict(
             percent_error=percent_error,
             actual_count=actual_count,
