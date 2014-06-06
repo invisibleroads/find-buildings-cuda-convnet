@@ -42,6 +42,7 @@ get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
     --dataset_folders $DATASET_FOLDERS \
     --batch_size $BATCH_SIZE \
+    --array_shape 20,20,3 \
     2>&1 | tee -a $LOG_PATH
 for IMAGE_NAME in $IMAGE_NAMES; do
     pushd $OUTPUT_FOLDER
