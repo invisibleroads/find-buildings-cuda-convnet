@@ -1,8 +1,7 @@
-import h5py
 import numpy as np
-import os
 import sys
 from crosscompute.libraries import script
+from progress.bar import Bar
 
 from .get_arrays_from_image import ARRAYS_NAME
 from .get_batches_from_datasets import save_meta, save_data

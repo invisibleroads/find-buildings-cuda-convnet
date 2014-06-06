@@ -3,6 +3,7 @@ import os
 import random
 import sys
 from crosscompute.libraries import script
+from progress.bar import Bar
 from shapely.geometry import box
 
 from ..libraries import satellite_image
@@ -92,6 +93,7 @@ def get_dataset_h5(target_folder):
 
 
 def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
+    bar = Bar('Saving dataset', max=positive_count)
     dataset_size = len(positive_indices) + len(negative_indices)
     positive_packs = [(_, True) for _ in positive_indices]
     negative_packs = [(_, False) for _ in negative_indices]
@@ -114,3 +116,5 @@ def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
         arrays[index, :, :, :] = inner_examples['arrays'][inner_index]
         labels[index] = label
         pixel_centers[index, :] = inner_examples['pixel_centers'][inner_index]
+        bar.goto(index)
+    bar.finish()

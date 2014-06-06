@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys
 from crosscompute.libraries import script
+from progress.bar import Bar
 from random import shuffle
 
 from count_buildings.libraries.dataset import DatasetGroup
@@ -61,6 +62,7 @@ def save_meta(target_folder, dataset_group, keys):
 def save_data(target_folder, dataset_group, keys, batch_size):
     target_path_template = os.path.join(target_folder, 'data_batch_%d')
     start_indices = xrange(0, len(keys), batch_size)
+    bar = Bar('Saving dataset', max=len(start_indices))
     for batch_index, start_index in enumerate(start_indices):
         selected_keys = keys[start_index:start_index + batch_size]
         data = dataset_group.get_data(selected_keys)
@@ -70,4 +72,6 @@ def save_data(target_folder, dataset_group, keys, batch_size):
             'data': data.astype(np.single),
             'labels': [1 if x else 0 for x in labels],
         }, open(target_path_template % batch_index, 'w'), protocol=-1)
+        bar.goto(batch_index)
+    bar.finish()
     return len(start_indices)

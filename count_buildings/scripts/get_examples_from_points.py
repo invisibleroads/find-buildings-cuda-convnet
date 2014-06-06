@@ -5,6 +5,7 @@ import sys
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint
 from geometryIO import load_points
+from progress.bar import Bar
 from scipy.sparse import lil_matrix
 
 from ..libraries import calculator
@@ -109,6 +110,7 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 def save_positive_examples(
         target_folder, image_scope, positive_pixel_centers,
         positive_count, examples_h5):
+    bar = Bar('Saving positive examples', max=positive_count)
     pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     positive_arrays = examples_h5.create_dataset(
         'positive/arrays', shape=(
@@ -118,14 +120,17 @@ def save_positive_examples(
         pixel_center = positive_pixel_centers[positive_index]
         array = save_example_array(target_folder, image_scope, pixel_center)
         positive_arrays[positive_index, :, :, :] = array
+        bar.goto(positive_index)
     save_pixel_centers(
         examples_h5, 'positive', positive_pixel_centers[:positive_count],
         image_scope)
+    bar.finish()
 
 
 def save_negative_examples(
         target_folder, image_scope, positive_pixel_centers,
         negative_count, examples_h5):
+    bar = Bar('Saving negative examples', max=negative_count)
     pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
@@ -139,9 +144,11 @@ def save_negative_examples(
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
         negative_pixel_centers.append(pixel_center)
+        bar.goto(negative_index)
     save_pixel_centers(
         examples_h5, 'negative', negative_pixel_centers[:negative_count],
         image_scope)
+    bar.finish()
 
 
 def save_example_array(target_folder, image_scope, pixel_center):
