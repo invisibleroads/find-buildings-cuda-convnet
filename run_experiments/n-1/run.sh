@@ -52,12 +52,12 @@ done
 
 MAX_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/training_batches`
+MAX_BATCH_INDEX_MINUS_ONE=$(expr $MAX_BATCH_INDEX - 1)
 date 2>&1 | tee -a $LOG_PATH
-echo "--train-range 0-$(expr $MAX_BATCH_INDEX - 1)"
 ccn-train options.cfg \
     --save-path $OUTPUT_FOLDER/classifiers \
     --data-path $OUTPUT_FOLDER/training_batches \
-    --train-range 0-$(expr $MAX_BATCH_INDEX - 1) \
+    --train-range 0-$(($MAX_BATCH_INDEX_MINUS_ONE > 0 ? $MAX_BATCH_INDEX_MINUS_ONE : 0)) \
     --test-range $MAX_BATCH_INDEX \
     2>&1 | tee -a $LOG_PATH
 pushd $OUTPUT_FOLDER
@@ -75,7 +75,7 @@ ccn-predict options.cfg \
     --write-preds $OUTPUT_FOLDER/predictions.csv \
     --data-path $OUTPUT_FOLDER/training_batches \
     --train-range 0 \
-    --test-range $MAX_INDEX \
+    --test-range $MAX_BATCH_INDEX \
     -f $CLASSIFIER_PATH \
     2>&1 | tee -a $LOG_PATH
 

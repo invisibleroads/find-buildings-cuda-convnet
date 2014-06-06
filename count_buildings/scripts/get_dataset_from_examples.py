@@ -83,7 +83,7 @@ def adjust_counts(
     if preserve_ratio:
         positive_ratio = positive_count / float(example_count)
         positive_count = int(positive_ratio * dataset_size)
-    negative_count = dataset_size - positive_count
+    negative_count = max(0, dataset_size - positive_count)
     return positive_count, negative_count
 
 
