@@ -30,10 +30,10 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         --batch_size $BATCH_SIZE \
         2>&1 | tee -a $LOG_PATH
-    tar czvf \
-        $OUTPUT_FOLDER/$IMAGE_NAME-examples.tar.gz \
-        $OUTPUT_FOLDER/examples/$IMAGE_NAME
-    rm -rf $OUTPUT_FOLDER/examples/$IMAGE_NAME
+    pushd $OUTPUT_FOLDER
+    tar czvf $IMAGE_NAME-examples.tar.gz examples/$IMAGE_NAME
+    rm -rf examples/$IMAGE_NAME
+    popd
     DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME"
 done
 
@@ -44,10 +44,10 @@ get_batches_from_datasets \
     --batch_size $BATCH_SIZE \
     2>&1 | tee -a $LOG_PATH
 for IMAGE_NAME in $IMAGE_NAMES; do
-    tar czvf \
-        $OUTPUT_FOLDER/$IMAGE_NAME-dataset.tar.gz \
-        $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME
-    rm -rf $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME
+    pushd $OUTPUT_FOLDER
+    tar czvf $IMAGE_NAME-dataset.tar.gz training_dataset/$IMAGE_NAME
+    rm -rf training_dataset/$IMAGE_NAME
+    popd
 done
 
 MAX_BATCH_INDEX=`get_index_from_batches \
@@ -60,10 +60,10 @@ ccn-train options.cfg \
     --train-range 0-$(expr $MAX_BATCH_INDEX - 1) \
     --test-range $MAX_BATCH_INDEX \
     2>&1 | tee -a $LOG_PATH
-tar czvf \
-    $OUTPUT_FOLDER/$CLASSIFIER_NAME-batches.tar.gz \
-    $OUTPUT_FOLDER/training_batches
-rm -rf $OUTPUT_FOLDER/training_batches
+pushd $OUTPUT_FOLDER
+tar czvf $CLASSIFIER_NAME-batches.tar.gz training_batches
+rm -rf training_batches
+popd
 
 CONVNET_NAME=`ls -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
 CONVNET_PATH=$OUTPUT_FOLDER/classifiers/$CONVNET_NAME
@@ -98,7 +98,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
             --tile_dimensions $TILE_DIMENSIONS \
             --overlap_dimensions $EXAMPLE_DIMENSIONS \
-            --included_pixel_bounds 500,500,600,600 \
+            --included_pixel_bounds 500,500,550,550 \
             2>&1 | tee -a $LOG_PATH
         # --included_pixel_bounds $PIXEL_BOUNDS \
         date 2>&1 | tee -a $LOG_PATH
@@ -109,10 +109,10 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --batch_size $BATCH_SIZE \
             --array_shape $ARRAY_SHAPE \
             2>&1 | tee -a $LOG_PATH
-        tar czvf \
-            ~/Downloads/$IMAGE_NAME-arrays.tar.gz \
-            ~/Downloads/$IMAGE_NAME/arrays \
-        rm -rf ~/Downloads/$IMAGE_NAME/arrays
+        pushd ~/Downloads
+        tar czvf $IMAGE_NAME-arrays.tar.gz $IMAGE_NAME/arrays
+        rm -rf $IMAGE_NAME/arrays
+        popd
 
         MAX_BATCH_INDEX=`get_index_from_batches \
             --batches_folder ~/Downloads/$IMAGE_NAME/batches`
@@ -124,10 +124,10 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --test-range 0-$MAX_BATCH_INDEX \
             -f $CLASSIFIER_PATH \
             2>&1 | tee -a $LOG_PATH
-        tar czvf \
-            ~/Downloads/$IMAGE_NAME-batches.tar.gz \
-            ~/Downloads/$IMAGE_NAME/batches \
-        rm -rf ~/Downloads/$IMAGE_NAME/batches
+        pushd ~/Downloads
+        tar czvf $IMAGE_NAME-batches.tar.gz $IMAGE_NAME/batches
+        rm -rf $IMAGE_NAME/batches
+        popd
 
         date 2>&1 | tee -a $LOG_PATH
         get_counts_from_probabilities \
