@@ -130,7 +130,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         rm -rf ~/Downloads/$IMAGE_NAME/batches
 
         date 2>&1 | tee -a $LOG_PATH
-        get_counts_from_predictions \
+        get_counts_from_probabilities \
             --probabilities_folder $OUTPUT_FOLDER/$IMAGE_NAME/predictions.csv \
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
             --points_path ~/Links/building-locations/$IMAGE_NAME \
