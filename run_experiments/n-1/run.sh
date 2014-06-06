@@ -66,8 +66,7 @@ tar czvf $CLASSIFIER_NAME-batches.tar.gz training_batches
 rm -rf training_batches
 popd
 
-CONVNET_NAME=`ls -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
-CONVNET_PATH=$OUTPUT_FOLDER/classifiers/$CONVNET_NAME
+CONVNET_PATH=`ls -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
 CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME-n-1
 rm -rf $CLASSIFIER_PATH
 mv $CONVNET_PATH $CLASSIFIER_PATH
