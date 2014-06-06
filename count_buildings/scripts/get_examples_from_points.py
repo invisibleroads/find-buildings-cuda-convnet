@@ -25,7 +25,7 @@ def start(argv=sys.argv):
             '--points_path', metavar='PATH', required=True,
             help='building locations')
         starter.add_argument(
-            '--example_dimensions', metavar='WIDTH,HEIGHT', required=True,
+            '--example_dimensions', metavar='WIDTH,HEIGHT',
             type=script.parse_dimensions,
             help='dimensions of extracted example in geographic units')
         starter.add_argument(
