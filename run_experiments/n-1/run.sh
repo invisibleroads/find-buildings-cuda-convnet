@@ -53,6 +53,7 @@ done
 MAX_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/training_batches`
 date 2>&1 | tee -a $LOG_PATH
+echo "--train-range 0-$(expr $MAX_BATCH_INDEX - 1)"
 ccn-train options.cfg \
     --save-path $OUTPUT_FOLDER/classifiers \
     --data-path $OUTPUT_FOLDER/training_batches \
