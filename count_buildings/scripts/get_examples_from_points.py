@@ -87,14 +87,17 @@ def trim_to_minimum(actual_maximum, desired_maximum):
 def estimate_negative_count(image_scope, positive_pixel_centers):
     canvas = lil_matrix(tuple(image_scope.pixel_dimensions), dtype='bool')
     # Compute the positive pixel area
-    for positive_pixel_center in positive_pixel_centers:
+    bar = Bar('Drawing positive pixel area', max=len(positive_pixel_centers))
+    for index, positive_pixel_center in enumerate(positive_pixel_centers):
         pixel_frame = image_scope.get_pixel_frame_from_pixel_center(
             positive_pixel_center)
         (pixel_x, pixel_y), (pixel_width, pixel_height) = pixel_frame
         canvas[
             pixel_x:pixel_x + pixel_width,
             pixel_y:pixel_y + pixel_height] = 1
+        bar.goto(index)
     positive_pixel_area = canvas.sum()
+    bar.finish()
     # Compute the negative pixel area
     image_pixel_area = reduce(operator.mul, image_scope.pixel_dimensions)
     negative_pixel_area = image_pixel_area - positive_pixel_area
