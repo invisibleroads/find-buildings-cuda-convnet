@@ -28,6 +28,8 @@ get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
 get_index_from_batches =\
     count_buildings.scripts.get_index_from_batches:start
+get_array_shape_from_batches =\
+    count_buildings.scripts.get_array_shape_from_batches:start
 get_predictions_from_arrays =\
     count_buildings.scripts.get_predictions_from_arrays:start
 get_counts_from_probabilities =\
