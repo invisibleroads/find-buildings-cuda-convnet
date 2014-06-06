@@ -5,7 +5,6 @@ import sys
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint
 from geometryIO import load_points
-from progress.bar import Bar
 from scipy.sparse import lil_matrix
 
 from ..libraries import calculator
@@ -87,7 +86,6 @@ def trim_to_minimum(actual_maximum, desired_maximum):
 def estimate_negative_count(image_scope, positive_pixel_centers):
     canvas = lil_matrix(tuple(image_scope.pixel_dimensions), dtype='bool')
     # Compute the positive pixel area
-    bar = Bar('Drawing positive pixel area', max=len(positive_pixel_centers))
     for index, positive_pixel_center in enumerate(positive_pixel_centers):
         pixel_frame = image_scope.get_pixel_frame_from_pixel_center(
             positive_pixel_center)
@@ -95,9 +93,7 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
         canvas[
             pixel_x:pixel_x + pixel_width,
             pixel_y:pixel_y + pixel_height] = 1
-        bar.goto(index)
     positive_pixel_area = canvas.sum()
-    bar.finish()
     # Compute the negative pixel area
     image_pixel_area = reduce(operator.mul, image_scope.pixel_dimensions)
     negative_pixel_area = image_pixel_area - positive_pixel_area
@@ -113,27 +109,26 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 def save_positive_examples(
         target_folder, image_scope, positive_pixel_centers,
         positive_count, examples_h5):
-    bar = Bar('Saving positive examples', max=positive_count)
     pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     positive_arrays = examples_h5.create_dataset(
         'positive/arrays', shape=(
             positive_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
     for positive_index in xrange(positive_count):
+        if positive_index % 1000 == 0:
+            print '%s / %s' % (positive_index, positive_count)
         pixel_center = positive_pixel_centers[positive_index]
         array = save_example_array(target_folder, image_scope, pixel_center)
         positive_arrays[positive_index, :, :, :] = array
-        bar.goto(positive_index)
     save_pixel_centers(
         examples_h5, 'positive', positive_pixel_centers[:positive_count],
         image_scope)
-    bar.finish()
+    print '%s / %s' % (positive_count, positive_count)
 
 
 def save_negative_examples(
         target_folder, image_scope, positive_pixel_centers,
         negative_count, examples_h5):
-    bar = Bar('Saving negative examples', max=negative_count)
     pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
@@ -143,15 +138,16 @@ def save_negative_examples(
     negative_pixel_center_iter = yield_negative_pixel_center(
         image_scope, positive_pixel_centers)
     for negative_index in xrange(negative_count):
+        if negative_index % 1000 == 0:
+            print '%s / %s' % (negative_index, negative_count)
         pixel_center = negative_pixel_center_iter.next()
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
         negative_pixel_centers.append(pixel_center)
-        bar.goto(negative_index)
     save_pixel_centers(
         examples_h5, 'negative', negative_pixel_centers[:negative_count],
         image_scope)
-    bar.finish()
+    print '%s / %s' % (negative_count, negative_count)
 
 
 def save_example_array(target_folder, image_scope, pixel_center):

@@ -1,7 +1,6 @@
 import os
 import sys
 from crosscompute.libraries import script
-from progress.bar import Bar
 
 from ..libraries import satellite_image
 
@@ -95,14 +94,15 @@ def save_tiles(
     image_scope = satellite_image.ImageScope(image_path, tile_dimensions)
     tile_packs = list(image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds, tile_indices))
-    bar = Bar('Saving tiles', max=len(tile_packs))
+    tile_count = len(tile_packs)
     for tile_index, pixel_upper_left in tile_packs:
+        if tile_index % 1000 == 0:
+            print '%s / %s' % (tile_index, tile_count)
         array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
         image_scope.save_image(
             get_tile_path(target_folder, pixel_upper_left, tile_index),
             array[:, :, :3])
-        bar.goto(tile_index)
-    bar.finish()
+    print '%s / %s' % (tile_count, tile_count)
     return dict(
         tile_pixel_dimensions=image_scope.scope_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(

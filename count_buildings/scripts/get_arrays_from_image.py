@@ -2,7 +2,6 @@ import h5py
 import os
 import sys
 from crosscompute.libraries import script
-from progress.bar import Bar
 
 from .get_tiles_from_image import save_image_dimensions
 from ..libraries.satellite_image import ImageScope
@@ -74,14 +73,14 @@ def save_arrays(
     array_count = len(tile_packs)
     arrays, pixel_centers = get_target_pack(
         target_folder, image_path, tile_dimensions, array_count)
-    bar = Bar('Saving arrays', max=array_count)
     for array_index, (tile_index, pixel_upper_left) in enumerate(tile_packs):
+        if array_index == 1000:
+            print '%s / %s' % (array_index, array_count)
         array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
         arrays[array_index, :, :, :] = array
         pixel_centers[array_index, :] = get_pixel_center_from_pixel_frame((
             pixel_upper_left, tile_pixel_dimensions))
-        bar.goto(array_index)
-    bar.finish()
+    print '%s / %s' % (array_count, array_count)
     return dict(
         tile_pixel_dimensions=tile_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(

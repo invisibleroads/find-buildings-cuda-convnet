@@ -65,7 +65,7 @@ mv $CONVNET_PATH $CLASSIFIER_PATH
 date 2>&1 | tee -a $LOG_PATH
 ccn-predict options.cfg \
     --write-preds $OUTPUT_FOLDER/predictions.csv \
-    --data-path $OUTPUT_FOLDER/training_batches
+    --data-path $OUTPUT_FOLDER/training_batches \
     --train-range 0 \
     --test-range $MAX_INDEX \
     -f $CLASSIFIER_PATH \
@@ -80,8 +80,8 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         get_tiles_from_image \
             --target_folder ~/Downloads/$IMAGE_NAME/tiles \
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
-            --tile_dimensions $TILE_DIMENSIONS
-            --overlap_dimensions $EXAMPLE_DIMENSIONS
+            --tile_dimensions $TILE_DIMENSIONS \
+            --overlap_dimensions $EXAMPLE_DIMENSIONS \
             --list_pixel_bounds`
     for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         date 2>&1 | tee -a $LOG_PATH

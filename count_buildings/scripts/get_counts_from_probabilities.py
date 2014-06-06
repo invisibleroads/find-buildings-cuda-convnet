@@ -126,13 +126,16 @@ def determine_pixel_radius(probability_packs, actual_count):
     pixel_centers = probability_packs[[
         'pixel_center_x', 'pixel_center_y']].values
     pixel_diameter = get_diameter(pixel_centers)
-    for pixel_radius in xrange(1, int(math.ceil(pixel_diameter))):
+    max_pixel_radius = int(math.ceil(pixel_diameter))
+    for pixel_radius in xrange(1, max_pixel_radius):
+        print '%s / %s' % (pixel_radius, max_pixel_radius)
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, pixel_radius)
         if len(selected_pixel_centers) < actual_count:
             break
         best_pixel_radius = pixel_radius
         best_pixel_centers = selected_pixel_centers
+    print '%s / %s' % (max_pixel_radius, max_pixel_radius)
     return best_pixel_radius, best_pixel_centers
 
 
