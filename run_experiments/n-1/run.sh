@@ -20,8 +20,6 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
         --points_path ~/Links/building-locations/$IMAGE_NAME \
         --example_dimensions $EXAMPLE_DIMENSIONS \
-        --maximum_positive_count 1 \
-        --maximum_negative_count 1 \
         2>&1 | tee -a $LOG_PATH
     date 2>&1 | tee -a $LOG_PATH
     get_dataset_from_examples \
@@ -98,9 +96,8 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
             --tile_dimensions $TILE_DIMENSIONS \
             --overlap_dimensions $EXAMPLE_DIMENSIONS \
-            --included_pixel_bounds 500,500,550,550 \
+            --included_pixel_bounds $PIXEL_BOUNDS \
             2>&1 | tee -a $LOG_PATH
-        # --included_pixel_bounds $PIXEL_BOUNDS \
         date 2>&1 | tee -a $LOG_PATH
         get_batches_from_arrays \
             --target_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS \
