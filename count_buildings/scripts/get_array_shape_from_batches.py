@@ -15,5 +15,4 @@ def run(
         target_folder, batches_folder):
     batches_path = os.path.join(batches_folder, 'batches.meta')
     value_by_key = pickle.load(open(batches_path))
-    array_shape = value_by_key['array_shape']
-    print ','.join(array_shape)
+    print '%s,%s,%s' % value_by_key['array_shape']
