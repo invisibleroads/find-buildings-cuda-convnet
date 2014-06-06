@@ -57,12 +57,18 @@ ccn-train options.cfg \
     --train-range 0-$(expr $MAX_BATCH_INDEX - 1) \
     --test-range $MAX_BATCH_INDEX \
     2>&1 | tee -a $LOG_PATH
+CONVNET_NAME=`ls -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
+CONVNET_PATH=$OUTPUT_FOLDER/classifiers/$CONVNET_NAME
+CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME-n-1
+rm -rf $CLASSIFIER_PATH
+mv $CONVNET_PATH $CLASSIFIER_PATH
 date 2>&1 | tee -a $LOG_PATH
 ccn-predict options.cfg \
     --write-preds $OUTPUT_FOLDER/predictions.csv \
     --data-path $OUTPUT_FOLDER/training_batches
     --train-range 0 \
     --test-range $MAX_INDEX \
+    -f $CLASSIFIER_PATH \
     2>&1 | tee -a $LOG_PATH
 
 ARRAY_SHAPE=`
@@ -107,6 +113,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --data-path ~/Downloads/$IMAGE_NAME/batches \
             --train-range 0 \
             --test-range 0-$MAX_BATCH_INDEX \
+            -f $CLASSIFIER_PATH \
             2>&1 | tee -a $LOG_PATH
         date 2>&1 | tee -a $LOG_PATH
         get_counts_from_predictions \
