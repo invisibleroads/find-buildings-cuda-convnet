@@ -1,5 +1,4 @@
 import geometryIO
-import math
 import numpy as np
 import os
 import sys
@@ -7,9 +6,7 @@ from count_buildings.libraries.kdtree import KDTree
 from count_buildings.libraries.satellite_image import SatelliteImage
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint
-from itertools import combinations
 from pandas import read_csv
-from scipy.spatial.distance import euclidean
 
 
 COUNTS_SHP = 'counts.shp'
@@ -123,19 +120,16 @@ def save_pixel_centers(target_path, pixel_centers, image):
 def determine_pixel_radius(probability_packs, actual_count):
     best_pixel_radius = 0
     best_pixel_centers = []
-    pixel_centers = probability_packs[[
-        'pixel_center_x', 'pixel_center_y']].values
-    pixel_diameter = get_diameter(pixel_centers)
-    max_pixel_radius = int(math.ceil(pixel_diameter))
-    for pixel_radius in xrange(1, max_pixel_radius):
-        print '%s / %s' % (pixel_radius, max_pixel_radius)
+    pixel_radius = 1
+    while True:
+        print 'pixel_radius >= %s' % pixel_radius
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, pixel_radius)
         if len(selected_pixel_centers) < actual_count:
             break
         best_pixel_radius = pixel_radius
         best_pixel_centers = selected_pixel_centers
-    print '%s / %s' % (max_pixel_radius, max_pixel_radius)
+        pixel_radius += 1
     return best_pixel_radius, best_pixel_centers
 
 
@@ -172,12 +166,3 @@ def yield_hotspot_via_metric(xys, radius, get_metric):
         yield best_hotspot_xy
         pending_indices = np.array(list(
             set(pending_indices) - set(best_indices)))
-
-
-def get_diameter(xys):
-    diameter = 0
-    for xy1, xy2 in combinations(xys, 2):
-        distance = euclidean(xy1, xy2)
-        if distance > diameter:
-            diameter = distance
-    return diameter
