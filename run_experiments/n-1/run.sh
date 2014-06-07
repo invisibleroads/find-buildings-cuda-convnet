@@ -97,8 +97,8 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         get_arrays_from_image \
             --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
-            --tile_dimensions $TILE_DIMENSIONS \
-            --overlap_dimensions $EXAMPLE_DIMENSIONS \
+            --tile_dimensions $EXAMPLE_DIMENSIONS \
+            --overlap_dimensions $OVERLAP_DIMENSIONS \
             --included_pixel_bounds 0,0,100,100 \
             2>&1 | tee -a $LOG_PATH
         # --included_pixel_bounds $PIXEL_BOUNDS \
