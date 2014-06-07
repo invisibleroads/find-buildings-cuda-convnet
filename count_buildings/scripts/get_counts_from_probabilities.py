@@ -59,6 +59,7 @@ def run(
         best_pixel_radius, best_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count)
         save_pixel_centers(target_path, best_pixel_centers, image)
+        save_pixel_centers(target_path, best_pixel_centers, image)
         estimated_count = len(best_pixel_centers)
         percent_error = 100 * (
             estimated_count - actual_count

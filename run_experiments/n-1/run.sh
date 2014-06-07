@@ -131,7 +131,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         ~/Downloads/$IMAGE_NAME/probabilities.csv
     sed -i '/0,1,pixel_center_x,pixel_center_y/d' \
         ~/Downloads/$IMAGE_NAME/probabilities.csv
-    sed '1 i 0,1,pixel_center_x,pixel_center_y' \
+    sed -i '1 i 0,1,pixel_center_x,pixel_center_y' \
         ~/Downloads/$IMAGE_NAME/probabilities.csv
     log get_counts_from_probabilities \
         --target_folder ~/Downloads/$IMAGE_NAME/counts \
