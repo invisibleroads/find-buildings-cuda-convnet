@@ -1,14 +1,14 @@
 import numpy as np
-import scipy.spatial.kdtree
+from pykdtree import kdtree
 
 
 class KDTree(object):
-    
+
     def __init__(self, points):
         points = np.array(points)
         self.point_count = len(points)
-        self.kdtree = scipy.spatial.kdtree.KDTree(points)
-    
+        self.kdtree = kdtree.KDTree(points)
+
     def query(self, x, maximum_count=None, maximum_distance=None):
         x = np.array(x)
         if x.ndim == 1:
@@ -18,6 +18,8 @@ class KDTree(object):
             k=maximum_count or self.point_count,
             distance_upper_bound=maximum_distance or np.inf)
         try:
-            return distances[distances != np.inf], indices[indices != self.point_count]
+            selected_distances = distances[distances != np.inf]
+            selected_indices = indices[indices != self.point_count]
+            return selected_distances, selected_indices
         except (TypeError, IndexError):
             return distances, indices
