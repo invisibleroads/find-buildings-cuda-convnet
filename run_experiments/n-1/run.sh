@@ -87,15 +87,18 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --tile_dimensions $TILE_DIMENSIONS \
             --overlap_dimensions $EXAMPLE_DIMENSIONS \
             --list_pixel_bounds`
+    PIXEL_BOUNDS_LIST="
+    0,0,100,100
+    100,100,200,200
+    "
     for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         log get_arrays_from_image \
             --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
             --tile_dimensions $EXAMPLE_DIMENSIONS \
             --overlap_dimensions $OVERLAP_DIMENSIONS \
-            --included_pixel_bounds 0,0,100,100 \
+            --included_pixel_bounds $PIXEL_BOUNDS \
             2>&1 | tee -a $LOG_PATH
-        # --included_pixel_bounds $PIXEL_BOUNDS \
         log get_batches_from_arrays \
             --target_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS \
             --random_seed $RANDOM_SEED \
