@@ -7,25 +7,22 @@ OVERLAP_DIMENSIONS=6,6
 RANDOM_SEED=crosscompute
 BATCH_SIZE=10k
 EXPERIMENT_NAME=`basename $(dirname $(pwd)/$0)`
-OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
-LOG_PATH=$OUTPUT_FOLDER/run.log
+export OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
+source log.sh
 
 DATASET_FOLDERS=""
 for IMAGE_NAME in $IMAGE_NAMES; do
     echo $IMAGE_NAME | tee -a $LOG_PATH
-    date 2>&1 | tee -a $LOG_PATH
-    get_examples_from_points \
+    log get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
         --points_path ~/Links/building-locations/$IMAGE_NAME \
         --example_dimensions $EXAMPLE_DIMENSIONS \
         --maximum_positive_count 1 \
-        --maximum_negative_count 1 \
-        2>&1 | tee -a $LOG_PATH
-    date 2>&1 | tee -a $LOG_PATH
-    get_dataset_from_examples \
+        --maximum_negative_count 1
+    log get_dataset_from_examples \
         --target_folder $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
         --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
@@ -38,8 +35,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME"
 done
 
-date 2>&1 | tee -a $LOG_PATH
-get_batches_from_datasets \
+log get_batches_from_datasets \
     --target_folder $OUTPUT_FOLDER/training_batches \
     --dataset_folders $DATASET_FOLDERS \
     --batch_size $BATCH_SIZE \
@@ -55,8 +51,7 @@ done
 MAX_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/training_batches`
 MAX_BATCH_INDEX_MINUS_ONE=$(expr $MAX_BATCH_INDEX - 1)
-date 2>&1 | tee -a $LOG_PATH
-ccn-train options.cfg \
+log ccn-train options.cfg \
     --save-path $OUTPUT_FOLDER/classifiers \
     --data-path $OUTPUT_FOLDER/training_batches \
     --train-range 0-$(($MAX_BATCH_INDEX_MINUS_ONE > 0 ? $MAX_BATCH_INDEX_MINUS_ONE : 0)) \
@@ -67,8 +62,7 @@ CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
 CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME-n-1
 rm -rf $CLASSIFIER_PATH
 mv $CONVNET_PATH $CLASSIFIER_PATH
-date 2>&1 | tee -a $LOG_PATH
-ccn-predict options.cfg \
+log ccn-predict options.cfg \
     --write-preds $OUTPUT_FOLDER/probabilities.csv \
     --data-path $OUTPUT_FOLDER/training_batches \
     --train-range 0 \
@@ -93,8 +87,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --overlap_dimensions $EXAMPLE_DIMENSIONS \
             --list_pixel_bounds`
     for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
-        date 2>&1 | tee -a $LOG_PATH
-        get_arrays_from_image \
+        log get_arrays_from_image \
             --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
             --image_path ~/Links/satellite-images/$IMAGE_NAME \
             --tile_dimensions $EXAMPLE_DIMENSIONS \
@@ -102,8 +95,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --included_pixel_bounds 0,0,100,100 \
             2>&1 | tee -a $LOG_PATH
         # --included_pixel_bounds $PIXEL_BOUNDS \
-        date 2>&1 | tee -a $LOG_PATH
-        get_batches_from_arrays \
+        log get_batches_from_arrays \
             --target_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS \
             --random_seed $RANDOM_SEED \
             --arrays_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
@@ -117,8 +109,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
 
         MAX_BATCH_INDEX=`get_index_from_batches \
             --batches_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS`
-        date 2>&1 | tee -a $LOG_PATH
-        ccn-predict options.cfg \
+        log ccn-predict options.cfg \
             --write-preds ~/Downloads/$IMAGE_NAME/probabilities.csv \
             --data-path ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS \
             --train-range 0 \
@@ -134,12 +125,10 @@ for IMAGE_NAME in $IMAGE_NAMES; do
 
     cat ~/Downloads/$IMAGE_NAME/probabilities-*.csv > \
         ~/Downloads/$IMAGE_NAME/probabilities.csv
-    date 2>&1 | tee -a $LOG_PATH
-    get_counts_from_probabilities \
+    log get_counts_from_probabilities \
         --target_folder ~/Downloads/$IMAGE_NAME/counts \
         --probabilities_folder ~/Downloads/$IMAGE_NAME \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
         --points_path ~/Links/building-locations/$IMAGE_NAME \
         2>&1 | tee -a $LOG_PATH
 done
-date 2>&1 | tee -a $LOG_PATH
