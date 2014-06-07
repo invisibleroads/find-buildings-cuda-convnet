@@ -10,6 +10,7 @@ EXPERIMENT_NAME=`basename $(dirname $(pwd)/$0)`
 export OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source log.sh
+rm $LOG_PATH
 
 DATASET_FOLDERS=""
 for IMAGE_NAME in $IMAGE_NAMES; do
