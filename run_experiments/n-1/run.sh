@@ -81,10 +81,6 @@ for IMAGE_NAME in $IMAGE_NAMES; do
             --tile_dimensions $TILE_DIMENSIONS \
             --overlap_dimensions $EXAMPLE_DIMENSIONS \
             --list_pixel_bounds`
-    PIXEL_BOUNDS_LIST="
-    0,0,100,100
-    100,100,200,200
-    "
     for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         log get_arrays_from_image \
             --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
