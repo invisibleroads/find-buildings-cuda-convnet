@@ -13,6 +13,7 @@ mkdir -p $OUTPUT_FOLDER
 
 DATASET_FOLDERS=""
 for IMAGE_NAME in $IMAGE_NAMES; do
+    echo $IMAGE_NAME | tee -a $LOG_PATH
     date 2>&1 | tee -a $LOG_PATH
     get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
@@ -126,14 +127,16 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         tar czvf $IMAGE_NAME-batches-$PIXEL_BOUNDS.tar.gz $IMAGE_NAME/batches-$PIXEL_BOUNDS
         rm -rf $IMAGE_NAME/batches-$PIXEL_BOUNDS
         popd
-
-        date 2>&1 | tee -a $LOG_PATH
-        get_counts_from_probabilities \
-            --target_folder ~/Downloads/$IMAGE_NAME/counts-$PIXEL_BOUNDS \
-            --probabilities_folder ~/Downloads/$IMAGE_NAME \
-            --image_path ~/Links/satellite-images/$IMAGE_NAME \
-            --points_path ~/Links/building-locations/$IMAGE_NAME \
-            2>&1 | tee -a $LOG_PATH
     done
+
+    cat ~/Downloads/$IMAGE_NAME/probabilities-*.csv > \
+        ~/Downloads/$IMAGE_NAME/probabilities.csv
+    date 2>&1 | tee -a $LOG_PATH
+    get_counts_from_probabilities \
+        --target_folder ~/Downloads/$IMAGE_NAME/counts \
+        --probabilities_folder ~/Downloads/$IMAGE_NAME \
+        --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        --points_path ~/Links/building-locations/$IMAGE_NAME \
+        2>&1 | tee -a $LOG_PATH
 done
 date 2>&1 | tee -a $LOG_PATH
