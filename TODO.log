@@ -1,4 +1,13 @@
-# UTC 06/03/2014
+# UTC 06/12/2014
++ Test whether we should set all wc=0 for Cropped [06/12/2014]
++ Backup 210k country classifiers [06/12/2014]
++ Use 210k generic [06/12/2014]
++ Write script to predict a large image [06/12/2014]
++ Use n-1 generic [06/12/2014]
++ Train n-1 generic [06/12/2014]
++ Backup training_batches for generic [06/12/2014]
++ Make full training_dataset for each country [06/12/2014]
++ Use cifar [06/12/2014]
 + Update get_counts_from_probabilities to get actual_count from points_path [06/03/2014]
 + Backup datasets for each country [06/03/2014]
 + Backup examples for each country [06/03/2014]

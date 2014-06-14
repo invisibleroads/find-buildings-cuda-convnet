@@ -20,8 +20,9 @@ def start(argv=sys.argv):
             type=script.parse_size,
             help='maximum number of examples to include')
         starter.add_argument(
-            '--preserve_ratio', action='store_true',
-            help='preserve ratio of positive to negative examples')
+            '--positive_fraction',
+            type=int,
+            help='0.5 half positive half negative; -1 natural ratio')
         starter.add_argument(
             '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
@@ -34,7 +35,7 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, examples_folder, maximum_dataset_size,
-        preserve_ratio, excluded_pixel_bounds, batch_size):
+        positive_fraction, excluded_pixel_bounds, batch_size):
     examples_h5 = h5py.File(os.path.join(examples_folder, EXAMPLES_NAME), 'r')
     positive_indices = get_indices(
         examples_h5['positive'], maximum_dataset_size, excluded_pixel_bounds)
@@ -42,14 +43,16 @@ def run(
         examples_h5['negative'], maximum_dataset_size, excluded_pixel_bounds)
     positive_count, negative_count = adjust_counts(
         len(positive_indices), len(negative_indices),
-        maximum_dataset_size, preserve_ratio, batch_size)
+        maximum_dataset_size, positive_fraction, batch_size)
     dataset_h5 = get_dataset_h5(target_folder)
     save_dataset(
         dataset_h5, examples_h5,
         positive_indices[:positive_count],
         negative_indices[:negative_count])
+    example_count = positive_count + negative_count
     return dict(
-        dataset_size=script.format_size(positive_count + negative_count),
+        dataset_size=script.format_size(example_count),
+        positive_fraction=positive_count / float(example_count),
         positive_count=positive_count,
         negative_count=negative_count)
 
@@ -73,7 +76,7 @@ def get_indices(examples, maximum_dataset_size, excluded_pixel_bounds):
 
 def adjust_counts(
         positive_count, negative_count,
-        maximum_dataset_size, preserve_ratio, batch_size):
+        maximum_dataset_size, positive_fraction, batch_size):
     example_count = positive_count + negative_count
     dataset_size = min(maximum_dataset_size or example_count, example_count)
     if batch_size:
