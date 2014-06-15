@@ -42,10 +42,10 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
             --batch_size $BATCH_SIZE \
             --positive_fraction $POSITIVE_FRACTION
-        pushd $OUTPUT_FOLDER
-        tar czvf $IMAGE_NAME-examples.tar.gz examples/$IMAGE_NAME
-        rm -rf examples/$IMAGE_NAME
-        popd
+        # pushd $OUTPUT_FOLDER
+        # tar czvf $IMAGE_NAME-examples.tar.gz examples/$IMAGE_NAME
+        # rm -rf examples/$IMAGE_NAME
+        # popd
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
     done
 
