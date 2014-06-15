@@ -23,7 +23,7 @@ def start(argv=sys.argv):
             help='maximum number of examples to include')
         starter.add_argument(
             '--positive_fraction', metavar='FRACTION',
-            type=int,
+            type=float,
             help='-1 natural ratio; 0.5 half positive half negative')
         starter.add_argument(
             '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
