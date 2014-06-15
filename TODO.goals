@@ -1,7 +1,7 @@
-# US/Pacific 6/12/2014
+# US/Pacific 6/14/2014
 = Optimize auc despite class imbalance
     = Set up class ratio experiment
-        = Modify get_dataset_from_examples
+        + Modify get_dataset_from_examples
     Modify ConvNet to use roc_auc_score
 Improve development classifier
     Use early stopping
@@ -12,26 +12,13 @@ Improve development classifier
     Experiment with YUV colorspace
     Record execution time
     Experiment with different overlap_dimensions
-Release production classifier
-    Backup production classifiers
-        Backup n-1 country classifiers
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Evaluate new libraries for image recognition [6h]
     Train classifier with dropconnect
-    Train classifier with opencv
     Train classifier with pylearn2
     Train classifier with theano
     Train classifier with OverFeat
-Explore new libraries
-    Write code example with https://code.google.com/p/pyresample/
-    Write code example with https://github.com/mraspaud/mpop
-    Write code example with https://github.com/matplotlib/basemap
-    Write code example with https://code.google.com/p/pycoast/
-    Write code example with https://github.com/mraspaud/trollimage
-    Write code example with https://pypi.python.org/pypi/OWSLib
-    Work through tutorials on http://www.pytroll.org/
-    Write code example with cartopy
 Make scripts easier to use
     Let options.cfg read environment variables
 Send access credentials to all tools, valid with no membership fee for one year

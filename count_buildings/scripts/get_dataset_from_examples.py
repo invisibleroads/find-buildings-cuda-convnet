@@ -20,9 +20,9 @@ def start(argv=sys.argv):
             type=script.parse_size,
             help='maximum number of examples to include')
         starter.add_argument(
-            '--positive_fraction',
+            '--positive_fraction', metavar='FRACTION',
             type=int,
-            help='0.5 half positive half negative; -1 natural ratio')
+            help='-1 natural ratio; 0.5 half positive half negative')
         starter.add_argument(
             '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
@@ -77,17 +77,27 @@ def get_indices(examples, maximum_dataset_size, excluded_pixel_bounds):
 def adjust_counts(
         positive_count, negative_count,
         maximum_dataset_size, positive_fraction, batch_size):
-    example_count = positive_count + negative_count
-    dataset_size = min(maximum_dataset_size or example_count, example_count)
+    # Get new_dataset_size
+    dataset_size = positive_count + negative_count
+    new_dataset_size = min(
+        maximum_dataset_size or dataset_size, dataset_size)
     if batch_size:
-        dataset_size = (dataset_size / batch_size) * batch_size
-    if dataset_size == example_count:
-        preserve_ratio = True
-    if preserve_ratio:
-        positive_ratio = positive_count / float(example_count)
-        positive_count = int(positive_ratio * dataset_size)
-    negative_count = max(0, dataset_size - positive_count)
-    return positive_count, negative_count
+        new_dataset_size = (new_dataset_size / batch_size) * batch_size
+    # Get positive_fraction
+    if positive_fraction is None:
+        positive_fraction = positive_count / float(new_dataset_size)
+    elif positive_fraction < 0:
+        positive_fraction = positive_count / float(dataset_size)
+    else:
+        positive_fraction = min(1, positive_fraction)
+    # Get new_positive_count
+    new_positive_count = int(positive_fraction * new_dataset_size)
+    new_positive_count = min(positive_count, new_positive_count)
+    # Get new_negative_count
+    new_dataset_size = int(new_positive_count / float(positive_fraction))
+    new_negative_count = new_dataset_size - new_positive_count
+    # Return
+    return new_positive_count, new_negative_count
 
 
 def get_dataset_h5(target_folder):
