@@ -3,10 +3,10 @@ import numpy as np
 import os
 import sys
 from crosscompute.libraries import script
-from random import shuffle
 
-from count_buildings.libraries.dataset import DatasetGroup
-from count_buildings.libraries.dataset import get_vector_from_array
+from .get_dataset_from_examples import DATASET_NAME
+from ..libraries.dataset import BatchGroup
+from ..libraries.dataset import get_vector_from_array
 
 
 def start(argv=sys.argv):
@@ -26,14 +26,13 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, dataset_folders, batch_size, array_shape):
-    dataset_group = DatasetGroup(dataset_folders, array_shape)
-    keys = dataset_group.get_keys()
-    shuffle(keys)
-    save_meta(target_folder, dataset_group, keys)
-    batch_count = save_data(target_folder, dataset_group, keys, batch_size)
+    batch_group = BatchGroup(DATASET_NAME, dataset_folders, array_shape)
+    keys = batch_group.get_random_keys(batch_size)
+    save_meta(target_folder, batch_group, keys)
+    batch_count = save_data(target_folder, batch_group, keys, batch_size)
     return dict(
-        array_count=dataset_group.array_count,
-        array_shape=dataset_group.array_shape,
+        array_count=batch_group.array_count,
+        array_shape=batch_group.array_shape,
         batch_count=batch_count)
 
 

@@ -3,29 +3,46 @@ import numpy as np
 import operator
 import os
 from decorator import decorator
+from itertools import izip
+from random import shuffle
 from skimage.transform import resize
 
 from . import disk
 
 
-DATASET_NAME = 'dataset.h5'
+class BatchGroup(object):
 
-
-class AbstractGroup(object):
-
-    def __init__(self, h5_folders, array_shape=None):
+    def __init__(self, h5_name, h5_folders, array_shape=None):
         self.h5s = [
-            h5py.File(os.path.join(x, self.H5_NAME)) for x in h5_folders]
+            h5py.File(os.path.join(x, h5_name)) for x in h5_folders]
         if array_shape is not None:
             self._array_shape = tuple(array_shape)
 
-    def get_keys(self):
+    def get_random_keys(self, batch_size):
         keys = []
         for h5_index, h5 in enumerate(self.h5s):
             keys.extend((
                 h5_index, array_index
             ) for array_index in xrange(len(h5['arrays'])))
+        shuffle(keys)
+        while True:
+            extra_size = len(keys) % batch_size
+            if not extra_size:
+                break
+            extra_keys = keys[:extra_size]
+            extra_labels = self.get_labels(extra_keys)
+            positive_keys = [k for k, l in izip(extra_keys, extra_labels) if l]
+            keys = keys[extra_size:] + positive_keys
+        shuffle(keys)
         return keys
+
+    def get_labels(self, keys):
+        labels = []
+        for h5_index, array_index in keys:
+            h5 = self.h5s[h5_index]
+            label = h5['labels'][array_index]
+            labels.append(label)
+        return labels
 
     @property
     def array_shape(self):
@@ -113,19 +130,6 @@ class AbstractGroup(object):
             return array
         assert pixel_height <= array.shape[0] and pixel_width <= array.shape[1]
         return resize(array, (pixel_height, pixel_width)) * 255
-
-
-class DatasetGroup(AbstractGroup):
-
-    H5_NAME = DATASET_NAME
-
-    def get_labels(self, keys):
-        labels = []
-        for h5_index, array_index in keys:
-            h5 = self.h5s[h5_index]
-            label = h5['labels'][array_index]
-            labels.append(label)
-        return labels
 
 
 @decorator

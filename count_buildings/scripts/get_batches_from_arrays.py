@@ -1,10 +1,9 @@
-import numpy as np
 import sys
 from crosscompute.libraries import script
 
 from .get_arrays_from_image import ARRAYS_NAME
 from .get_batches_from_datasets import save_meta, save_data
-from ..libraries.dataset import AbstractGroup
+from ..libraries.dataset import BatchGroup
 
 
 def start(argv=sys.argv):
@@ -24,19 +23,11 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, arrays_folder, batch_size, array_shape):
-    arrays_group = ArraysGroup([arrays_folder], array_shape)
-    keys = arrays_group.get_keys()
-    save_meta(target_folder, arrays_group, keys)
-    batch_count = save_data(target_folder, arrays_group, keys, batch_size)
+    batch_group = BatchGroup(ARRAYS_NAME, [arrays_folder], array_shape)
+    keys = batch_group.get_random_keys(batch_size)
+    save_meta(target_folder, batch_group, keys)
+    batch_count = save_data(target_folder, batch_group, keys, batch_size)
     return dict(
-        array_count=arrays_group.array_count,
-        array_shape=arrays_group.array_shape,
+        array_count=batch_group.array_count,
+        array_shape=batch_group.array_shape,
         batch_count=batch_count)
-
-
-class ArraysGroup(AbstractGroup):
-
-    H5_NAME = ARRAYS_NAME
-
-    def get_labels(self, keys):
-        return np.zeros(len(keys))
