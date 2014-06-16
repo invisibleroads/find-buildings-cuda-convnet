@@ -119,6 +119,7 @@ def save_pixel_centers(target_path, pixel_centers, image):
 
 
 def determine_pixel_radius(probability_packs, actual_count):
+    best_margin = np.inf
     best_pixel_radius = 0
     best_pixel_centers = []
     pixel_radius = 1
@@ -126,8 +127,10 @@ def determine_pixel_radius(probability_packs, actual_count):
         print 'pixel_radius >= %s' % pixel_radius
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, pixel_radius)
-        if len(selected_pixel_centers) < actual_count:
+        actual_margin = actual_count - len(selected_pixel_centers)
+        if abs(best_margin) < abs(actual_margin):
             break
+        best_margin = actual_margin
         best_pixel_radius = pixel_radius
         best_pixel_centers = selected_pixel_centers
         pixel_radius += 1
