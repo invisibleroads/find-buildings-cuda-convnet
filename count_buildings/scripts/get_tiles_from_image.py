@@ -97,12 +97,12 @@ def save_tiles(
     tile_count = len(tile_packs)
     for tile_index, pixel_upper_left in tile_packs:
         if tile_index % 1000 == 0:
-            print '%s / %s' % (tile_index, tile_count)
+            print '%s / %s' % (tile_index, tile_count - 1)
         array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
         image_scope.save_image(
             get_tile_path(target_folder, pixel_upper_left, tile_index),
             array[:, :, :3])
-    print '%s / %s' % (tile_count, tile_count)
+    print '%s / %s' % (tile_index, tile_count - 1)
     return dict(
         tile_pixel_dimensions=image_scope.scope_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(

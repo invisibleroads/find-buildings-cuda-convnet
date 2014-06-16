@@ -126,9 +126,9 @@ def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
         'labels', shape=(dataset_size,), dtype=bool)
     for index, (inner_index, label) in enumerate(dataset_packs):
         if index % 1000 == 0:
-            print '%s / %s' % (index, dataset_size)
+            print '%s / %s' % (index, dataset_size - 1)
         inner_examples = examples_h5['positive' if label else 'negative']
         arrays[index, :, :, :] = inner_examples['arrays'][inner_index]
         labels[index] = label
         pixel_centers[index, :] = inner_examples['pixel_centers'][inner_index]
-    print '%s / %s' % (dataset_size, dataset_size)
+    print '%s / %s' % (index, dataset_size - 1)

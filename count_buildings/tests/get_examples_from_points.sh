@@ -1,6 +1,6 @@
 OUTPUT_FOLDER=~/Experiments/`basename -s .sh $0`
-IMAGE_PATH=~/Links/satellite-images/test-geotiff
-POINTS_PATH=~/Links/building-locations/test-shapefile
+IMAGE_PATH=`realpath ~/Links/satellite-images/test-geotiff`
+POINTS_PATH=`realpath ~/Links/building-locations/test-shapefile`
 EXAMPLE_DIMENSIONS=10x10
 
 get_examples_from_points \

@@ -63,7 +63,7 @@ def save_data(target_folder, dataset_group, keys, batch_size):
     batch_count = len(start_indices)
     for batch_index, start_index in enumerate(start_indices):
         if batch_index % 1000 == 0:
-            print '%s / %s' % (batch_index, batch_count)
+            print '%s / %s' % (batch_index, batch_count - 1)
         selected_keys = keys[start_index:start_index + batch_size]
         data = dataset_group.get_data(selected_keys)
         labels = dataset_group.get_labels(selected_keys)
@@ -72,5 +72,5 @@ def save_data(target_folder, dataset_group, keys, batch_size):
             'data': data.astype(np.single),
             'labels': [1 if x else 0 for x in labels],
         }, open(target_path_template % batch_index, 'w'), protocol=-1)
-    print '%s / %s' % (batch_count, batch_count)
+    print '%s / %s' % (batch_index, batch_count - 1)
     return batch_count

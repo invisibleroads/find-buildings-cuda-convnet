@@ -2,6 +2,7 @@ CLASSIFIER_NAME=$1
 shift
 IMAGE_NAMES=$@
 
+PIXEL_BOUNDS=13260,2320,14060,2920
 EXAMPLE_DIMENSIONS=12,12
 OVERLAP_DIMENSIONS=6,6
 RANDOM_SEED=crosscompute
@@ -11,6 +12,26 @@ OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source ../log.sh
 rm $LOG_PATH
+
+log get_arrays_from_image \
+    --target_folder $OUTPUT_FOLDER/test_arrays \
+    --image_path ~/Links/satellite-images/myanmar0 \
+    --points_path ~/Links/building-locations/myanmar0 \
+    --overlap_dimensions $OVERLAP_DIMENSIONS \
+    --tile_dimensions $EXAMPLE_DIMENSIONS \
+    --included_pixel_bounds $PIXEL_BOUNDS
+log get_batches_from_arrays \
+    --target_folder $OUTPUT_FOLDER/test_batches \
+    --arrays_folder $OUTPUT_FOLDER/test_arrays \
+    --batch_size $BATCH_SIZE \
+    --array_shape 20,20,3
+pushd $OUTPUT_FOLDER
+tar czvf ${IMAGE_NAME}_test_arrays.tar.gz test_arrays
+rm -rf test_arrays
+popd
+MAX_TEST_BATCH_INDEX=`get_index_from_batches \
+    --batches_folder $OUTPUT_FOLDER/test_batches`
+MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
 POSITIVE_FRACTIONS="
 0.50
@@ -40,6 +61,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
             --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
             --random_seed $RANDOM_SEED \
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
+            --excluded_pixel_bounds $PIXEL_BOUNDS \
             --batch_size $BATCH_SIZE \
             --positive_fraction $POSITIVE_FRACTION
         # pushd $OUTPUT_FOLDER
@@ -65,14 +87,14 @@ done
 
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
-    MAX_BATCH_INDEX=`get_index_from_batches \
+    MAX_TRAINING_BATCH_INDEX=`get_index_from_batches \
         --batches_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION`
-    MAX_BATCH_INDEX_MINUS_ONE=$(expr $MAX_BATCH_INDEX - 1)
+    MAX_TRAINING_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TRAINING_BATCH_INDEX - 1)
     log ccn-train options.cfg \
         --save-path $OUTPUT_FOLDER/classifiers \
         --data-path $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
-        --train-range 0-$(($MAX_BATCH_INDEX_MINUS_ONE > 0 ? $MAX_BATCH_INDEX_MINUS_ONE : 0)) \
-        --test-range $MAX_BATCH_INDEX
+        --train-range 0-$(($MAX_TRAINING_BATCH_INDEX_MINUS_ONE > 0 ? $MAX_TRAINING_BATCH_INDEX_MINUS_ONE : 0)) \
+        --test-range $MAX_TRAINING_BATCH_INDEX
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
     CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME_$POSITIVE_FRACTION
@@ -80,9 +102,9 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
-        --data-path $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
+        --data-path $OUTPUT_FOLDER/test_batches \
         --train-range 0 \
-        --test-range $MAX_BATCH_INDEX \
+        --test-range 0-$MAX_TEST_BATCH_INDEX \
         -f $CLASSIFIER_PATH
 
 done

@@ -116,14 +116,14 @@ def save_positive_examples(
             image_scope.band_count), dtype=image_scope.array_dtype)
     for positive_index in xrange(positive_count):
         if positive_index % 1000 == 0:
-            print '%s / %s' % (positive_index, positive_count)
+            print '%s / %s' % (positive_index, positive_count - 1)
         pixel_center = positive_pixel_centers[positive_index]
         array = save_example_array(target_folder, image_scope, pixel_center)
         positive_arrays[positive_index, :, :, :] = array
     save_pixel_centers(
         examples_h5, 'positive', positive_pixel_centers[:positive_count],
         image_scope)
-    print '%s / %s' % (positive_count, positive_count)
+    print '%s / %s' % (positive_index, positive_count - 1)
 
 
 def save_negative_examples(
@@ -139,7 +139,7 @@ def save_negative_examples(
         image_scope, positive_pixel_centers)
     for negative_index in xrange(negative_count):
         if negative_index % 1000 == 0:
-            print '%s / %s' % (negative_index, negative_count)
+            print '%s / %s' % (negative_index, negative_count - 1)
         pixel_center = negative_pixel_center_iter.next()
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
@@ -147,7 +147,7 @@ def save_negative_examples(
     save_pixel_centers(
         examples_h5, 'negative', negative_pixel_centers[:negative_count],
         image_scope)
-    print '%s / %s' % (negative_count, negative_count)
+    print '%s / %s' % (negative_index, negative_count - 1)
 
 
 def save_example_array(target_folder, image_scope, pixel_center):
