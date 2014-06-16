@@ -30,4 +30,5 @@ def run(
     return dict(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
-        batch_count=batch_count)
+        batch_count=batch_count,
+        positive_count=sum(batch_group.get_labels(keys)))

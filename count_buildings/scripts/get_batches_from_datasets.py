@@ -33,13 +33,14 @@ def run(
     return dict(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
-        batch_count=batch_count)
+        batch_count=batch_count,
+        positive_count=sum(batch_group.get_labels(keys)))
 
 
-def save_meta(target_folder, dataset_group, keys):
+def save_meta(target_folder, batch_group, keys):
     target_path = os.path.join(target_folder, 'batches.meta')
-    array_mean = dataset_group.array_mean
-    array_sd = dataset_group.array_sd
+    array_mean = batch_group.array_mean
+    array_sd = batch_group.array_sd
 
     vector_mean = get_vector_from_array(array_mean)
     vector_sd = get_vector_from_array(array_sd)
@@ -51,13 +52,13 @@ def save_meta(target_folder, dataset_group, keys):
         'data_sd': transform_vector(vector_sd),
         'label_names': ['', 'building'],
         'num_vis': vector_size,
-        'packs': map(tuple, dataset_group.get_pixel_centers(keys)),
+        'packs': map(tuple, batch_group.get_pixel_centers(keys)),
         'pack_columns': ['pixel_center_x', 'pixel_center_y'],
         'array_shape': array_mean.shape,
     }, open(target_path, 'w'), protocol=-1)
 
 
-def save_data(target_folder, dataset_group, keys, batch_size):
+def save_data(target_folder, batch_group, keys, batch_size):
     target_path_template = os.path.join(target_folder, 'data_batch_%d')
     start_indices = xrange(0, len(keys), batch_size)
     batch_count = len(start_indices)
@@ -65,8 +66,8 @@ def save_data(target_folder, dataset_group, keys, batch_size):
         if batch_index % 1000 == 0:
             print '%s / %s' % (batch_index, batch_count - 1)
         selected_keys = keys[start_index:start_index + batch_size]
-        data = dataset_group.get_data(selected_keys)
-        labels = dataset_group.get_labels(selected_keys)
+        data = batch_group.get_data(selected_keys)
+        labels = batch_group.get_labels(selected_keys)
         pickle.dump({
             'ids': range(start_index, start_index + len(selected_keys)),
             'data': data.astype(np.single),
