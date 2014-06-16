@@ -27,7 +27,7 @@ log get_batches_from_arrays \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 pushd $OUTPUT_FOLDER
-tar czvf $TEST_IMAGE_test_arrays.tar.gz test_arrays
+tar czvf ${TEST_IMAGE}_test_arrays.tar.gz test_arrays
 rm -rf test_arrays
 popd
 MAX_TEST_BATCH_INDEX=`get_index_from_batches \
