@@ -2,7 +2,6 @@ CLASSIFIER_NAME=$1
 shift
 IMAGE_NAMES=$@
 
-PIXEL_BOUNDS=13260,2320,14060,2920
 EXAMPLE_DIMENSIONS=12,12
 OVERLAP_DIMENSIONS=6,6
 RANDOM_SEED=crosscompute
@@ -13,10 +12,12 @@ mkdir -p $OUTPUT_FOLDER
 source ../log.sh
 rm $LOG_PATH
 
+TEST_IMAGE=myanmar0
+PIXEL_BOUNDS=13260,2320,14060,2920
 log get_arrays_from_image \
     --target_folder $OUTPUT_FOLDER/test_arrays \
-    --image_path ~/Links/satellite-images/myanmar0 \
-    --points_path ~/Links/building-locations/myanmar0 \
+    --image_path ~/Links/satellite-images/$TEST_IMAGE \
+    --points_path ~/Links/building-locations/$TEST_IMAGE \
     --overlap_dimensions $OVERLAP_DIMENSIONS \
     --tile_dimensions $EXAMPLE_DIMENSIONS \
     --included_pixel_bounds $PIXEL_BOUNDS
@@ -26,7 +27,7 @@ log get_batches_from_arrays \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 pushd $OUTPUT_FOLDER
-tar czvf ${IMAGE_NAME}_test_arrays.tar.gz test_arrays
+tar czvf $TEST_IMAGE_test_arrays.tar.gz test_arrays
 rm -rf test_arrays
 popd
 MAX_TEST_BATCH_INDEX=`get_index_from_batches \
