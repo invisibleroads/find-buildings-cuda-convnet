@@ -66,7 +66,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
             --batch_size $BATCH_SIZE \
             --positive_fraction $POSITIVE_FRACTION
         # pushd $OUTPUT_FOLDER
-        # tar czvf $IMAGE_NAME-examples.tar.gz examples/$IMAGE_NAME
+        # tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
         # rm -rf examples/$IMAGE_NAME
         # popd
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
@@ -79,7 +79,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --array_shape 20,20,3
     for IMAGE_NAME in $IMAGE_NAMES; do
         pushd $OUTPUT_FOLDER
-        tar czvf $IMAGE_NAME-dataset.tar.gz training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
+        tar czvf ${IMAGE_NAME}_training_dataset_${POSITIVE_FRACTION}.tar.gz training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
         rm -rf training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
         popd
     done
