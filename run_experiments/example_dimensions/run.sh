@@ -23,6 +23,7 @@ log get_arrays_from_image \
     --included_pixel_bounds $PIXEL_BOUNDS
 log get_batches_from_arrays \
     --target_folder $OUTPUT_FOLDER/test_batches \
+    --random_seed $RANDOM_SEED \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE
 pushd $OUTPUT_FOLDER
@@ -72,6 +73,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     log get_batches_from_datasets \
         --target_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
+        --random_seed $RANDOM_SEED \
         --dataset_folders $DATASET_FOLDERS \
         --batch_size $BATCH_SIZE
     for IMAGE_NAME in $IMAGE_NAMES; do
