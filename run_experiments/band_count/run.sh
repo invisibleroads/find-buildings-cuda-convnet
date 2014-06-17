@@ -34,6 +34,19 @@ MAX_TEST_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/test_batches`
 MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
+# for IMAGE_NAME in $IMAGE_NAMES; do
+    # echo $IMAGE_NAME | tee -a $LOG_PATH
+    # log get_examples_from_points \
+        # --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
+        # --random_seed $RANDOM_SEED \
+        # --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        # --points_path ~/Links/building-locations/$IMAGE_NAME \
+        # --example_dimensions $EXAMPLE_DIMENSIONS
+    # pushd $OUTPUT_FOLDER
+    # tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
+    # popd
+# done
+
 POSITIVE_FRACTIONS="
 0.11
 0.10
