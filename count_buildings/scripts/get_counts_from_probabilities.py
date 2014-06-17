@@ -38,6 +38,7 @@ def start(argv=sys.argv):
 def run(
         target_folder, probabilities_folder,
         image_path, points_path, actual_count, actual_radius):
+    value_by_key = {}
     probability_packs = get_probability_packs(probabilities_folder)
     image = SatelliteImage(image_path)
     if not points_path and not actual_count and not actual_radius:
@@ -50,6 +51,7 @@ def run(
     elif points_path:
         pixel_bounds = get_pixel_bounds(probabilities_folder)
         actual_count = get_actual_count(image, points_path, pixel_bounds)
+        value_by_key['pixel_bounds'] = pixel_bounds
 
     if actual_radius is not None:
         selected_pixel_radius = min(image.to_pixel_dimensions((
@@ -63,7 +65,6 @@ def run(
     save_pixel_centers(target_path, selected_pixel_centers, image)
     estimated_count = len(selected_pixel_centers)
 
-    value_by_key = {}
     if actual_count is not None:
         value_by_key['percent_error'] = 100 * (
             estimated_count - actual_count
