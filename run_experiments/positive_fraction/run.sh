@@ -98,7 +98,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
     CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME_$POSITIVE_FRACTION
-    rm -rf $CLASSIFIER_PATH
+    mv $CLASSIFIER_PATH /tmp
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
