@@ -107,5 +107,12 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --train-range 0 \
         --test-range 0-$MAX_TEST_BATCH_INDEX \
         -f $CLASSIFIER_PATH
+    mkdir $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION
+    mv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION/probabilities.csv
+    log get_counts_from_probabilities \
+        --target_folder counts_$POSITIVE_FRACTION \
+        --probabilities_folder probabilities_$POSITIVE_FRACTION \
+        --image_path ~/Links/satellite-images/myanmar0 \
+        --points_path ~/Links/building-locations/myanmar0
 
 done
