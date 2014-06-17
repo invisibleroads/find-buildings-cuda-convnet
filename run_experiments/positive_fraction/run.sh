@@ -10,7 +10,7 @@ EXPERIMENT_NAME=`basename $(dirname $(pwd)/$0)`
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source ../log.sh
-rm $LOG_PATH
+LOG_PATH=$OUTPUT_FOLDER/`basename $0`-`date +"%Y%m%d-%H%M%S"`.log
 
 TEST_IMAGE=myanmar0
 PIXEL_BOUNDS=13260,2320,14060,2920

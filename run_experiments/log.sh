@@ -1,4 +1,3 @@
-LOG_PATH=$OUTPUT_FOLDER/run.log
 function log() {
     echo $@ | tee -a $LOG_PATH
     date | tee -a $LOG_PATH
