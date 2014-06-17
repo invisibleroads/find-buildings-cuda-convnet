@@ -41,9 +41,9 @@ def run(
     probability_packs = get_probability_packs(probabilities_folder)
     image = SatelliteImage(image_path)
     if not points_path and not actual_count and not actual_radius:
-        target_path = os.path.join(target_folder, PROBABILITIES_SHP)
         pixel_centers = probability_packs[[
             'pixel_center_x', 'pixel_center_y']].values
+        target_path = os.path.join(target_folder, PROBABILITIES_SHP)
         save_pixel_centers(target_path, pixel_centers, image)
         return dict(
             probability_count=len(pixel_centers))
@@ -51,32 +51,30 @@ def run(
         pixel_bounds = get_pixel_bounds(probabilities_folder)
         actual_count = get_actual_count(image, points_path, pixel_bounds)
 
-    if actual_count is not None:
-        target_path = os.path.join(target_folder, COUNTS_SHP)
-        best_pixel_radius, best_pixel_centers = determine_pixel_radius(
-            probability_packs, actual_count)
-        save_pixel_centers(target_path, best_pixel_centers, image)
-        save_pixel_centers(target_path, best_pixel_centers, image)
-        estimated_count = len(best_pixel_centers)
-        percent_error = 100 * (
-            estimated_count - actual_count
-        ) / float(actual_count) if actual_count else np.inf
-        return dict(
-            percent_error=percent_error,
-            actual_count=actual_count,
-            estimated_count=estimated_count,
-            estimated_radius=min(image.to_dimensions((
-                best_pixel_radius, best_pixel_radius))))
-    else:
-        target_path = os.path.join(target_folder, COUNTS_SHP)
-        actual_pixel_radius = min(image.to_pixel_dimensions((
+    if actual_radius is not None:
+        selected_pixel_radius = min(image.to_pixel_dimensions((
             actual_radius, actual_radius)))
         selected_pixel_centers = get_selected_pixel_centers(
-            probability_packs, actual_pixel_radius)
-        save_pixel_centers(target_path, selected_pixel_centers, image)
-        return dict(
-            estimated_count=len(selected_pixel_centers),
-            actual_pixel_radius=actual_pixel_radius)
+            probability_packs, selected_pixel_radius)
+    elif actual_count is not None:
+        selected_pixel_radius, selected_pixel_centers = determine_pixel_radius(
+            probability_packs, actual_count)
+    target_path = os.path.join(target_folder, COUNTS_SHP)
+    save_pixel_centers(target_path, selected_pixel_centers, image)
+    estimated_count = len(selected_pixel_centers)
+
+    value_by_key = {}
+    if actual_count is not None:
+        value_by_key['percent_error'] = 100 * (
+            estimated_count - actual_count
+        ) / float(actual_count) if actual_count else np.inf
+        value_by_key['actual_count'] = actual_count
+    return dict(
+        estimated_count=estimated_count,
+        selected_radius=min(image.to_dimensions((
+            selected_pixel_radius, selected_pixel_radius))),
+        selected_pixel_radius=selected_pixel_radius,
+        **value_by_key)
 
 
 def get_probability_packs(probabilities_folder):
