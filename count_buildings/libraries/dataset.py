@@ -25,8 +25,11 @@ class BatchGroup(object):
                 h5_index, array_index
             ) for array_index in xrange(len(h5['arrays'])))
         # Use existing keys as filler to make the last batch whole
-        extra_size = len(keys) % batch_size
-        keys += keys[:batch_size - extra_size]
+        while True:
+            extra_size = len(keys) % batch_size
+            if not extra_size:
+                break
+            keys += keys[:batch_size - extra_size]
         shuffle(keys)
         return keys
 
