@@ -126,7 +126,7 @@ def determine_pixel_radius(probability_packs, actual_count):
     while True:
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, pixel_radius)
-        actual_margin = actual_count - len(selected_pixel_centers)
+        actual_margin = len(selected_pixel_centers) - actual_count
         print 'pixel_radius >= %s\tactual_margin = %s' % (
             pixel_radius, actual_margin)
         if abs(best_margin) < abs(actual_margin):
