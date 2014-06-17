@@ -98,6 +98,6 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --probabilities_folder probabilities_$POSITIVE_FRACTION \
         --image_path ~/Links/satellite-images/myanmar0 \
         --points_path ~/Links/building-locations/myanmar0 \
-        --actual_radius 12
+        --actual_radius 10
 
 done
