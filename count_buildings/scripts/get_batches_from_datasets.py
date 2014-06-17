@@ -63,7 +63,7 @@ def save_data(target_folder, batch_group, keys, batch_size):
     start_indices = xrange(0, len(keys), batch_size)
     batch_count = len(start_indices)
     for batch_index, start_index in enumerate(start_indices):
-        if batch_index % 1000 == 0:
+        if batch_index % 10 == 0:
             print '%s / %s' % (batch_index, batch_count - 1)
         selected_keys = keys[start_index:start_index + batch_size]
         data = batch_group.get_data(selected_keys)
