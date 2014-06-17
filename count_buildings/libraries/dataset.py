@@ -24,15 +24,9 @@ class BatchGroup(object):
             keys.extend((
                 h5_index, array_index
             ) for array_index in xrange(len(h5['arrays'])))
-        shuffle(keys)
-        while True:
-            extra_size = len(keys) % batch_size
-            if not extra_size:
-                break
-            extra_keys = keys[:extra_size]
-            extra_labels = self.get_labels(extra_keys)
-            positive_keys = [k for k, l in izip(extra_keys, extra_labels) if l]
-            keys = keys[extra_size:] + positive_keys
+        # Use existing keys as filler to make the last batch whole
+        extra_size = len(keys) % batch_size
+        keys += keys[:batch_size - extra_size]
         shuffle(keys)
         return keys
 
