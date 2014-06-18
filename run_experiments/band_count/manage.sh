@@ -1,1 +1,1 @@
-bash run.sh myanmar myanmar0
+bash run.sh myanmar "myanmar0" 10x10 5x5
