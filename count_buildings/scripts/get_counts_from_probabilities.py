@@ -71,6 +71,7 @@ def run(
         ) / float(actual_count) if actual_count else np.inf
         value_by_key['actual_count'] = actual_count
     return dict(
+        probability_count=len(probability_packs),
         estimated_count=estimated_count,
         selected_radius=min(image.to_dimensions((
             selected_pixel_radius, selected_pixel_radius))),
