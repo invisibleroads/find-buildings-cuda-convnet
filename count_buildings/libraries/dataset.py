@@ -3,7 +3,6 @@ import numpy as np
 import operator
 import os
 from decorator import decorator
-from itertools import izip
 from PIL import Image
 from random import shuffle
 

@@ -8,7 +8,7 @@ OVERLAP_DIMENSIONS=5,5
 RANDOM_SEED=crosscompute
 
 ARRAY_SHAPE=20,20,4
-BATCH_SIZE=10k
+BATCH_SIZE=1k
 TILE_DIMENSIONS=1000,1000
 
 source ../log.sh
@@ -21,6 +21,9 @@ PIXEL_BOUNDS_LIST=`\
         --tile_dimensions $TILE_DIMENSIONS \
         --overlap_dimensions $EXAMPLE_DIMENSIONS \
         --list_pixel_bounds`
+PIXEL_BOUNDS_LIST="
+13260,2320,14060,2920
+"
 for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
     log get_arrays_from_image \
         --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
@@ -33,8 +36,7 @@ for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         --target_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS \
         --random_seed $RANDOM_SEED \
         --arrays_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
-        --batch_size $BATCH_SIZE \
-        --array_shape $ARRAY_SHAPE
+        --batch_size $BATCH_SIZE
 
     MAX_BATCH_INDEX=`get_index_from_batches \
         --batches_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS`
@@ -56,6 +58,10 @@ sed -i '/0,1,pixel_center_x,pixel_center_y/d' \
     ~/Downloads/$IMAGE_NAME/probabilities.csv
 sed -i '1 i 0,1,pixel_center_x,pixel_center_y' \
     ~/Downloads/$IMAGE_NAME/probabilities.csv
+log get_counts_from_probabilities \
+    --target_folder ~/Downloads/$IMAGE_NAME/counts \
+    --probabilities_folder ~/Downloads/$IMAGE_NAME \
+    --image_path ~/Links/satellite-images/$IMAGE_NAME
 log get_counts_from_probabilities \
     --target_folder ~/Downloads/$IMAGE_NAME/counts \
     --probabilities_folder ~/Downloads/$IMAGE_NAME \
