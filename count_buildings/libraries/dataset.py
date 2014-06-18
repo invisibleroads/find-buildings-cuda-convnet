@@ -4,8 +4,8 @@ import operator
 import os
 from decorator import decorator
 from itertools import izip
+from PIL import Image
 from random import shuffle
-from skimage.transform import resize
 
 from . import disk
 
@@ -57,8 +57,8 @@ class BatchGroup(object):
                 selected_height, selected_width = pixel_height, pixel_width
             if band_count < selected_band_count:
                 selected_band_count = band_count
-        self._array_shape = [
-            selected_height, selected_width, selected_band_count]
+        self._array_shape = (
+            selected_height, selected_width, selected_band_count)
         return self._array_shape
 
     @property
@@ -123,10 +123,10 @@ class BatchGroup(object):
         pixel_height, pixel_width, band_count = self.array_shape
         assert band_count <= array.shape[2]
         array = array[:, :, :band_count]
-        if array.shape == self.array_shape:
+        if tuple(array.shape) == tuple(self.array_shape):
             return array
-        assert pixel_height <= array.shape[0] and pixel_width <= array.shape[1]
-        return resize(array, (pixel_height, pixel_width)) * 255
+        return np.array(Image.fromarray(array).resize(
+            (pixel_height, pixel_width), Image.ANTIALIAS))
 
 
 @decorator
