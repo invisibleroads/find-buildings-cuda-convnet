@@ -1,4 +1,4 @@
-bash run.sh myanmar myanmar0
+# bash run.sh myanmar myanmar0
 # bash run.sh uganda uganda0 uganda1
 # bash run.sh mali mali0
 # bash run.sh senegal senegal0

@@ -23,6 +23,7 @@ log get_arrays_from_image \
     --included_pixel_bounds $PIXEL_BOUNDS
 log get_batches_from_arrays \
     --target_folder $OUTPUT_FOLDER/test_batches \
+    --random_seed $RANDOM_SEED \
     --arrays_folder $OUTPUT_FOLDER/test_arrays \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
@@ -34,29 +35,40 @@ MAX_TEST_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/test_batches`
 MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
+for IMAGE_NAME in $IMAGE_NAMES; do
+    echo $IMAGE_NAME | tee -a $LOG_PATH
+    log get_examples_from_points \
+        --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
+        --random_seed $RANDOM_SEED \
+        --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        --points_path ~/Links/building-locations/$IMAGE_NAME \
+        --example_dimensions $EXAMPLE_DIMENSIONS
+    pushd $OUTPUT_FOLDER
+    tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
+    popd
+done
+
 POSITIVE_FRACTIONS="
-0.140
-0.130
-0.120
-0.110
-0.100
-0.090
-0.080
-0.070
-0.060
+0.15
+0.14
+0.13
+0.12
+0.11
+0.10
+0.09
+0.08
+0.07
+0.06
+0.05
+0.04
+0.03
+0.02
 "
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     DATASET_FOLDERS=""
     for IMAGE_NAME in $IMAGE_NAMES; do
         echo $IMAGE_NAME | tee -a $LOG_PATH
-        # log get_examples_from_points \
-            # --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
-            # --random_seed $RANDOM_SEED \
-            # --image_path ~/Links/satellite-images/$IMAGE_NAME \
-            # --points_path ~/Links/building-locations/$IMAGE_NAME \
-            # --example_dimensions $EXAMPLE_DIMENSIONS
-
         log get_dataset_from_examples \
             --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
             --random_seed $RANDOM_SEED \
@@ -64,15 +76,12 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
             --excluded_pixel_bounds $PIXEL_BOUNDS \
             --batch_size $BATCH_SIZE \
             --positive_fraction $POSITIVE_FRACTION
-        # pushd $OUTPUT_FOLDER
-        # tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
-        # rm -rf examples/$IMAGE_NAME
-        # popd
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
     done
 
     log get_batches_from_datasets \
         --target_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
+        --random_seed $RANDOM_SEED \
         --dataset_folders $DATASET_FOLDERS \
         --batch_size $BATCH_SIZE \
         --array_shape 20,20,3
@@ -109,8 +118,8 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     mkdir $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION
     mv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION/probabilities.csv
     log get_counts_from_probabilities \
-        --target_folder counts_$POSITIVE_FRACTION \
-        --probabilities_folder probabilities_$POSITIVE_FRACTION \
+        --target_folder $OUTPUT_FOLDER/counts_$POSITIVE_FRACTION \
+        --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
         --image_path ~/Links/satellite-images/myanmar0 \
         --points_path ~/Links/building-locations/myanmar0 \
         --actual_radius 12

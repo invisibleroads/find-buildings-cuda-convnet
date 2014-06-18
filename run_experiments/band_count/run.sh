@@ -56,6 +56,10 @@ POSITIVE_FRACTIONS="
 0.07
 0.06
 0.05
+0.04
+0.03
+0.02
+0.01
 "
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
@@ -115,6 +119,6 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
         --image_path ~/Links/satellite-images/myanmar0 \
         --points_path ~/Links/building-locations/myanmar0 \
-        --actual_radius 10
+        --actual_radius 18
 
 done
