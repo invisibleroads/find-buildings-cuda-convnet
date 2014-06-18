@@ -1,7 +1,10 @@
 CLASSIFIER_NAME=$1
-IMAGE_NAMES=$2
+TRAINING_IMAGE_NAMES=$2
 EXAMPLE_DIMENSIONS=$3
 OVERLAP_DIMENSIONS=$4
+TEST_IMAGE_NAME=$5
+TEST_PIXEL_BOUNDS=$6
+
 RANDOM_SEED=crosscompute
 BATCH_SIZE=1k
 EXPERIMENT_NAME=`basename $(dirname $(pwd)/$0)`
@@ -10,15 +13,13 @@ mkdir -p $OUTPUT_FOLDER
 source ../log.sh
 LOG_PATH=$OUTPUT_FOLDER/`basename $0`-`date +"%Y%m%d-%H%M%S"`.log
 
-TEST_IMAGE=myanmar0
-PIXEL_BOUNDS=13260,2320,14060,2920
 log get_arrays_from_image \
     --target_folder $OUTPUT_FOLDER/test_arrays \
-    --image_path ~/Links/satellite-images/$TEST_IMAGE \
-    --points_path ~/Links/building-locations/$TEST_IMAGE \
+    --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
+    --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
     --overlap_dimensions $OVERLAP_DIMENSIONS \
     --tile_dimensions $EXAMPLE_DIMENSIONS \
-    --included_pixel_bounds $PIXEL_BOUNDS
+    --included_pixel_bounds $TEST_PIXEL_BOUNDS
 log get_batches_from_arrays \
     --target_folder $OUTPUT_FOLDER/test_batches \
     --random_seed $RANDOM_SEED \
@@ -26,14 +27,14 @@ log get_batches_from_arrays \
     --batch_size $BATCH_SIZE \
     --array_shape 20,20,3
 pushd $OUTPUT_FOLDER
-tar czvf ${TEST_IMAGE}_test_arrays.tar.gz test_arrays
+tar czvf ${TEST_IMAGE_NAME}_test_arrays.tar.gz test_arrays
 rm -rf test_arrays
 popd
 MAX_TEST_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/test_batches`
 MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
-for IMAGE_NAME in $IMAGE_NAMES; do
+for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     echo $IMAGE_NAME | tee -a $LOG_PATH
     log get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
@@ -62,13 +63,13 @@ POSITIVE_FRACTIONS="
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     DATASET_FOLDERS=""
-    for IMAGE_NAME in $IMAGE_NAMES; do
+    for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         echo $IMAGE_NAME | tee -a $LOG_PATH
         log get_dataset_from_examples \
             --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
             --random_seed $RANDOM_SEED \
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
-            --excluded_pixel_bounds $PIXEL_BOUNDS \
+            --excluded_pixel_bounds $TEST_PIXEL_BOUNDS \
             --batch_size $BATCH_SIZE \
             --positive_fraction $POSITIVE_FRACTION
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
@@ -80,7 +81,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --dataset_folders $DATASET_FOLDERS \
         --batch_size $BATCH_SIZE \
         --array_shape 20,20,3
-    for IMAGE_NAME in $IMAGE_NAMES; do
+    for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         pushd $OUTPUT_FOLDER
         tar czvf ${IMAGE_NAME}_training_dataset_${POSITIVE_FRACTION}.tar.gz training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
         rm -rf training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
