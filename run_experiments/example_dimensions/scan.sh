@@ -1,13 +1,13 @@
 CLASSIFIER_PATH=$1
 IMAGE_PATH=$2
 IMAGE_NAME=`basename $IMAGE_PATH`
-POINTS_PATH=$3
+EXAMPLE_DIMENSIONS=$3
+OVERLAP_DIMENSIONS=$4
+ARRAY_SHAPE=$5
+POINTS_PATH=$6
+ACTUAL_RADIUS=$7
 
-EXAMPLE_DIMENSIONS=10,10
-OVERLAP_DIMENSIONS=5,5
 RANDOM_SEED=crosscompute
-
-ARRAY_SHAPE=20,20,4
 BATCH_SIZE=1k
 TILE_DIMENSIONS=1000,1000
 
@@ -21,9 +21,6 @@ PIXEL_BOUNDS_LIST=`\
         --tile_dimensions $TILE_DIMENSIONS \
         --overlap_dimensions $EXAMPLE_DIMENSIONS \
         --list_pixel_bounds`
-PIXEL_BOUNDS_LIST="
-13260,2320,14060,2920
-"
 for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
     log get_arrays_from_image \
         --target_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
@@ -46,10 +43,10 @@ for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         --train-range 0 \
         --test-range 0-$MAX_BATCH_INDEX \
         -f $CLASSIFIER_PATH
-    pushd ~/Downloads
-    rm -rf $IMAGE_NAME/arrays-$PIXEL_BOUNDS
-    rm -rf $IMAGE_NAME/batches-$PIXEL_BOUNDS
-    popd
+    # pushd ~/Downloads
+    # rm -rf $IMAGE_NAME/arrays-$PIXEL_BOUNDS
+    # rm -rf $IMAGE_NAME/batches-$PIXEL_BOUNDS
+    # popd
 done
 
 cat ~/Downloads/$IMAGE_NAME/probabilities-*.csv > \
@@ -67,4 +64,4 @@ log get_counts_from_probabilities \
     --probabilities_folder ~/Downloads/$IMAGE_NAME \
     --image_path ~/Links/satellite-images/$IMAGE_NAME \
     --points_path ~/Links/building-locations/$IMAGE_NAME \
-    --actual_radius 18
+    --actual_radius $ACTUAL_RADIUS
