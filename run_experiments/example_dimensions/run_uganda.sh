@@ -36,7 +36,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     MAX_TRAINING_BATCH_INDEX=`get_index_from_batches \
         --batches_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION`
     MAX_TRAINING_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TRAINING_BATCH_INDEX - 1)
-    log ccn-train options.cfg \
+    log ccn-train options_uganda.cfg \
         --save-path $OUTPUT_FOLDER/classifiers \
         --data-path $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
         --train-range 0-$(($MAX_TRAINING_BATCH_INDEX_MINUS_ONE > 0 ? $MAX_TRAINING_BATCH_INDEX_MINUS_ONE : 0)) \
@@ -46,7 +46,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$CLASSIFIER_NAME_$POSITIVE_FRACTION
     mv $CLASSIFIER_PATH /tmp
     mv $CONVNET_PATH $CLASSIFIER_PATH
-    log ccn-predict options.cfg \
+    log ccn-predict options_uganda.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
         --data-path $OUTPUT_FOLDER/test_batches \
         --train-range 0 \
