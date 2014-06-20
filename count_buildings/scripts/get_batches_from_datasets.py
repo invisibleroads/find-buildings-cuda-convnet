@@ -40,16 +40,13 @@ def run(
 def save_meta(target_folder, batch_group, keys):
     target_path = os.path.join(target_folder, 'batches.meta')
     array_mean = batch_group.array_mean
-    array_sd = batch_group.array_sd
 
     vector_mean = get_vector_from_array(array_mean)
-    vector_sd = get_vector_from_array(array_sd)
     vector_size = vector_mean.size
 
     transform_vector = lambda x: x.reshape(vector_size, 1).astype(np.single)
     pickle.dump({
         'data_mean': transform_vector(vector_mean),
-        'data_sd': transform_vector(vector_sd),
         'label_names': ['', 'building'],
         'num_vis': vector_size,
         'packs': map(tuple, batch_group.get_pixel_centers(keys)),
