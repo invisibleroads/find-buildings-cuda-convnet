@@ -20,9 +20,12 @@ class BatchGroup(object):
     def get_random_keys(self, batch_size):
         keys = []
         for h5_index, h5 in enumerate(self.h5s):
-            keys.extend((
-                h5_index, array_index
-            ) for array_index in xrange(len(h5['arrays'])))
+            arrays = h5['arrays']
+            for array_index in xrange(len(arrays)):
+                # Skip empty arrays
+                if arrays[array_index].max() == 0:
+                    continue
+                keys.append((h5_index, array_index))
         # Use existing keys as filler to make the last batch whole
         while True:
             extra_size = len(keys) % batch_size
