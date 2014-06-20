@@ -35,11 +35,11 @@ def start(argv=sys.argv):
             help='')
         starter.add_argument(
             '--minimum_radius', metavar='METERS',
-            type=float, default=1,
+            type=float,
             help='')
         starter.add_argument(
             '--maximum_radius', metavar='METERS',
-            type=float, default=np.inf,
+            type=float,
             help='')
 
 
@@ -55,29 +55,31 @@ def run(
             'pixel_center_x', 'pixel_center_y']].values
         target_path = os.path.join(target_folder, PROBABILITIES_SHP)
         save_pixel_centers(target_path, pixel_centers, image)
-        return dict(
-            probability_count=len(pixel_centers))
+        return dict(probability_count=len(pixel_centers))
     elif points_path:
         pixel_bounds = get_pixel_bounds(probabilities_folder)
         actual_count = get_actual_count(image, points_path, pixel_bounds)
         value_by_key['pixel_bounds'] = pixel_bounds
 
-    get_pixel_length = lambda x: min(image.to_pixel_dimensions((x, x)))
-    get_length = lambda x: min(image.to_dimensions((x, x)))
     if actual_radius is not None:
         selected_pixel_radius = min(image.to_pixel_dimensions((
             actual_radius, actual_radius)))
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, selected_pixel_radius)
-        value_by_key['selected_radius'] = get_length(selected_pixel_radius)
+        value_by_key['selected_radius'] = image.to_width(
+            selected_pixel_radius)
     elif actual_count is not None:
-        minimum_pixel_radius = get_pixel_length(minimum_radius)
-        maximum_pixel_radius = get_pixel_length(maximum_radius)
+        minimum_pixel_radius = image.to_pixel_width(
+            minimum_radius) if minimum_radius else 1
+        maximum_pixel_radius = image.to_pixel_width(
+            maximum_radius) if maximum_radius else np.inf
         best_pixel_radiuses, selected_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count,
             minimum_pixel_radius, maximum_pixel_radius)
-        value_by_key['minimum_best_radius'] = get_length(min(best_pixel_radiuses))
-        value_by_key['maximum_best_radius'] = get_length(max(best_pixel_radiuses))
+        value_by_key['minimum_best_radius'] = image.to_width(
+            min(best_pixel_radiuses))
+        value_by_key['maximum_best_radius'] = image.to_width(
+            max(best_pixel_radiuses))
     target_path = os.path.join(target_folder, COUNTS_SHP)
     save_pixel_centers(target_path, selected_pixel_centers, image)
     estimated_count = len(selected_pixel_centers)
