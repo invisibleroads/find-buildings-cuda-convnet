@@ -155,6 +155,8 @@ def determine_pixel_radius(
         best_pixel_radiuses.append(pixel_radius)
         if pixel_radius >= maximum_pixel_radius:
             break
+        if len(selected_pixel_centers) <= 1:
+            break
         pixel_radius += 1
     return best_pixel_radiuses, best_pixel_centers
 
