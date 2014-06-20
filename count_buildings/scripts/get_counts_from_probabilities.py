@@ -35,11 +35,11 @@ def start(argv=sys.argv):
             help='')
         starter.add_argument(
             '--minimum_radius', metavar='METERS',
-            type=float,
+            type=float, default=1,
             help='')
         starter.add_argument(
             '--maximum_radius', metavar='METERS',
-            type=float,
+            type=float, default=np.inf,
             help='')
 
 
@@ -71,8 +71,8 @@ def run(
             probability_packs, selected_pixel_radius)
         value_by_key['selected_radius'] = get_length(selected_pixel_radius)
     elif actual_count is not None:
-        minimum_pixel_radius = get_pixel_length(minimum_radius) or 1
-        maximum_pixel_radius = get_pixel_length(maximum_radius) or np.inf
+        minimum_pixel_radius = get_pixel_length(minimum_radius)
+        maximum_pixel_radius = get_pixel_length(maximum_radius)
         best_pixel_radiuses, selected_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count,
             minimum_pixel_radius, maximum_pixel_radius)
