@@ -26,8 +26,8 @@ get_batches_from_datasets =\
     count_buildings.scripts.get_batches_from_datasets:start
 get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
-get_range_from_batches =\
-    count_buildings.scripts.get_range_from_batches:start
+get_index_from_batches =\
+    count_buildings.scripts.get_index_from_batches:start
 get_array_shape_from_batches =\
     count_buildings.scripts.get_array_shape_from_batches:start
 get_predictions_from_arrays =\
