@@ -83,8 +83,9 @@ def adjust_counts(
     dataset_size = positive_count + negative_count
     new_dataset_size = min(
         maximum_dataset_size or dataset_size, dataset_size)
-    if batch_size:
-        new_dataset_size = (new_dataset_size / batch_size) * batch_size
+    # Round up
+    if new_dataset_size % batch_size:
+        new_dataset_size = (new_dataset_size / batch_size + 1) * batch_size
     # Get positive_fraction
     if positive_fraction is None:
         positive_fraction = positive_count / float(new_dataset_size)
