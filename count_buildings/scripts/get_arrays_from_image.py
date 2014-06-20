@@ -3,7 +3,7 @@ import os
 import sys
 from crosscompute.libraries import script
 
-from .get_examples_from_points import get_positive_pixel_centers
+from .get_examples_from_points import get_pixel_centers
 from .get_tiles_from_image import save_image_dimensions
 from ..libraries.kdtree import KDTree
 from ..libraries.satellite_image import ImageScope
@@ -72,7 +72,8 @@ def save_arrays(
         target_folder, image_path, points_path,
         tile_dimensions, overlap_dimensions, included_pixel_bounds):
     image_scope = ImageScope(image_path, tile_dimensions)
-    points_tree = KDTree(get_positive_pixel_centers(points_path, image_scope)) if points_path else None
+    points_tree = KDTree(get_pixel_centers(
+        [points_path], image_scope)) if points_path else None
     tile_pixel_dimensions = image_scope.scope_pixel_dimensions
     tile_packs = list(image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds))
