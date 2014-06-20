@@ -61,25 +61,6 @@ class ZeroMeanDataProvider(GenericDataProvider):
         return data + data_mean
 
 
-class ZeroMeanUnitVarianceDataProvider(ZeroMeanDataProvider):
-
-    def __init__(
-            self, data_dir, batch_range, init_epoch=1, init_batchnum=None,
-            dp_params={}, test=False):
-        ZeroMeanDataProvider.__init__(
-            self, data_dir, batch_range, init_epoch, init_batchnum,
-            dp_params, test)
-        data_sd = self.batch_meta['data_sd']
-        for d in self.data_dic:
-            d['data'] = np.require(
-                d['data'] / data_sd,
-                dtype=np.single, requirements='C')
-
-    def restore_data(self, data):
-        data_sd = self.batch_meta['data_sd']
-        return ZeroMeanDataProvider.restore_data(data) * data_sd
-
-
 class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
 
     def __init__(

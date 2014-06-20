@@ -4,6 +4,7 @@ EXAMPLE_DIMENSIONS=$3
 OVERLAP_DIMENSIONS=$4
 TEST_IMAGE_NAME=$5
 TEST_PIXEL_BOUNDS=$6
+ACTUAL_RADIUS=$7
 
 RANDOM_SEED=crosscompute
 BATCH_SIZE=1k
@@ -114,8 +115,8 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     log get_counts_from_probabilities \
         --target_folder $OUTPUT_FOLDER/counts_$POSITIVE_FRACTION \
         --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
-        --image_path ~/Links/satellite-images/myanmar0 \
-        --points_path ~/Links/building-locations/myanmar0 \
-        --actual_radius 18
+        --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
+        --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
+        --actual_radius $ACTUAL_RADIUS
 
 done
