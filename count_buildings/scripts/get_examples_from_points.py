@@ -22,12 +22,15 @@ def start(argv=sys.argv):
             '--image_path', metavar='PATH', required=True,
             help='satellite image')
         starter.add_argument(
-            '--points_path', metavar='PATH', required=True,
-            help='building locations')
-        starter.add_argument(
-            '--example_dimensions', metavar='WIDTH,HEIGHT',
+            '--example_dimensions', metavar='WIDTH,HEIGHT', required=True,
             type=script.parse_dimensions,
             help='dimensions of extracted example in geographic units')
+        starter.add_argument(
+            '--positive_points_path', metavar='PATH', required=True,
+            help='building locations')
+        starter.add_argument(
+            '--negative_points_path', metavar='PATH',
+            help='non-building locations')
         starter.add_argument(
             '--maximum_positive_count', metavar='INTEGER',
             type=script.parse_size,
@@ -42,12 +45,15 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, image_path, points_path, example_dimensions,
+        target_folder, image_path, example_dimensions,
+        positive_points_path, negative_points_path,
         maximum_positive_count, maximum_negative_count, save_images):
     examples_h5 = get_examples_h5(target_folder)
     image_scope = satellite_image.ImageScope(image_path, example_dimensions)
-    positive_pixel_centers = get_positive_pixel_centers(
-        points_path, image_scope)
+    positive_pixel_centers = get_pixel_centers(
+        positive_points_path, image_scope)
+    negative_pixel_centers = get_pixel_centers(
+        negative_points_path, image_scope)
 
     positive_count = trim_to_minimum(
         len(positive_pixel_centers),
@@ -61,7 +67,8 @@ def run(
         image_scope, positive_pixel_centers, positive_count, examples_h5)
     save_negative_examples(
         save_images and disk.replace_folder(target_folder, 'negatives'),
-        image_scope, positive_pixel_centers, negative_count, examples_h5)
+        image_scope, negative_pixel_centers, negative_count, examples_h5,
+        positive_pixel_centers)
     return dict(
         example_pixel_dimensions=image_scope.scope_pixel_dimensions,
         positive_count=positive_count,
@@ -72,7 +79,9 @@ def get_examples_h5(target_folder):
     return h5py.File(os.path.join(target_folder, EXAMPLES_NAME), 'w')
 
 
-def get_positive_pixel_centers(points_path, image_scope):
+def get_pixel_centers(points_path, image_scope):
+    if not points_path:
+        return []
     points_proj4, centers = load_points(points_path)[:2]
     transform_point = get_transformPoint(points_proj4, image_scope.proj4)
     return filter(image_scope.is_pixel_center, (
@@ -127,16 +136,15 @@ def save_positive_examples(
 
 
 def save_negative_examples(
-        target_folder, image_scope, positive_pixel_centers,
-        negative_count, examples_h5):
+        target_folder, image_scope, negative_pixel_centers,
+        negative_count, examples_h5, positive_pixel_centers):
     pixel_width, pixel_height = image_scope.scope_pixel_dimensions
     negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
             negative_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
-    negative_pixel_centers = []
     negative_pixel_center_iter = yield_negative_pixel_center(
-        image_scope, positive_pixel_centers)
+        image_scope, negative_pixel_centers, positive_pixel_centers)
     for negative_index in xrange(negative_count):
         if negative_index % 1000 == 0:
             print '%s / %s' % (negative_index, negative_count - 1)
@@ -170,7 +178,10 @@ def save_pixel_centers(examples_h5, category, pixel_centers, image_scope):
     pixel_centers.attrs['proj4'] = image_scope.proj4
 
 
-def yield_negative_pixel_center(image_scope, positive_pixel_centers):
+def yield_negative_pixel_center(
+        image_scope, negative_pixel_centers, positive_pixel_centers):
+    for pixel_center in negative_pixel_centers:
+        yield pixel_center
     point_rtree = RTree(positive_pixel_centers)
     while True:
         pixel_center = image_scope.get_random_pixel_center()

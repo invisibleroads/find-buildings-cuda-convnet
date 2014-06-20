@@ -88,11 +88,8 @@ class BatchGroup(object):
         array_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
-            if tuple(arrays.shape[1:]) == tuple(self.array_shape):
-                array_sum += np.sum(arrays, axis=0)
-            else:
-                array_sum += reduce(operator.add, (
-                    self.resize_array(x) for x in arrays))
+            array_sum += reduce(operator.add, (
+                self.resize_array(x) for x in arrays))
         self._array_mean = array_sum / float(self.array_count)
         return self._array_mean
 
