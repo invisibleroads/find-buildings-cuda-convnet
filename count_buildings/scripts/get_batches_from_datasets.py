@@ -26,14 +26,15 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, dataset_folders, batch_size, array_shape):
-    batch_group = BatchGroup(DATASET_NAME, dataset_folders, array_shape)
-    keys = batch_group.get_random_keys(batch_size)
+    batch_group = BatchGroup(
+        DATASET_NAME, dataset_folders, batch_size, array_shape)
+    keys = batch_group.keys
     save_meta(target_folder, batch_group, keys)
-    batch_count = save_data(target_folder, batch_group, keys, batch_size)
+    save_data(target_folder, batch_group, keys, batch_size)
     return dict(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
-        batch_count=batch_count,
+        batch_count=1 + len(keys) / batch_size,
         positive_count=sum(batch_group.get_labels(keys)))
 
 
@@ -71,4 +72,3 @@ def save_data(target_folder, batch_group, keys, batch_size):
             'labels': [1 if x else 0 for x in labels],
         }, open(target_path_template % batch_index, 'w'), protocol=-1)
     print '%s / %s' % (batch_index, batch_count - 1)
-    return batch_count

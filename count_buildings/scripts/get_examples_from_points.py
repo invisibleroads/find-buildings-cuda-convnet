@@ -143,6 +143,7 @@ def save_negative_examples(
         'negative/arrays', shape=(
             negative_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
+    pixel_centers = []
     negative_pixel_center_iter = yield_negative_pixel_center(
         image_scope, negative_pixel_centers, positive_pixel_centers)
     for negative_index in xrange(negative_count):
@@ -151,9 +152,9 @@ def save_negative_examples(
         pixel_center = negative_pixel_center_iter.next()
         array = save_example_array(target_folder, image_scope, pixel_center)
         negative_arrays[negative_index, :, :, :] = array
-        negative_pixel_centers.append(pixel_center)
+        pixel_centers.append(pixel_center)
     save_pixel_centers(
-        examples_h5, 'negative', negative_pixel_centers[:negative_count],
+        examples_h5, 'negative', pixel_centers[:negative_count],
         image_scope)
     print '%s / %s' % (negative_index, negative_count - 1)
 
