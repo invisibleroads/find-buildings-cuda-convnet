@@ -26,11 +26,13 @@ def start(argv=sys.argv):
             type=script.parse_dimensions,
             help='dimensions of extracted example in geographic units')
         starter.add_argument(
-            '--positive_points_path', metavar='PATH', required=True,
-            help='building locations')
+            '--positive_points_paths', metavar='PATH', required=True,
+            nargs='+',
+            help='positive locations')
         starter.add_argument(
-            '--negative_points_path', metavar='PATH',
-            help='non-building locations')
+            '--negative_points_paths', metavar='PATH',
+            nargs='+',
+            help='negative locations')
         starter.add_argument(
             '--maximum_positive_count', metavar='INTEGER',
             type=script.parse_size,
@@ -46,14 +48,14 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, image_path, example_dimensions,
-        positive_points_path, negative_points_path,
+        positive_points_paths, negative_points_paths,
         maximum_positive_count, maximum_negative_count, save_images):
     examples_h5 = get_examples_h5(target_folder)
     image_scope = satellite_image.ImageScope(image_path, example_dimensions)
     positive_pixel_centers = get_pixel_centers(
-        positive_points_path, image_scope)
+        positive_points_paths, image_scope)
     negative_pixel_centers = get_pixel_centers(
-        negative_points_path, image_scope)
+        negative_points_paths, image_scope)
 
     positive_count = trim_to_minimum(
         len(positive_pixel_centers),
@@ -79,13 +81,16 @@ def get_examples_h5(target_folder):
     return h5py.File(os.path.join(target_folder, EXAMPLES_NAME), 'w')
 
 
-def get_pixel_centers(points_path, image_scope):
-    if not points_path:
+def get_pixel_centers(points_paths, image_scope):
+    if not points_paths:
         return []
-    points_proj4, centers = load_points(points_path)[:2]
-    transform_point = get_transformPoint(points_proj4, image_scope.proj4)
-    return filter(image_scope.is_pixel_center, (
-        image_scope.to_pixel_xy(transform_point(*_)) for _ in centers))
+    pixel_centers = []
+    for points_path in points_paths:
+        points_proj4, centers = load_points(points_path)[:2]
+        transform_point = get_transformPoint(points_proj4, image_scope.proj4)
+        pixel_centers.extend(filter(image_scope.is_pixel_center, (
+            image_scope.to_pixel_xy(transform_point(*_)) for _ in centers)))
+    return pixel_centers
 
 
 def trim_to_minimum(actual_maximum, desired_maximum):

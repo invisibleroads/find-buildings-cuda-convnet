@@ -12,7 +12,8 @@ from ..libraries.dataset import get_vector_from_array
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(
-            '--dataset_folders', metavar='FOLDER', required=True, nargs='+',
+            '--dataset_folders', metavar='FOLDER', required=True,
+            nargs='+',
             help='selections of positive and negative examples')
         starter.add_argument(
             '--batch_size', metavar='SIZE', required=True,
