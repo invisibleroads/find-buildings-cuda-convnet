@@ -11,13 +11,19 @@ from . import disk
 
 class BatchGroup(object):
 
-    def __init__(self, h5_name, h5_folders, array_shape=None):
+    def __init__(self, h5_name, h5_folders, batch_size, array_shape=None):
         self.h5s = [
             h5py.File(os.path.join(x, h5_name)) for x in h5_folders]
+        self.batch_size = batch_size
         if array_shape is not None:
             self._array_shape = tuple(array_shape)
 
-    def get_random_keys(self, batch_size):
+    @property
+    def keys(self):
+        try:
+            return self._keys
+        except AttributeError:
+            pass
         keys = []
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
@@ -28,12 +34,13 @@ class BatchGroup(object):
                 keys.append((h5_index, array_index))
         # Use existing keys as filler to make the last batch whole
         while True:
-            extra_size = len(keys) % batch_size
+            extra_size = len(keys) % self.batch_size
             if not extra_size:
                 break
-            keys += keys[:batch_size - extra_size]
+            keys += keys[:self.batch_size - extra_size]
         shuffle(keys)
-        return keys
+        self._keys = keys
+        return self._keys
 
     def get_labels(self, keys):
         labels = []
@@ -69,11 +76,7 @@ class BatchGroup(object):
             return self._array_count
         except AttributeError:
             pass
-        array_count = 0
-        for h5_index, h5 in enumerate(self.h5s):
-            arrays = h5['arrays']
-            array_count += len(arrays)
-        self._array_count = array_count
+        self._array_count = len(self.keys)
         return self._array_count
 
     @property
@@ -85,8 +88,11 @@ class BatchGroup(object):
         array_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']
-            array_sum += reduce(operator.add, (
-                self.resize_array(x) for x in arrays))
+            if tuple(arrays.shape[1:]) == tuple(self.array_shape):
+                array_sum += np.sum(arrays, axis=0)
+            else:
+                array_sum += reduce(operator.add, (
+                    self.resize_array(x) for x in arrays))
         self._array_mean = array_sum / float(self.array_count)
         return self._array_mean
 
