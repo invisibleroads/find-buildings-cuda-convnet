@@ -32,17 +32,31 @@ class Calibration(object):
 
     def to_dimensions(self, (pixel_width, pixel_height)):
         'Get geographic dimensions given pixel dimensions'
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return np.array([
-            abs(pixel_width * g1),
-            abs(pixel_height * g5)])
+            self.to_width(pixel_width),
+            self.to_height(pixel_height)])
 
     def to_pixel_dimensions(self, (width, height)):
         'Get pixel dimensions given geographic dimensions'
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return np.array([
-            calculator.round_integer(width / float(g1)),
-            calculator.round_integer(height / float(g5))])
+            self.to_pixel_width(width),
+            self.to_pixel_height(height)])
+
+    def to_width(self, pixel_width):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return abs(pixel_width * g1),
+
+    def to_pixel_width(self, width):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return calculator.round_integer(width / float(g1))
+
+    def to_height(self, pixel_height):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return abs(pixel_height * g5)
+
+    def to_pixel_height(self, height):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return calculator.round_integer(height / float(g5))
 
 
 class SatelliteImage(Calibration):
