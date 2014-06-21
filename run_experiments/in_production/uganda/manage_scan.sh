@@ -7,5 +7,5 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         ~/Experiments/example_dimensions/uganda/classifiers/0.060 \
         ~/Links/satellite-images/$IMAGE_NAME \
         ~/Links/building-locations/$IMAGE_NAME \
-        12x12 6x6 20x20x3 13.2
+        12x12 6x6 20,20,3 13.2
 done
