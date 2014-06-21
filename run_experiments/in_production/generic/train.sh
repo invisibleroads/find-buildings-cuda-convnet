@@ -7,7 +7,7 @@ TEST_IMAGE_NAME=$6
 TEST_PIXEL_BOUNDS=$7
 
 RANDOM_SEED=crosscompute
-BATCH_SIZE=5k
+BATCH_SIZE=1k
 EXPERIMENT_NAME=in_production
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
@@ -37,7 +37,7 @@ MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
 for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     echo $IMAGE_NAME | tee -a $LOG_PATH
-    ROADS_PATH="~/Links/road-locations/$IMAGE_NAME"
+    ROADS_PATH=~/Links/road-locations/$IMAGE_NAME
     if [ -f $ROADS_PATH ]; then
         ARGUMENTS="--negative_points_paths $ROADS_PATH"
     else
@@ -74,7 +74,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     DATASET_FOLDERS=""
     for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         echo $IMAGE_NAME | tee -a $LOG_PATH
-        if [ "$IMAGE_NAME" == "$TEST_IMAGE_NAME"]; then
+        if [ "$IMAGE_NAME" == "$TEST_IMAGE_NAME" ]; then
             ARGUMENTS="--excluded_pixel_bounds $TEST_PIXEL_BOUNDS"
         else
             ARGUMENTS=""
@@ -117,7 +117,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
     CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$POSITIVE_FRACTION
-    mv $CLASSIFIER_PATH /tmp
+    rm -rf $CLASSIFIER_PATH
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \

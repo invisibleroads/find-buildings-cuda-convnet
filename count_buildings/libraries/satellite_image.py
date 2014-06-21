@@ -44,7 +44,7 @@ class Calibration(object):
 
     def to_width(self, pixel_width):
         g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return abs(pixel_width * g1),
+        return abs(pixel_width * g1)
 
     def to_pixel_width(self, width):
         g0, g1, g2, g3, g4, g5 = self.calibration_pack

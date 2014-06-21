@@ -115,7 +115,6 @@ def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
     random.shuffle(dataset_packs)
     positive_arrays = examples_h5['positive']['arrays']
     positive_pixel_centers = examples_h5['positive']['pixel_centers']
-    import ipdb; ipdb.set_trace()
     arrays = dataset_h5.create_dataset(
         'arrays', shape=(dataset_size,) + positive_arrays.shape[1:],
         dtype=positive_arrays.dtype)

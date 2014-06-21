@@ -7,7 +7,7 @@ TEST_IMAGE_NAME=$6
 TEST_PIXEL_BOUNDS=$7
 
 RANDOM_SEED=crosscompute
-BATCH_SIZE=5k
+BATCH_SIZE=1k
 EXPERIMENT_NAME=in_production
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
@@ -43,7 +43,6 @@ for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     else
         ARGUMENTS=""
     fi
-    echo $ARGUMENTS
     log get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
@@ -51,8 +50,6 @@ for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         --example_dimensions $EXAMPLE_DIMENSIONS \
         --positive_points_paths \
             ~/Links/building-locations/$IMAGE_NAME \
-        --maximum_positive_count 10 \
-        --maximum_negative_count 10 \
         $ARGUMENTS
     pushd $OUTPUT_FOLDER
     tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
@@ -60,7 +57,17 @@ for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
 done
 
 POSITIVE_FRACTIONS="
-0.5
+0.100
+0.090
+0.080
+0.070
+0.060
+0.050
+0.040
+0.030
+0.020
+0.010
+0.009
 "
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
@@ -72,8 +79,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         else
             ARGUMENTS=""
         fi
-        echo $ARGUMENTS
-        get_dataset_from_examples \
+        log get_dataset_from_examples \
             --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
             --random_seed $RANDOM_SEED \
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
@@ -111,7 +117,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
     CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$POSITIVE_FRACTION
-    mv $CLASSIFIER_PATH /tmp
+    rm -rf $CLASSIFIER_PATH
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
