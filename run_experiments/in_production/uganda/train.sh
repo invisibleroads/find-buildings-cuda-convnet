@@ -5,6 +5,7 @@ OVERLAP_DIMENSIONS=$4
 ARRAY_SHAPE=$5
 TEST_IMAGE_NAME=$6
 TEST_PIXEL_BOUNDS=$7
+MINIMUM_RADIUS=$8
 
 RANDOM_SEED=crosscompute
 BATCH_SIZE=1k
@@ -132,6 +133,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --target_folder $OUTPUT_FOLDER/counts_$POSITIVE_FRACTION \
         --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
         --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
-        --points_path ~/Links/building-locations/$TEST_IMAGE_NAME
+        --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
+        --minimum_radius $MINIMUM_RADIUS
 
 done
