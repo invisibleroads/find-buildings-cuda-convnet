@@ -75,18 +75,12 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     DATASET_FOLDERS=""
     for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         echo $IMAGE_NAME | tee -a $LOG_PATH
-        # if [ "$IMAGE_NAME" == "$TEST_IMAGE_NAME" ]; then
-            # ARGUMENTS="--excluded_pixel_bounds $TEST_PIXEL_BOUNDS"
-        # else
-            # ARGUMENTS=""
-        # fi
         log get_dataset_from_examples \
             --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
             --random_seed $RANDOM_SEED \
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
             --batch_size $BATCH_SIZE \
-            --positive_fraction $POSITIVE_FRACTION \
-            $ARGUMENTS
+            --positive_fraction $POSITIVE_FRACTION
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
     done
 
