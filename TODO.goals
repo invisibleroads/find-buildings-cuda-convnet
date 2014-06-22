@@ -1,23 +1,12 @@
-# US/Pacific 6/14/2014
-+ Optimize auc despite class imbalance
-    + Set up class ratio experiment
-        + Modify get_dataset_from_examples
-    _ Modify ConvNet to use roc_auc_score
+# US/Pacific 6/22/2014
 = Improve development classifier
-    Consider being able to cherry pick negative examples
-    Ignore zero arrays
-    = Make speed optimized BatchGroup
-        Exclude standard deviation
-        Compute mean using shortcut
-        = Test whether mean of resized is similar to resized of mean
-    Select country-specific PIXEL_BOUNDS for generic
+    = Consider making coarse classifier to optimize speed
     Use early stopping
         Experiment with early stopping (early_stopping)
     Experiment with weight norm constraint
         Experiment with weight norm constraint (weight_constraint)
     Experiment with autoencoders to pretrain neural network
     Experiment with YUV colorspace
-    + Record execution time
     Experiment with different overlap_dimensions
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]

@@ -1,4 +1,15 @@
-# UTC 06/14/2014
+# UTC 06/22/2014
++ Consider being able to cherry pick negative examples [06/22/2014]
++ Ignore zero arrays [06/22/2014]
++ Make speed optimized BatchGroup [06/22/2014]
++ Exclude standard deviation [06/22/2014]
++ Compute mean using shortcut [06/22/2014]
++ Test whether mean of resized is similar to resized of mean [06/22/2014]
++ Select country-specific PIXEL_BOUNDS for generic [06/22/2014]
++ Optimize auc despite class imbalance [06/22/2014]
++ Set up class ratio experiment [06/22/2014]
++ Modify get_dataset_from_examples [06/22/2014]
++ Record execution time [06/22/2014]
 + Explore new libraries [06/14/2014]
 + Test whether we should set all wc=0 for Cropped [06/12/2014]
 + Backup 210k country classifiers [06/12/2014]
