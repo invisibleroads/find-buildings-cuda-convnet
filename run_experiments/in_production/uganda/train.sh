@@ -13,7 +13,8 @@ EXPERIMENT_NAME=in_production
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source ~/Projects/count-buildings/run_experiments/log.sh
-LOG_PATH=$OUTPUT_FOLDER/`basename $0`-`date +"%Y%m%d-%H%M%S"`.log
+TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
+LOG_PATH=$OUTPUT_FOLDER/`basename $0`-$TIMESTAMP.log
 
 log get_arrays_from_image \
     --target_folder $OUTPUT_FOLDER/test_arrays \
@@ -111,8 +112,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --test-range $MAX_TRAINING_BATCH_INDEX
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
-    CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/$POSITIVE_FRACTION
-    rm -rf $CLASSIFIER_PATH
+    CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/${POSITIVE_FRACTION}_${TIMESTAMP}
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
