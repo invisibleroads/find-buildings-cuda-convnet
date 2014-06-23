@@ -1,5 +1,5 @@
 EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
-CLASSIFIER_NAME=0.01
+CLASSIFIER_NAME=20140623-141718
 IMAGE_NAMES="
 myanmar0
 "
