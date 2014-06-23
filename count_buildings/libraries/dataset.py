@@ -85,6 +85,8 @@ class BatchGroup(object):
             return self._array_mean
         except AttributeError:
             pass
+        if not self.array_count:
+            return np.zeros(self.array_shape)
         array_sum = 0
         for h5_index, h5 in enumerate(self.h5s):
             arrays = h5['arrays']

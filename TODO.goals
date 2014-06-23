@@ -6,7 +6,7 @@ Select production classifier
         Evaluate myanmar-20140622-212724
         Evaluate myanmar-20140623-064851
         Evaluate myanmar-20140623-141718 with dropout
-        Evaluate with dropout and training with last 10k
+        Evaluate myanmar-20140623-1509 with extra training
         Evaluate generic-20140622-0945
         Evaluate generic-20140622-1154
         Evaluate generic-20140622-1630
@@ -16,7 +16,6 @@ Select production classifier
         Evaluate uganda-20140622-0131
         Evaluate uganda-20140623-141751
         Evaluate uganda-20140623-173736 with dropout
-        Evaluate with dropout and training with last 10k
         Evaluate generic-20140622-0945
         Evaluate generic-20140622-1154
         Evaluate generic-20140622-1630
