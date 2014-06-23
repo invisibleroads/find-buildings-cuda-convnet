@@ -1,30 +1,13 @@
-CLASSIFIER_NAME=$1
-TRAINING_IMAGE_NAMES=$2
-EXAMPLE_DIMENSIONS=$3
-OVERLAP_DIMENSIONS=$4
-ARRAY_SHAPE=$5
-TEST_IMAGE_NAME=$6
-TEST_PIXEL_BOUNDS=$7
-MINIMUM_RADIUS=$8
-
-RANDOM_SEED=crosscompute
-BATCH_SIZE=1k
-EXPERIMENT_NAME=in_production
+EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source ~/Projects/count-buildings/run_experiments/log.sh
-TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
 LOG_PATH=$OUTPUT_FOLDER/`basename $0`-$TIMESTAMP.log
 
 MAX_TEST_BATCH_INDEX=`get_index_from_batches \
     --batches_folder $OUTPUT_FOLDER/test_batches`
 MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
-POSITIVE_FRACTIONS="
-0.020
-0.010
-0.009
-"
 for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     MAX_TRAINING_BATCH_INDEX=`get_index_from_batches \
         --batches_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION`
@@ -46,9 +29,6 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         -f $CLASSIFIER_PATH
     mkdir -p $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION
     mv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION/probabilities.csv
-done
-
-for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
     log get_counts_from_probabilities \
         --target_folder $OUTPUT_FOLDER/counts_$POSITIVE_FRACTION \
         --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
