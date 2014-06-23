@@ -35,7 +35,9 @@ for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         --arrays_folder ~/Downloads/$IMAGE_NAME/arrays-$PIXEL_BOUNDS \
         --batch_size $BATCH_SIZE \
         --array_shape $ARRAY_SHAPE
+done
 
+for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
     MAX_BATCH_INDEX=`get_index_from_batches \
         --batches_folder ~/Downloads/$IMAGE_NAME/batches-$PIXEL_BOUNDS`
     log ccn-predict options.cfg \
@@ -44,10 +46,6 @@ for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
         --train-range 0 \
         --test-range 0-$MAX_BATCH_INDEX \
         -f $CLASSIFIER_PATH
-    # pushd ~/Downloads
-    # rm -rf $IMAGE_NAME/arrays-$PIXEL_BOUNDS
-    # rm -rf $IMAGE_NAME/batches-$PIXEL_BOUNDS
-    # popd
 done
 
 cat ~/Downloads/$IMAGE_NAME/probabilities-*.csv > \
