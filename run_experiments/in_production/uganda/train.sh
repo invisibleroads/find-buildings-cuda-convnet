@@ -19,7 +19,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --test-range $MAX_TRAINING_BATCH_INDEX
 
     CONVNET_PATH=`ls -d -t -1 $OUTPUT_FOLDER/classifiers/ConvNet__* | head -n 1`
-    CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/${POSITIVE_FRACTION}_${TIMESTAMP}
+    CLASSIFIER_PATH=$OUTPUT_FOLDER/classifiers/${TIMESTAMP}
     mv $CONVNET_PATH $CLASSIFIER_PATH
     log ccn-predict options.cfg \
         --write-preds $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION.csv \
