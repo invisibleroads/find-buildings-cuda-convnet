@@ -9,7 +9,7 @@ MINIMUM_RADIUS=$8
 
 RANDOM_SEED=crosscompute
 BATCH_SIZE=1k
-EXPERIMENT_NAME=in_production
+EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
 mkdir -p $OUTPUT_FOLDER
 source ~/Projects/count-buildings/run_experiments/log.sh
