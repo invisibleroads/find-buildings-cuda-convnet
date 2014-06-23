@@ -27,9 +27,9 @@ def run(
         ARRAYS_NAME, [arrays_folder], batch_size, array_shape)
     keys = batch_group.keys
     save_meta(target_folder, batch_group, keys)
-    save_data(target_folder, batch_group, keys, batch_size)
+    batch_count = save_data(target_folder, batch_group, keys, batch_size)
     return dict(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
-        batch_count=1 + len(keys) / batch_size,
+        batch_count=batch_count,
         positive_count=sum(batch_group.get_labels(keys)))
