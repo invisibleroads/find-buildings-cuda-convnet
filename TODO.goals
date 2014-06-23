@@ -1,17 +1,34 @@
-# US/Pacific 6/22/2014
-= Improve development classifier
-    = Consider making coarse classifier to optimize speed
-    Use early stopping
-        Experiment with early stopping (early_stopping)
-    Experiment with weight norm constraint
-        Experiment with weight norm constraint (weight_constraint)
+# US/Pacific 6/23/2014
+Select production classifier
+    Evaluate classifiers on myanmar0
+        Evaluate myanmar-20140618-1609
+        Evaluate myanmar-20140622-144958
+        Evaluate myanmar-20140622-212724
+        Evaluate myanmar-20140623-064851
+        Evaluate myanmar-20140623-141718 with dropout
+        Evaluate with dropout and training with last 10k
+        Evaluate generic-20140622-0945
+        Evaluate generic-20140622-1154
+        Evaluate generic-20140622-1630
+        Evaluate generic-20140623-0755
+    Evaluate classifiers on uganda0
+        Evaluate uganda-20140619-0812
+        Evaluate uganda-20140622-0131
+        Evaluate uganda-20140623-141751
+        Evaluate uganda-20140623-173736 with dropout
+        Evaluate with dropout and training with last 10k
+        Evaluate generic-20140622-0945
+        Evaluate generic-20140622-1154
+        Evaluate generic-20140622-1630
+        Evaluate generic-20140623-0755
+Improve development classifier
+    Consider making coarse classifier to optimize speed
+    Experiment with training on test set
     Experiment with autoencoders to pretrain neural network
     Experiment with YUV colorspace
-    Experiment with different overlap_dimensions
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Evaluate new libraries for image recognition [6h]
-    Train classifier with dropconnect
     Train classifier with pylearn2
     Train classifier with theano
     Train classifier with OverFeat

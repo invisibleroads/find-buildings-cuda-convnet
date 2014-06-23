@@ -60,6 +60,7 @@ def save_meta(target_folder, batch_group, keys):
 def save_data(target_folder, batch_group, keys, batch_size):
     target_path_template = os.path.join(target_folder, 'data_batch_%d')
     start_indices = xrange(0, len(keys), batch_size)
+    batch_index = 0
     batch_count = len(start_indices)
     for batch_index, start_index in enumerate(start_indices):
         if batch_index % 10 == 0:
