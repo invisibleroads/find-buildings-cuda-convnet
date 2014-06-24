@@ -26,15 +26,16 @@ sed -i '/0,1,pixel_center_x,pixel_center_y/d' \
     ~/Downloads/$IMAGE_NAME/probabilities.csv
 sed -i '1 i 0,1,pixel_center_x,pixel_center_y' \
     ~/Downloads/$IMAGE_NAME/probabilities.csv
-cp ~/Downloads/$IMAGE_NAME/probabilities.csv \
-    ~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-probabilities.csv
+PROBABILITY_FOLDER=~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-probabilities
+mkdir -p $PROBABILITY_FOLDER
+cp ~/Downloads/$IMAGE_NAME/probabilities.csv $PROBABILITY_FOLDER/probabilities.csv
 log get_counts_from_probabilities \
     --target_folder ~/Downloads/$IMAGE_NAME/counts \
-    --probabilities_folder ~/Downloads/$IMAGE_NAME \
+    --probabilities_folder $PROBABILITY_FOLDER \
     --image_path ~/Links/satellite-images/$IMAGE_NAME
 log get_counts_from_probabilities \
     --target_folder ~/Downloads/$IMAGE_NAME/counts \
-    --probabilities_folder ~/Downloads/$IMAGE_NAME \
+    --probabilities_folder $PROBABILITY_FOLDER \
     --image_path ~/Links/satellite-images/$IMAGE_NAME \
     --points_path ~/Links/building-locations/$IMAGE_NAME \
     --actual_radius $ACTUAL_RADIUS
