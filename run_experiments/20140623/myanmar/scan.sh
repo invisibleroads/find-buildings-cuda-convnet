@@ -37,3 +37,5 @@ log get_counts_from_probabilities \
     --image_path ~/Links/satellite-images/$IMAGE_NAME \
     --points_path ~/Links/building-locations/$IMAGE_NAME \
     --actual_radius $ACTUAL_RADIUS
+cp -r ~/Downloads/$IMAGE_NAME/counts \
+    ~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-counts
