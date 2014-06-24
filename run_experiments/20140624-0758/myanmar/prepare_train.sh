@@ -56,8 +56,7 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
             --random_seed $RANDOM_SEED \
             --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
             --batch_size $BATCH_SIZE \
-            --positive_fraction $POSITIVE_FRACTION \
-            --maximum_dataset_size $MAXIMUM_DATASET_SIZE
+            --positive_fraction $POSITIVE_FRACTION
         DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
     done
 
