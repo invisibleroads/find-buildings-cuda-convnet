@@ -1,5 +1,7 @@
 CLASSIFIER_NAMES="
 myanmar-20140618-1609
+"
+CLASSIFIER_NAMES="
 myanmar-20140622-144958
 myanmar-20140622-212724
 myanmar-20140623-064851
@@ -19,6 +21,7 @@ export BATCH_SIZE=5k
 export TILE_DIMENSIONS=1000,1000
 # bash prepare_scan.sh
 for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
+    export CLASSIFIER_NAME
     export CLASSIFIER_PATH=~/Storage/building-classifiers/$CLASSIFIER_NAME
     bash scan.sh
 done

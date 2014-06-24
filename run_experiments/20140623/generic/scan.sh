@@ -1,5 +1,6 @@
 source ~/Projects/count-buildings/run_experiments/log.sh
 LOG_PATH=~/Downloads/$IMAGE_NAME/`basename $0`-`date +"%Y%m%d-%H%M%S"`.log
+rm ~/Downloads/$IMAGE_NAME/probabilities-*.csv
 
 PIXEL_BOUNDS_LIST=`\
     get_tiles_from_image \
