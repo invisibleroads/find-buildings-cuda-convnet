@@ -95,8 +95,9 @@ def save_tiles(
     tile_packs = list(image_scope.yield_tile_pack(
         overlap_dimensions, included_pixel_bounds, tile_indices))
     tile_count = len(tile_packs)
+    tile_index = 0
     for tile_index, pixel_upper_left in tile_packs:
-        if tile_index % 1000 == 0:
+        if tile_index % 10 == 0:
             print '%s / %s' % (tile_index, tile_count - 1)
         array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
         image_scope.save_image(

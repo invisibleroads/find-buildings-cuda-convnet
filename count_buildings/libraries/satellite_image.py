@@ -88,6 +88,16 @@ class SatelliteImage(Calibration):
             pixel_frame)
         pixel_x, pixel_y = pixel_upper_left
         array = self._image.ReadAsArray(pixel_x, pixel_y, *pixel_dimensions)
+        # If the array is smaller than expected, pad it with zeros
+        if tuple(array.shape) != tuple(pixel_frame[1]):
+            frame_width, frame_height = pixel_frame[1]
+            frame_array = np.zeros(
+                (array.shape[0], frame_height, frame_width), dtype=array.dtype)
+            frame_array[
+                :array.shape[0],
+                :array.shape[1],
+                :array.shape[2]] = array
+            array = frame_array
         return np.rollaxis(array, 0, start=3)
 
     def _clip_pixel_frame(self, (pixel_upper_left, pixel_dimensions)):
@@ -120,10 +130,10 @@ class ImageScope(SatelliteImage):
         try:
             x1, y1, x2, y2 = targeted_pixel_bounds
         except TypeError:
-            x1, y1 = self.minimum_pixel_upper_left
-            x2, y2 = self.maximum_pixel_upper_left
-        min_x, min_y = self.minimum_pixel_upper_left
-        max_x, max_y = self.maximum_pixel_upper_left
+            x1, y1 = 0, 0
+            x2, y2 = self.pixel_dimensions
+        min_x, min_y = 0, 0
+        max_x, max_y = self.pixel_dimensions
         pixel_x_iter = get_covering_xrange(
             x1, x2, interval_pixel_width, min_x, max_x)
         pixel_y_iter = get_covering_xrange(
