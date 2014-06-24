@@ -128,6 +128,7 @@ def save_positive_examples(
         'positive/arrays', shape=(
             positive_count, pixel_height, pixel_width,
             image_scope.band_count), dtype=image_scope.array_dtype)
+    positive_index = 0
     for positive_index in xrange(positive_count):
         if positive_index % 1000 == 0:
             print '%s / %s' % (positive_index, positive_count - 1)

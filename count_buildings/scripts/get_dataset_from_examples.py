@@ -49,8 +49,8 @@ def run(
     dataset_h5 = get_dataset_h5(target_folder)
     save_dataset(
         dataset_h5, examples_h5,
-        positive_indices[:positive_count],
-        negative_indices[:negative_count])
+        fit_indices(positive_indices, positive_count),
+        fit_indices(negative_indices, negative_count))
     example_count = positive_count + negative_count
     return dict(
         dataset_size=script.format_size(example_count),
@@ -96,13 +96,8 @@ def adjust_counts(
         positive_fraction = positive_count / float(dataset_size)
     else:
         positive_fraction = min(1, positive_fraction)
-    # Get new_positive_count
     new_positive_count = int(positive_fraction * new_dataset_size)
-    new_positive_count = min(positive_count, new_positive_count)
-    # Get new_negative_count
-    new_dataset_size = int(new_positive_count / float(positive_fraction))
     new_negative_count = new_dataset_size - new_positive_count
-    # Return
     return new_positive_count, new_negative_count
 
 
@@ -128,6 +123,7 @@ def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
         pixel_centers.attrs[key] = value
     labels = dataset_h5.create_dataset(
         'labels', shape=(dataset_size,), dtype=bool)
+    index = 0
     for index, (inner_index, label) in enumerate(dataset_packs):
         if index % 1000 == 0:
             print '%s / %s' % (index, dataset_size - 1)
@@ -136,3 +132,10 @@ def save_dataset(dataset_h5, examples_h5, positive_indices, negative_indices):
         labels[index] = label
         pixel_centers[index, :] = inner_examples['pixel_centers'][inner_index]
     print '%s / %s' % (index, dataset_size - 1)
+
+
+def fit_indices(indices, count):
+    index_count = len(indices)
+    if index_count >= count:
+        return indices[:count]
+    return np.tile(indices, 1 + count / index_count)[:count]

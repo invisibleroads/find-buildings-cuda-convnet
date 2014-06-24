@@ -80,6 +80,7 @@ def save_arrays(
     array_count = len(tile_packs)
     arrays, pixel_centers, labels = get_target_pack(
         target_folder, image_path, tile_dimensions, array_count)
+    array_index = 0
     for array_index, (tile_index, pixel_upper_left) in enumerate(tile_packs):
         if array_index % 1000 == 0:
             print '%s / %s' % (array_index, array_count - 1)
