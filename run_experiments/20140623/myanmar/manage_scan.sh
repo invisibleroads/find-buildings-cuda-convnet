@@ -5,10 +5,6 @@ myanmar-20140622-212724
 myanmar-20140623-064851
 myanmar-20140623-141718
 myanmar-20140623-1509
-generic-20140622-0945
-generic-20140622-1154
-generic-20140622-1630
-generic-20140623-0755
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 export IMAGE_NAME=myanmar0

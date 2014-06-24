@@ -3,10 +3,6 @@ uganda-20140619-0812
 uganda-20140622-0131
 uganda-20140623-141751
 uganda-20140623-173736
-generic-20140622-0945
-generic-20140622-1154
-generic-20140622-1630
-generic-20140623-0755
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 export IMAGE_NAME=uganda0
