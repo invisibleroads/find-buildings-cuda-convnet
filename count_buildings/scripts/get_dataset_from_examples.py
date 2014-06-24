@@ -61,23 +61,27 @@ def run(
 
 
 def get_indices(examples, maximum_dataset_size, excluded_pixel_bounds):
-    pixel_centers = examples['pixel_centers'][:maximum_dataset_size]
-    if not excluded_pixel_bounds:
-        return range(len(pixel_centers))
-    indices = []
+    eligible_indices = []
     arrays = examples['arrays']
+    for index, array in enumerate(arrays):
+        if array.max() == 0:
+            continue
+        eligible_indices.append(index)
+    if not excluded_pixel_bounds:
+        return eligible_indices
+    included_indices = []
+    pixel_centers = examples['pixel_centers'][:maximum_dataset_size]
     pixel_dimensions = arrays.shape[1:3]
     excluded_pixel_box = box(*excluded_pixel_bounds)
-    for array_index, pixel_center in enumerate(pixel_centers):
+    for index in eligible_indices:
+        pixel_center = pixel_centers[index]
         pixel_bounds = satellite_image.get_pixel_bounds_from_pixel_center(
             pixel_center, pixel_dimensions)
         pixel_box = box(*pixel_bounds)
         if pixel_box.intersects(excluded_pixel_box):
             continue
-        if arrays[array_index].max() == 0:
-            continue
-        indices.append(array_index)
-    return indices
+        included_indices.append(index)
+    return included_indices
 
 
 def adjust_counts(
