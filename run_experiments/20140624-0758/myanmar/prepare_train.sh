@@ -27,13 +27,20 @@ MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
 for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     echo $IMAGE_NAME | tee -a $LOG_PATH
+    ROADS_PATH=~/Links/road-locations/$IMAGE_NAME
+    if [ -f $ROADS_PATH ]; then
+        GET_EXAMPLES_FROM_POINTS="--negative_points_paths $ROADS_PATH"
+    else
+        GET_EXAMPLES_FROM_POINTS=""
+    fi
     log get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
         --example_dimensions $EXAMPLE_DIMENSIONS \
         --positive_points_paths \
-            ~/Links/building-locations/$IMAGE_NAME
+            ~/Links/building-locations/$IMAGE_NAME \
+        $GET_EXAMPLES_FROM_POINTS
     pushd $OUTPUT_FOLDER
     tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
     popd
