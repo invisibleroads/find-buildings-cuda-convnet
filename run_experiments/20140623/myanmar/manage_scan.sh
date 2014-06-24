@@ -1,11 +1,11 @@
 CLASSIFIER_NAMES="
 myanmar-20140618-1609
+myanmar-20140622-144958
+myanmar-20140623-141718
 "
 CLASSIFIER_NAMES="
-myanmar-20140622-144958
 myanmar-20140622-212724
 myanmar-20140623-064851
-myanmar-20140623-141718
 myanmar-20140623-1509
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
