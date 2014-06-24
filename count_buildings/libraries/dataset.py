@@ -30,6 +30,7 @@ class BatchGroup(object):
             for array_index in xrange(len(arrays)):
                 # Skip empty arrays
                 if arrays[array_index].max() == 0:
+                    print '!!! array_index = %s' % array_index
                     continue
                 keys.append((h5_index, array_index))
         # Use existing keys as filler to make the last batch whole
@@ -37,6 +38,8 @@ class BatchGroup(object):
             extra_size = len(keys) % self.batch_size
             if not extra_size:
                 break
+            print '!!! extra_size = %s' % extra_size
+            print '!!! key_count = %s' % len(keys)
             keys += keys[:self.batch_size - extra_size]
         shuffle(keys)
         self._keys = keys
