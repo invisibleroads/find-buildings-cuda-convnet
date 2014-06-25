@@ -29,15 +29,14 @@ sed -i '1 i 0,1,pixel_center_x,pixel_center_y' \
 PROBABILITY_FOLDER=~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-probabilities
 mkdir -p $PROBABILITY_FOLDER
 cp ~/Downloads/$IMAGE_NAME/probabilities.csv $PROBABILITY_FOLDER/probabilities.csv
+COUNTS_FOLDER=~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-counts
 log get_counts_from_probabilities \
-    --target_folder ~/Downloads/$IMAGE_NAME/counts \
+    --target_folder $COUNTS_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
     --image_path ~/Links/satellite-images/$IMAGE_NAME
 log get_counts_from_probabilities \
-    --target_folder ~/Downloads/$IMAGE_NAME/counts \
+    --target_folder ${COUNTS_FOLDER}-radius${ACTUAL_RADIUS} \
     --probabilities_folder $PROBABILITY_FOLDER \
     --image_path ~/Links/satellite-images/$IMAGE_NAME \
     --points_path ~/Links/building-locations/$IMAGE_NAME \
     --actual_radius $ACTUAL_RADIUS
-cp -r ~/Downloads/$IMAGE_NAME/counts \
-    ~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-counts
