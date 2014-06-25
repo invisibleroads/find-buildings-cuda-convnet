@@ -17,9 +17,9 @@ export ACTUAL_RADIUS=9.5
 export RANDOM_SEED=crosscompute
 export BATCH_SIZE=5k
 export TILE_DIMENSIONS=1000,1000
-# bash prepare_scan.sh
-for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
-    export CLASSIFIER_NAME
-    export CLASSIFIER_PATH=~/Storage/building-classifiers/$CLASSIFIER_NAME
-    bash scan.sh
-done
+bash prepare_scan.sh
+# for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
+#    export CLASSIFIER_NAME
+#    export CLASSIFIER_PATH=~/Storage/building-classifiers/$CLASSIFIER_NAME
+#    bash scan.sh
+# done
