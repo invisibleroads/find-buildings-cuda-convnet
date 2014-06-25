@@ -1,10 +1,6 @@
 CLASSIFIER_NAMES="
-uganda-20140619-0812
-"
-CLASSIFIER_NAMES="
-uganda-20140622-0131
-uganda-20140623-141751
-uganda-20140623-173736
+20140624-154605-0.01
+20140624-154605-0.02
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 export IMAGE_NAME=uganda1
@@ -20,6 +16,6 @@ export TILE_DIMENSIONS=1000,1000
 # bash prepare_scan.sh
 for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
     export CLASSIFIER_NAME
-    export CLASSIFIER_PATH=~/Storage/building-classifiers/$CLASSIFIER_NAME
+    export CLASSIFIER_PATH=~/Experiments/20140624-0758/uganda/classifiers/$CLASSIFIER_NAME
     bash scan.sh
 done

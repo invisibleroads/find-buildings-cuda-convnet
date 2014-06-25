@@ -64,7 +64,7 @@ def run(
         estimate_negative_count(image_scope, positive_pixel_centers),
         maximum_negative_count)
     example_count = positive_count + negative_count
-    print 'positive_fraction = %s' % positive_count / float(example_count)
+    print 'positive_fraction = %s' % (positive_count / float(example_count))
 
     save_positive_examples(
         save_images and disk.replace_folder(target_folder, 'positives'),
