@@ -27,43 +27,45 @@ MAX_TEST_BATCH_INDEX_MINUS_ONE=$(expr $MAX_TEST_BATCH_INDEX - 1)
 
 for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     echo $IMAGE_NAME | tee -a $LOG_PATH
+    ROADS_PATH=~/Links/road-locations/$IMAGE_NAME
+    if [ -f $ROADS_PATH ]; then
+        GET_EXAMPLES_FROM_POINTS="--negative_points_paths $ROADS_PATH"
+    else
+        GET_EXAMPLES_FROM_POINTS=""
+    fi
     log get_examples_from_points \
         --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
         --example_dimensions $EXAMPLE_DIMENSIONS \
         --positive_points_paths \
-            ~/Links/building-locations/$IMAGE_NAME
+            ~/Links/building-locations/$IMAGE_NAME \
+        $GET_EXAMPLES_FROM_POINTS
     pushd $OUTPUT_FOLDER
     tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
     popd
 done
 
-for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
-
-    DATASET_FOLDERS=""
-    for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
-        echo $IMAGE_NAME | tee -a $LOG_PATH
-        log get_dataset_from_examples \
-            --target_folder $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME \
-            --random_seed $RANDOM_SEED \
-            --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
-            --batch_size $BATCH_SIZE \
-            --positive_fraction $POSITIVE_FRACTION
-        DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME"
-    done
-
-    log get_batches_from_datasets \
-        --target_folder $OUTPUT_FOLDER/training_batches_$POSITIVE_FRACTION \
+DATASET_FOLDERS=""
+for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
+    echo $IMAGE_NAME | tee -a $LOG_PATH
+    log get_dataset_from_examples \
+        --target_folder $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME \
         --random_seed $RANDOM_SEED \
-        --dataset_folders $DATASET_FOLDERS \
-        --batch_size $BATCH_SIZE \
-        --array_shape $ARRAY_SHAPE
-    for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
-        pushd $OUTPUT_FOLDER
-        tar czvf ${IMAGE_NAME}_training_dataset_${POSITIVE_FRACTION}.tar.gz training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
-        rm -rf training_dataset_$POSITIVE_FRACTION/$IMAGE_NAME
-        popd
-    done
+        --examples_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
+        --batch_size $BATCH_SIZE
+    DATASET_FOLDERS="$DATASET_FOLDERS $OUTPUT_FOLDER/training_dataset/$IMAGE_NAME"
+done
 
+log get_batches_from_datasets \
+    --target_folder $OUTPUT_FOLDER/training_batches \
+    --random_seed $RANDOM_SEED \
+    --dataset_folders $DATASET_FOLDERS \
+    --batch_size $BATCH_SIZE \
+    --array_shape $ARRAY_SHAPE
+for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
+    pushd $OUTPUT_FOLDER
+    tar czvf ${IMAGE_NAME}_training_dataset.tar.gz training_dataset/$IMAGE_NAME
+    rm -rf training_dataset/$IMAGE_NAME
+    popd
 done
