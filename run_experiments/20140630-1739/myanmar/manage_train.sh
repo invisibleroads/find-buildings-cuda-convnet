@@ -1,4 +1,4 @@
-export CLASSIFIER_NAME=myanmar0-4
+export CLASSIFIER_NAME="myanmar0-4"
 export TRAINING_IMAGE_NAMES="
 myanmar0
 myanmar1
