@@ -2,19 +2,19 @@ import numpy as np
 from noccn import ccn
 
 
-LabeledMemoryDataProvider = ccn.data.LabeledMemoryDataProvider
+DataProvider = ccn.data.LabeledDataProvider
 
 
 class CudaConvNetMarker(object):
     pass
 
 
-class GenericDataProvider(LabeledMemoryDataProvider):
+class GenericDataProvider(DataProvider):
 
     def __init__(
             self, data_dir, batch_range, init_epoch=1, init_batchnum=None,
             dp_params={}, test=False):
-        LabeledMemoryDataProvider.__init__(
+        DataProvider.__init__(
             self, data_dir, batch_range, init_epoch, init_batchnum,
             dp_params, test)
         for d in self.data_dic:
@@ -29,7 +29,7 @@ class GenericDataProvider(LabeledMemoryDataProvider):
         return self.batch_meta['num_vis'] if idx == 0 else 1
 
     def get_next_batch(self):
-        batch = LabeledMemoryDataProvider.get_next_batch(self)
+        batch = DataProvider.get_next_batch(self)
         return batch[0], batch[1], [batch[2]['data'], batch[2]['labels']]
 
     def get_plottable_data(self, data):
