@@ -7,6 +7,7 @@ OUTPUT_FOLDER=~/Experiments/get_plottable_data
 # get_arrays_from_image \
     # --target_folder $OUTPUT_FOLDER/arrays \
     # --image_path ~/Links/satellite-images/myanmar0 \
+    # --tile_dimensions 100x200 \
     # --included_pixel_bounds 500,500,2500,1500 
 # python plot_arrays.py
 
@@ -16,7 +17,7 @@ OUTPUT_FOLDER=~/Experiments/get_plottable_data
 # get_batches_from_arrays \
     # --target_folder $OUTPUT_FOLDER/get_batches_from_arrays \
     # --arrays_folder $OUTPUT_FOLDER/arrays \
-    # --batch_size 1k
+    # --batch_size 10
 # python plot_batches_from_arrays.py
 
 COUNTRY_IMAGES="

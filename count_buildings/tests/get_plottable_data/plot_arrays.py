@@ -5,8 +5,8 @@ from matplotlib import pylab as plt
 
 array = arrays_h5['arrays'][0]
 print array.shape
-print arrays_h5['pixel_upper_lefts'][0]
+print arrays_h5['pixel_centers'][0]
 
 plt.imshow(array[:, :, :3] / 255.0)
-plt.imsave('array.jpg', array[:, :, :3])
+# plt.imsave('array.jpg', array[:, :, :3])
 plt.show()

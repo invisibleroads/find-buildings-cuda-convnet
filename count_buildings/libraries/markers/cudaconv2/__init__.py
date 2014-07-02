@@ -11,26 +11,19 @@ class CudaConvNetMarker(object):
 
 class GenericDataProvider(DataProvider):
 
-    def __init__(
-            self, data_dir, batch_range, init_epoch=1, init_batchnum=None,
-            dp_params={}, test=False):
-        DataProvider.__init__(
-            self, data_dir, batch_range, init_epoch, init_batchnum,
-            dp_params, test)
-        for d in self.data_dic:
-            d['data'] = np.require(
-                d['data'],
-                dtype=np.single, requirements='C')
-            d['labels'] = np.require(
-                d['labels'].reshape((1, len(d['labels']))),
-                dtype=np.single, requirements='C')
-
     def get_data_dims(self, idx=0):
         return self.batch_meta['num_vis'] if idx == 0 else 1
 
     def get_next_batch(self):
-        batch = DataProvider.get_next_batch(self)
-        return batch[0], batch[1], [batch[2]['data'], batch[2]['labels']]
+        epoch_index, batch_index, d = DataProvider.get_next_batch(self)
+        data, labels, count = d['data'], d['labels'], len(d['labels'])
+        data = np.require(
+            data,
+            dtype=np.single, requirements='C')
+        labels = np.require(
+            np.array(labels).reshape((1, count)),
+            dtype=np.single, requirements='C')
+        return epoch_index, batch_index, [data, labels]
 
     def get_plottable_data(self, data):
         pixel_height, pixel_width, band_count = self.batch_meta['array_shape']
@@ -51,14 +44,19 @@ class ZeroMeanDataProvider(GenericDataProvider):
         GenericDataProvider.__init__(
             self, data_dir, batch_range, init_epoch, init_batchnum,
             dp_params, test)
-        for d in self.data_dic:
-            d['data'] = np.require(
-                d['data'] - self.batch_meta['data_mean'],
-                dtype=np.single, requirements='C')
+        self.data_mean = self.batch_meta['data_mean']
+
+    def get_next_batch(self):
+        epoch_index, batch_index, [
+            data, labels,
+        ] = GenericDataProvider.get_next_batch(self)
+        data = np.require(
+            data - self.data_mean,
+            dtype=np.single, requirements='C')
+        return epoch_index, batch_index, [data, labels]
 
     def restore_data(self, data):
-        data_mean = self.batch_meta['data_mean']
-        return data + data_mean
+        return data + self.data_mean
 
 
 class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
@@ -80,20 +78,7 @@ class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
         self.num_views = 5 * 2
         self.data_mult = self.num_views if self.multiview else 1
 
-        for d in self.data_dic:
-            d['labels'] = np.require(
-                np.tile(
-                    d['labels'].reshape((1, d['data'].shape[1])),
-                    (1, self.data_mult)),
-                requirements='C')
-
-        self.cropped_data = [
-            np.zeros((
-                self.get_data_dims(),
-                self.data_dic[0]['data'].shape[1] * self.data_mult,
-            ), dtype=np.single) for x in xrange(2)]
-        self.batches_generated = 0
-        self.data_mean = self.batch_meta['data_mean'].T.reshape(
+        self.cropped_data_mean = self.batch_meta['data_mean'].T.reshape(
             (self.band_count, self.pixel_height, self.pixel_width)
         )[
             :,
@@ -102,24 +87,28 @@ class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
         ].reshape((self.get_data_dims(), 1))
 
     def get_next_batch(self):
-        epoch, batchnum, (
+        epoch_index, batch_index, [
             data, labels,
-        ) = ZeroMeanDataProvider.get_next_batch(self)
-
-        cropped = self.cropped_data[self.batches_generated % 2]
-        self.__trim_borders(data, cropped)
-        cropped -= self.data_mean
-        self.batches_generated += 1
-        return epoch, batchnum, [cropped, labels]
+        ] = ZeroMeanDataProvider.get_next_batch(self)
+        cropped_data = np.require(
+            np.zeros((self.get_data_dims(), data.shape[1] * self.data_mult)),
+            dtype=np.single, requirements='C')
+        self.__trim_borders(data, cropped_data)
+        labels = np.require(
+            np.tile(labels, (1, self.data_mult)),
+            dtype=np.single, requirements='C')
+        return epoch_index, batch_index, [cropped_data, labels]
 
     def get_data_dims(self, idx=0):
         inner_area = self.inner_height * self.inner_width
         return inner_area * self.band_count if idx == 0 else 1
 
     def get_plottable_data(self, data):
-        return np.require((data + self.data_mean).T.reshape(
-            data.shape[1],
-            self.band_count, self.inner_height, self.inner_width,
+        band_count = self.band_count
+        pixel_height, pixel_width = self.inner_height, self.inner_width
+        example_count = data.shape[1]
+        return np.require(self.restore_data(data).T.reshape(
+            example_count, band_count, pixel_height, pixel_width
         ).swapaxes(1, 3).swapaxes(1, 2) / 255.0, dtype=np.single)
 
     def __trim_borders(self, x, target):
@@ -147,13 +136,14 @@ class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
                     target[
                         :,
                         i * x.shape[1]:(i + 1) * x.shape[1],
-                    ] = pic.reshape((self.get_data_dims(), x.shape[1]))
+                    ] = pic.reshape((
+                        self.get_data_dims(), x.shape[1]))
                     target[
                         :,
                         (self.num_views / 2 + i) * x.shape[1]:(
                             self.num_views / 2 + i + 1) * x.shape[1],
-                    ] = pic[:, :, ::-1, :].reshape(
-                        (self.get_data_dims(), x.shape[1]))
+                    ] = pic[:, :, ::-1, :].reshape((
+                        self.get_data_dims(), x.shape[1]))
             else:
                 pic = y[
                     :,
@@ -171,3 +161,6 @@ class CroppedZeroMeanDataProvider(ZeroMeanDataProvider):
                 if np.random.randint(2) == 0:  # flip with 50% probability
                     pic = pic[:, :, ::-1]
                 target[:, c] = pic.reshape((self.get_data_dims(),))
+
+    def restore_data(self, cropped_data):
+        return cropped_data + self.cropped_data_mean
