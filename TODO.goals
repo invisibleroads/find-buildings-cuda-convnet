@@ -1,26 +1,7 @@
-# US/Pacific 6/23/2014
-Select production classifier
-    Evaluate classifiers on myanmar0
-        Evaluate myanmar-20140618-1609
-        Evaluate myanmar-20140622-144958
-        Evaluate myanmar-20140622-212724
-        Evaluate myanmar-20140623-064851
-        Evaluate myanmar-20140623-141718 with dropout
-        Evaluate myanmar-20140623-1509 with extra training
-        Evaluate generic-20140622-0945
-        Evaluate generic-20140622-1154
-        Evaluate generic-20140622-1630
-        Evaluate generic-20140623-0755
-    Evaluate classifiers on uganda0
-        Evaluate uganda-20140619-0812
-        Evaluate uganda-20140622-0131
-        Evaluate uganda-20140623-141751
-        Evaluate uganda-20140623-173736 with dropout
-        Evaluate generic-20140622-0945
-        Evaluate generic-20140622-1154
-        Evaluate generic-20140622-1630
-        Evaluate generic-20140623-0755
+# US/Pacific 7/4/2014
+= Select production classifier
 Improve development classifier
+    Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
     Experiment with training on test set
     Experiment with autoencoders to pretrain neural network

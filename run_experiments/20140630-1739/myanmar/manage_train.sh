@@ -15,5 +15,5 @@ export MINIMUM_RADIUS=8
 export RANDOM_SEED=crosscompute
 export BATCH_SIZE=10k
 export TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
-# bash prepare_train.sh
+bash prepare_train.sh
 bash train.sh

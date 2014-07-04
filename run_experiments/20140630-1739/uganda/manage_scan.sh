@@ -12,9 +12,9 @@ export MINIMUM_RADIUS=9
 export RANDOM_SEED=crosscompute
 export BATCH_SIZE=5k
 export TILE_DIMENSIONS=1000,1000
-# bash prepare_scan.sh
+bash prepare_scan.sh
 for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
     export CLASSIFIER_NAME
-    export CLASSIFIER_PATH=~/Experiments/20140624-0758/uganda/classifiers/$CLASSIFIER_NAME
+    export CLASSIFIER_PATH=~/Experiments/20140630-1739/myanmar/classifiers/$CLASSIFIER_NAME
     bash scan.sh
 done
