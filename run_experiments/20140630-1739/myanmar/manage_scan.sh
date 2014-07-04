@@ -1,5 +1,6 @@
+OUTPUT_NAME="myanmar0-4"
 CLASSIFIER_NAMES="
-20140630-1739
+20140702-034531
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 export IMAGE_NAME=myanmar0
@@ -15,6 +16,6 @@ export TILE_DIMENSIONS=1000,1000
 bash prepare_scan.sh
 for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
     export CLASSIFIER_NAME
-    export CLASSIFIER_PATH=~/Experiments/20140630-1739/myanmar/classifiers/$CLASSIFIER_NAME
+    export CLASSIFIER_PATH=~/Experiments/20140630-1739/$OUTPUT_NAME/classifiers/$CLASSIFIER_NAME
     bash scan.sh
 done

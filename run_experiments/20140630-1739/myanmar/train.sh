@@ -1,5 +1,5 @@
 EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
-OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
+OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$OUTPUT_NAME
 mkdir -p $OUTPUT_FOLDER
 source ~/Projects/count-buildings/run_experiments/log.sh
 LOG_PATH=$OUTPUT_FOLDER/`basename $0`-$TIMESTAMP.log
