@@ -1,6 +1,7 @@
-export CLASSIFIER_NAME="myanmar0"
+export OUTPUT_NAME="myanmar0-1"
 export TRAINING_IMAGE_NAMES="
 myanmar0
+myanmar1
 "
 export EXAMPLE_DIMENSIONS=16x16
 export OVERLAP_DIMENSIONS=8x8

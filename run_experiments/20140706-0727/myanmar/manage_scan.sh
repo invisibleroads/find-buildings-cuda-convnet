@@ -2,7 +2,6 @@ CLASSIFIER_NAMES="
 20140705-031924
 "
 IMAGE_NAMES="
-myanmar1
 myanmar2
 myanmar3
 myanmar4
@@ -22,7 +21,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     bash prepare_scan.sh
     for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
         export CLASSIFIER_NAME
-        export CLASSIFIER_PATH=~/Experiments/20140624-0758/myanmar0/classifiers/$CLASSIFIER_NAME
+        export CLASSIFIER_PATH=~/Experiments/20140706-0727/myanmar0-1/classifiers/$CLASSIFIER_NAME
         bash scan.sh
     done
     rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
