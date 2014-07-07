@@ -1,5 +1,5 @@
 EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
-OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$CLASSIFIER_NAME
+OUTPUT_FOLDER=~/Experiments/$EXPERIMENT_NAME/$OUTPUT_NAME
 mkdir -p $OUTPUT_FOLDER
 source ~/Projects/count-buildings/run_experiments/log.sh
 LOG_PATH=$OUTPUT_FOLDER/`basename $0`-$TIMESTAMP.log
@@ -33,16 +33,16 @@ for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
     else
         GET_EXAMPLES_FROM_POINTS=""
     fi
-    log get_examples_from_points \
-        --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
-        --random_seed $RANDOM_SEED \
-        --image_path ~/Links/satellite-images/$IMAGE_NAME \
-        --example_dimensions $EXAMPLE_DIMENSIONS \
-        --positive_points_paths \
-            ~/Links/building-locations/$IMAGE_NAME \
-        $GET_EXAMPLES_FROM_POINTS
+    # log get_examples_from_points \
+        # --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
+        # --random_seed $RANDOM_SEED \
+        # --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        # --example_dimensions $EXAMPLE_DIMENSIONS \
+        # --positive_points_paths \
+            # ~/Links/building-locations/$IMAGE_NAME \
+        # $GET_EXAMPLES_FROM_POINTS
     pushd $OUTPUT_FOLDER
-    tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
+    # tar czvf ${IMAGE_NAME}_examples.tar.gz examples/$IMAGE_NAME
     popd
 done
 
