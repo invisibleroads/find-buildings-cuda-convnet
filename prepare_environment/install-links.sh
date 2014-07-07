@@ -35,3 +35,40 @@ ln -s $OUTPUT_FOLDER/Uganda/2003/Features/Buildings/RuhiiraE.shp $BUILDING_LOCAT
 
 ln -s $OUTPUT_FOLDER/Uganda/2007/Images/OrthorectifiedPanSharpened/OrthoPCSharpRuhiiraMV.tif $SATELLITE_IMAGES/uganda1
 ln -s $OUTPUT_FOLDER/Uganda/2007/Features/Buildings/RuhiiraMV.shp $BUILDING_LOCATIONS/uganda1
+
+IMAGE_NAMES="
+ethiopia0
+mali0
+senegal0
+tanzania0
+uganda0
+uganda1
+"
+for IMAGE_NAME in $IMAGE_NAMES; do
+    get_examples_from_points \
+        --target_folder /tmp/$IMAGE_NAME \
+        --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        --example_dimensions 19x19 \
+        --positive_points_paths ~/Links/building-locations/$IMAGE_NAME \
+        --maximum_positive_count 10 \
+        --maximum_negative_count 10 \
+        --save_images
+done
+
+IMAGE_NAMES="
+myanmar0
+myanmar1
+myanmar2
+myanmar3
+myanmar4
+"
+for IMAGE_NAME in $IMAGE_NAMES; do
+    get_examples_from_points \
+        --target_folder /tmp/$IMAGE_NAME \
+        --image_path ~/Links/satellite-images/$IMAGE_NAME \
+        --example_dimensions 16x16 \
+        --positive_points_paths ~/Links/building-locations/$IMAGE_NAME \
+        --maximum_positive_count 10 \
+        --maximum_negative_count 10 \
+        --save_images
+done
