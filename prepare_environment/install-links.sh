@@ -1,6 +1,7 @@
 OUTPUT_FOLDER=~/Storage/business-datasets/ColumbiaUniversity
 SATELLITE_IMAGES=~/Links/satellite-images
 BUILDING_LOCATIONS=~/Links/building-locations
+mkdir -p $SATELLITE_IMAGES $BUILDING_LOCATIONS
 
 ln -s $OUTPUT_FOLDER/Ethiopia/2005/Images/OrthorectifiedPanSharpened/KoraroQB2005.tif $SATELLITE_IMAGES/ethiopia0
 ln -s $OUTPUT_FOLDER/Ethiopia/2005/Features/Buildings/KoraroQB2005Roofs.shp $BUILDING_LOCATIONS/ethiopia0

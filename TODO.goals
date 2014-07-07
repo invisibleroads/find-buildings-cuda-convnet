@@ -1,6 +1,7 @@
 # US/Pacific 7/4/2014
 = Select production classifier
 Improve development classifier
+    Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
     Experiment with training on test set
