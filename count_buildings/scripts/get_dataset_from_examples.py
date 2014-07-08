@@ -25,7 +25,7 @@ def start(argv=sys.argv):
         starter.add_argument(
             '--positive_fraction', metavar='FRACTION',
             type=float,
-            help='-1 natural ratio; 0.5 half positive half negative')
+            help='set fraction of positive to negative examples')
         starter.add_argument(
             '--excluded_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
@@ -96,12 +96,10 @@ def adjust_counts(
         new_dataset_size = (new_dataset_size / batch_size + 1) * batch_size
     # Get positive_fraction
     if positive_fraction is None:
-        positive_fraction = positive_count / float(new_dataset_size)
-    elif positive_fraction < 0:
         positive_fraction = positive_count / float(dataset_size)
     else:
         positive_fraction = min(1, positive_fraction)
-    new_positive_count = int(positive_fraction * new_dataset_size)
+    new_positive_count = int(round(positive_fraction * new_dataset_size))
     new_negative_count = new_dataset_size - new_positive_count
     return new_positive_count, new_negative_count
 
