@@ -1,4 +1,5 @@
 import h5py
+import numpy as np
 import os
 import sys
 from crosscompute.libraries import script
@@ -96,7 +97,7 @@ def save_arrays(
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(
             overlap_dimensions),
         array_count=array_count,
-        positive_fraction=sum(labels) / float(array_count))
+        positive_fraction=np.sum(labels) / float(array_count))
 
 
 def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):

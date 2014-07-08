@@ -1,3 +1,4 @@
+import numpy as np
 import sys
 from crosscompute.libraries import script
 
@@ -32,4 +33,4 @@ def run(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
         batch_count=batch_count,
-        positive_count=sum(batch_group.get_labels(keys)))
+        positive_count=np.sum(batch_group.get_labels(keys)))

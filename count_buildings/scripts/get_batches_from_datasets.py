@@ -36,7 +36,7 @@ def run(
         array_count=batch_group.array_count,
         array_shape=batch_group.array_shape,
         batch_count=batch_count,
-        positive_count=sum(batch_group.get_labels(keys)))
+        positive_count=np.sum(batch_group.get_labels(keys)))
 
 
 def save_meta(target_folder, batch_group, keys):

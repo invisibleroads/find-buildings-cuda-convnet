@@ -1,6 +1,12 @@
-# US/Pacific 7/4/2014
-= Select production classifier
+# US/Pacific 7/7/2014
+= Deploy web app
+    = Write dummy web app for uploading a request and downloading the response
+        = Finish crosscompute-scaffolds
+    Write dummy queue that takes a request and returns a response
+    Write dummy processor that takes a request and returns a response
+    Replace dummy proccesor with real processor
 Improve development classifier
+    Investigate why the positive count is 7027 instead of 7028
     Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
@@ -9,14 +15,9 @@ Improve development classifier
     Experiment with YUV colorspace
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
-Evaluate new libraries for image recognition [6h]
-    Train classifier with pylearn2
-    Train classifier with theano
-    Train classifier with OverFeat
 Make scripts easier to use
     Let options.cfg read environment variables
 Send access credentials to all tools, valid with no membership fee for one year
-    Experiment with boto
     Add payment
     Experiment with message queues
     Mask paths in run.pkl
