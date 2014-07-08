@@ -3,7 +3,6 @@ from matplotlib import pylab as plt
 from count_buildings.libraries.markers import cudaconv2
 
 
-import ipdb; ipdb.set_trace()
 DataProvider = cudaconv2.CroppedZeroMeanDataProvider
 
 dp = DataProvider(
