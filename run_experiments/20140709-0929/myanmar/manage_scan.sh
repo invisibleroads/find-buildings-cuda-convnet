@@ -24,5 +24,5 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         bash scan.sh
     done
     rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
-    rm -rf ~/Downloads/$IMAGE_NAME/batches-*
+    # rm -rf ~/Downloads/$IMAGE_NAME/batches-*
 done
