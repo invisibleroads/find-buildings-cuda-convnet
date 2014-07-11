@@ -7,20 +7,8 @@ export MINIMUM_RADIUS=8
 export RANDOM_SEED=crosscompute
 export BATCH_SIZE=10k
 
-export OUTPUT_NAME="myanmar0-1"
-export TRAINING_IMAGE_NAMES="myanmar0 myanmar1"
-export TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
-bash prepare_train.sh
-bash train.sh
-
-export OUTPUT_NAME="myanmar0-2"
-export TRAINING_IMAGE_NAMES="myanmar0 myanmar1 myanmar2"
-export TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
-bash prepare_train.sh
-bash train.sh
-
-export OUTPUT_NAME="myanmar0-3"
-export TRAINING_IMAGE_NAMES="myanmar0 myanmar1 myanmar2 myanmar3"
+export OUTPUT_NAME="myanmar0-4"
+export TRAINING_IMAGE_NAMES="myanmar0 myanmar1 myanmar2 myanmar3 myanmar4"
 export TIMESTAMP=`date +"%Y%m%d-%H%M%S"`
 bash prepare_train.sh
 bash train.sh
