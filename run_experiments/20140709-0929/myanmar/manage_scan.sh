@@ -1,9 +1,15 @@
-export OUTPUT_NAME="myanmar0-4"
-CLASSIFIER_NAMES="
-20140706-154132
+CLASSIFIER_PATHS="
+~/Experiments/20140707-1149/myanmar0-1/classifiers/20140709-172831
+~/Experiments/20140707-1149/myanmar0-2/classifiers/20140710-165500
+~/Experiments/20140707-1149/myanmar0-3/classifiers/20140711-031019
+~/Experiments/20140707-1149/myanmar0-4/classifiers/20140708-001953
 "
 IMAGE_NAMES="
 myanmar0
+myanmar1
+myanmar2
+myanmar3
+myanmar4
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
 export EXAMPLE_DIMENSIONS=16x16
@@ -17,12 +23,12 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     export IMAGE_NAME
     export IMAGE_PATH=~/Links/satellite-images/$IMAGE_NAME
     export POINTS_PATH=~/Links/building-locations/$IMAGE_NAME
-    bash prepare_scan.sh
-    for CLASSIFIER_NAME in $CLASSIFIER_NAMES; do
-        export CLASSIFIER_NAME
-        export CLASSIFIER_PATH=~/Experiments/$EXPERIMENT_NAME/myanmar0-4/classifiers/$CLASSIFIER_NAME
+    if [ ! -f ~/Downloads/$IMAGE_NAME/batches-0,0,2000,2000 ]; then
+        bash prepare_scan.sh
+        rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
+    fi
+    for CLASSIFIER_PATH in $CLASSIFIER_PATHS; do
+        export CLASSIFIER_NAME=`basename $CLASSIFIER_PATH`
         bash scan.sh
     done
-    rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
-    # rm -rf ~/Downloads/$IMAGE_NAME/batches-*
 done
