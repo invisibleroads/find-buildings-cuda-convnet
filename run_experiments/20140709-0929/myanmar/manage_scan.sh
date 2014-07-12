@@ -28,6 +28,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
         rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
     fi
     for CLASSIFIER_PATH in $CLASSIFIER_PATHS; do
+        export CLASSIFIER_PATH
         export CLASSIFIER_NAME=`basename $CLASSIFIER_PATH`
         bash scan.sh
     done
