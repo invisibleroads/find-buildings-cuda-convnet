@@ -1,8 +1,8 @@
 CLASSIFIER_PATHS="
-~/Experiments/20140707-1149/myanmar0-1/classifiers/20140709-172831
-~/Experiments/20140707-1149/myanmar0-2/classifiers/20140710-165500
-~/Experiments/20140707-1149/myanmar0-3/classifiers/20140711-031019
-~/Experiments/20140707-1149/myanmar0-4/classifiers/20140708-001953
+/home/ec2-user/Experiments/20140707-1149/myanmar0-1/classifiers/20140709-172831
+/home/ec2-user/Experiments/20140707-1149/myanmar0-2/classifiers/20140710-165500
+/home/ec2-user/Experiments/20140707-1149/myanmar0-3/classifiers/20140711-031019
+/home/ec2-user/Experiments/20140707-1149/myanmar0-4/classifiers/20140708-001953
 "
 IMAGE_NAMES="
 myanmar0
@@ -23,7 +23,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     export IMAGE_NAME
     export IMAGE_PATH=~/Links/satellite-images/$IMAGE_NAME
     export POINTS_PATH=~/Links/building-locations/$IMAGE_NAME
-    if [ ! -f ~/Downloads/$IMAGE_NAME/batches-0,0,2000,2000 ]; then
+    if [ ! -d ~/Downloads/$IMAGE_NAME/batches-0,0,2000,2000 ]; then
         bash prepare_scan.sh
         rm -rf ~/Downloads/$IMAGE_NAME/arrays-*
     fi
