@@ -1,4 +1,5 @@
 CLASSIFIER_PATHS="
+/home/ec2-user/Experiments/20140709-0929/uganda0-1/classifiers/20140715-061930
 "
 IMAGE_NAMES="
 uganda0
