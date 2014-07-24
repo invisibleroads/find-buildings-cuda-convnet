@@ -5,7 +5,7 @@ import sys
 from crosscompute.libraries import script
 
 from .get_examples_from_points import get_pixel_centers
-from .get_tiles_from_image import save_image_dimensions
+from .get_tiles_from_image import save_image_properties
 from ..libraries.kdtree import KDTree
 from ..libraries.satellite_image import ImageScope
 from ..libraries.satellite_image import SatelliteImage
@@ -43,7 +43,7 @@ def run(
         tile_dimensions, overlap_dimensions,
         included_pixel_bounds):
     if tile_dimensions is None and included_pixel_bounds is None:
-        return save_image_dimensions(image_path)
+        return save_image_properties(image_path)
     elif tile_dimensions is None:
         return save_pixel_bounds(
             target_folder, image_path, included_pixel_bounds)

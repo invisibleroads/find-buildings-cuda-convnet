@@ -36,7 +36,7 @@ def run(
         tile_dimensions, overlap_dimensions, tile_indices,
         included_pixel_bounds, list_pixel_bounds):
     if tile_dimensions is None and included_pixel_bounds is None:
-        return save_image_dimensions(image_path)
+        return save_image_properties(image_path)
     elif tile_dimensions is None:
         return save_pixel_bounds(
             target_folder, image_path, included_pixel_bounds)
@@ -50,7 +50,7 @@ def run(
         included_pixel_bounds, list_pixel_bounds)
 
 
-def save_image_dimensions(image_path):
+def save_image_properties(image_path):
     image = satellite_image.SatelliteImage(image_path)
     return dict(
         image_dimensions=image.to_dimensions(image.pixel_dimensions),
