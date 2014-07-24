@@ -33,10 +33,9 @@ COUNTS_FOLDER=~/Downloads/$IMAGE_NAME/${IMAGE_NAME}-${CLASSIFIER_NAME}-counts
 log get_counts_from_probabilities \
     --target_folder $COUNTS_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
-    --image_path ~/Links/satellite-images/$IMAGE_NAME
+    --image_path $IMAGE_PATH
 log get_counts_from_probabilities \
     --target_folder $TARGET_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
-    --image_path ~/Links/satellite-images/$IMAGE_NAME \
-    --points_path ~/Links/building-locations/$IMAGE_NAME \
+    --image_path $IMAGE_PATH \
     --actual_radius $ACTUAL_RADIUS
