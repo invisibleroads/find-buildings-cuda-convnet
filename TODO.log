@@ -1,4 +1,7 @@
-# UTC 07/07/2014
+# UTC 07/23/2014
++ Investigate why the positive count is 7027 instead of 7028 [07/23/2014]
++ Prepare small test geotiff [07/23/2014]
++ Finish crosscompute-scaffolds [07/23/2014]
 + Select production classifier [07/07/2014]
 + Experiment with boto [07/07/2014]
 + Evaluate classifiers on myanmar0 [07/04/2014]
