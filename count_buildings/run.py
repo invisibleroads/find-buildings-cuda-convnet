@@ -32,16 +32,27 @@ def schedule(target_result_id, classifier_name, image_url):
 
 
 def run(target_folder, classifier_name, image_url):
-    # classifier_path = join(CLASSIFIER_FOLDER, classifier_name)
+    classifier_path = join(CLASSIFIER_FOLDER, classifier_name)
     image_path = download(image_url)
     image_name = basename(image_url)
     image_properties = save_image_properties(image_path)
+
+    import subprocess
+    subprocess.call([
+        'bash',
+        '/home/ec2-user/Projects/count-buildings/run_experiments/20140724-1114/myanmar/manage_scan.sh',
+        target_folder, classifier_path, image_path])
+
+    import pickle
+    run_properties = pickle.load(open(join(target_folder, 'run.pkl')))
+    estimated_count = run_properties['variables']['estimated_count']
+
     return dict(
-        columns=['Dimensions', 'Bands'],
+        columns=['Dimensions', 'Bands', 'Count'],
         rows=[[
-            image_name,
             '%ix%im' % tuple(image_properties['image_dimensions']),
-            image_properties['image_band_count']]])
+            image_properties['image_band_count'],
+            estimated_count]])
 
 
 def download(url):

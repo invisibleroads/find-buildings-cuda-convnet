@@ -1,3 +1,5 @@
+cd ~/Projects/count-buildings/run_experiments/20140724-1114/myanmar/
+
 export TARGET_FOLDER=$1
 CLASSIFIER_PATH=$2
 IMAGE_PATH=$3
