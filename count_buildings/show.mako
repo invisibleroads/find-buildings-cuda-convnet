@@ -10,7 +10,7 @@
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
       <option value='myanmar4-20140708-001953'>myanmar4</option>
-      <option value='uganda1-20140715-061930'>uganda1</option>
+      ## <option value='uganda1-20140715-061930'>uganda1</option>
     </select>
   </div>
 
