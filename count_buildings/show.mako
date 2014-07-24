@@ -16,7 +16,7 @@
 
   <div id=image_url_question class=form-group>
     <label for=image_url class=control-label>From which URL will we download the image?</label>
-    <input id=image_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-201200,2314700,201500,2314400.tif'>
+    <input id=image_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-204500,2314400,205500,2313800.tif'>
   </div>
 
   <button id=run type=button class='btn btn-primary'>Count buildings</button>
