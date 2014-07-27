@@ -1,7 +1,7 @@
-# US/Pacific 7/24/2014
-= Deploy web app
-    = Replace dummy proccesor with real processor
-    Feature Modi Research Group logo and link on tool webpage
+# US/Pacific 7/27/2014
+Train generic classifier
+    Pan sharpen images
+Consider training classifiers for each ecological zone
 Improve development classifier
     Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch

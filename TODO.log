@@ -1,4 +1,6 @@
-# UTC 07/24/2014
+# UTC 07/27/2014
++ Deploy prototype web app [07/27/2014]
++ Replace dummy proccesor with real processor [07/27/2014]
 + Write dummy web app for uploading a request and downloading the response [07/24/2014]
 + Update description [07/24/2014]
 + Let user paste image URL [07/24/2014]
