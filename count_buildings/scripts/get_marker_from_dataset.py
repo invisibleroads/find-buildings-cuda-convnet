@@ -2,8 +2,8 @@ import os
 import sys
 from crosscompute.libraries import script
 
+from .get_dataset_from_examples import DATASET_NAME
 from ..libraries.markers import initialize_marker
-from ..libraries.dataset import DATASET_NAME
 
 
 def start(argv=sys.argv):

@@ -1,4 +1,15 @@
-# UTC 07/23/2014
+# UTC 08/01/2014
++ Deploy web app [08/01/2014]
++ Write dummy web app for uploading a request and downloading the response [08/01/2014]
++ Write dummy processor that takes a request and returns a response [08/01/2014]
++ Replace dummy proccesor with real processor [08/01/2014]
++ Feature Modi Research Group logo and link on tool webpage [08/01/2014]
++ Deploy prototype web app [07/27/2014]
++ Replace dummy proccesor with real processor [07/27/2014]
++ Write dummy web app for uploading a request and downloading the response [07/24/2014]
++ Update description [07/24/2014]
++ Let user paste image URL [07/24/2014]
++ Trigger rqworker that downloads and gets file size [07/24/2014]
 + Investigate why the positive count is 7027 instead of 7028 [07/23/2014]
 + Prepare small test geotiff [07/23/2014]
 + Finish crosscompute-scaffolds [07/23/2014]

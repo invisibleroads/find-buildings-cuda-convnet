@@ -1,0 +1,2 @@
+include *.ini *.cfg *.md
+recursive-include count_buildings *.mako *.css *.js *.ico *.png 

@@ -1,9 +1,7 @@
-# US/Pacific 7/23/2014
-+ Deploy web app
-    + Write dummy web app for uploading a request and downloading the response
-    + Write dummy processor that takes a request and returns a response
-    + Replace dummy proccesor with real processor
-    + Feature Modi Research Group logo and link on tool webpage
+# US/Pacific 7/31/2014
+Train generic classifier
+    Pan sharpen images
+    Consider training classifiers for each ecological zone
 Improve development classifier
     Use cuda-convnet2
     Use dropout
