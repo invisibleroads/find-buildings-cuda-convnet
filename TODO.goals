@@ -1,6 +1,15 @@
-# US/Pacific 7/31/2014
+# US/Pacific 8/4/2014
+= Send access credentials
+    = Save results to remote cloud storage
+    Launch server if there are queued jobs but no corresponding processor
+    Show picture of results
+    Let user upload files
+    Let them scan part of the image for free
+    Add payments
 Train generic classifier
     Pan sharpen images
+    Make sure that each image has accurate labels
+        Label unlabelled images
     Consider training classifiers for each ecological zone
 Improve development classifier
     Use cuda-convnet2
@@ -11,13 +20,9 @@ Improve development classifier
     Experiment with autoencoders to pretrain neural network
 Combine Amazon Mechanical Turk results into a clean dataset [8h]
     Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
-Make scripts easier to use
-    Let options.cfg read environment variables
-Send access credentials to all tools, valid with no membership fee for one year
+Update interface
     Add Yann LeCun to credits
-    Let them see examples with each classifier
-    Let them scan part of the image
-    Let them label a few to auto select optimal classifier
+    Let them see building examples with each classifier
     Show map of results
         Update preview dynamically
-Evaluate classifiers on cost-effective lower resolution satellite images
+    Let them label a few to auto select optimal classifier
