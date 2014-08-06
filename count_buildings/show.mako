@@ -35,6 +35,7 @@ Thanks to
 <a target=_blank href=https://code.google.com/u/108586368378757621796/>Alex Krizhevsky</a>,
 <a target=_blank href=https://github.com/dnouri>Daniel Nouri</a>,
 <a target=_blank href=http://www.cs.toronto.edu/~ilya/>Ilya Sutskever</a>,
+<a target=_blank href=http://www.cs.toronto.edu/~ranzato/>Marc'Aurelio Ranzato</a>,
 <a target=_blank href=http://yann.lecun.com/>Yann LeCun</a>.
 </div>
 
