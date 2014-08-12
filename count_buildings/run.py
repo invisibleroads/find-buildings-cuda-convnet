@@ -1,6 +1,6 @@
 import sys
 from os import makedirs
-from os.path import basename, join
+from os.path import basename, expanduser, join
 from tempfile import mkstemp
 from urllib2 import urlopen
 
@@ -11,8 +11,8 @@ from crosscompute.libraries import disk
 from crosscompute.models import Result
 
 
-CLASSIFIER_FOLDER = '/tmp/classifiers'
-DOWNLOAD_FOLDER = '/tmp/downloads'
+CLASSIFIER_FOLDER = expanduser('~/Documents/classifiers')
+DOWNLOAD_FOLDER = expanduser('~/Documents/downloads')
 try:
     makedirs(DOWNLOAD_FOLDER)
 except OSError:
