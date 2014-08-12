@@ -7,6 +7,7 @@ from urllib2 import urlopen
 from count_buildings.scripts.get_tiles_from_image import save_image_properties
 from crosscompute.libraries import script
 from crosscompute.libraries import queue
+from crosscompute.libraries import disk
 from crosscompute.models import Result
 
 
@@ -28,6 +29,7 @@ def start(argv=sys.argv):
 
 def schedule(target_result_id, classifier_name, image_url):
     target_folder = Result(id=target_result_id).target_folder
+    disk.make_folder(target_folder)
     summary = run(target_folder, classifier_name, image_url)
     queue.save(target_result_id, summary)
 
