@@ -5,10 +5,11 @@ from tempfile import mkstemp
 from urllib2 import urlopen
 
 from count_buildings.scripts.get_tiles_from_image import save_image_properties
-from crosscompute.libraries import script
-from crosscompute.libraries import queue
+from crosscompute import models
 from crosscompute.libraries import disk
-from crosscompute.models import Result
+from crosscompute.libraries import queue
+from crosscompute.libraries import script
+from crosscompute.models import Result, get_data_path
 
 
 CLASSIFIER_FOLDER = expanduser('~/Documents/classifiers')
@@ -29,9 +30,15 @@ def start(argv=sys.argv):
 
 def schedule(target_result_id, classifier_name, image_url):
     target_folder = Result(id=target_result_id).target_folder
+    p53_path = get_data_path('p53')
+    try:
+        os.remove(p53_path)
+    except OSError:
+        pass
     disk.make_folder(target_folder)
     summary = run(target_folder, classifier_name, image_url)
     queue.save(target_result_id, summary)
+    open(p53_path, 'wt')
 
 
 def run(target_folder, classifier_name, image_url):
