@@ -73,7 +73,7 @@ class SatelliteImage(Calibration):
         self.band_count = image.RasterCount
         self.spatial_reference = osr.SpatialReference()
         self.spatial_reference.ImportFromWkt(image.GetProjectionRef())
-        self.proj4 = self.spatial_reference.ExportToProj4()
+        self.proj4 = self.spatial_reference.ExportToProj4().strip()
         self.array_dtype = self.get_array_from_pixel_frame(
             ((0, 0), (0, 0))).dtype
         self.save_image = partial(plt.imsave, vmin=self._vmin, vmax=self._vmax)

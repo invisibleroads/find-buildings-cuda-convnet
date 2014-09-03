@@ -1,11 +1,11 @@
 # US/Pacific 8/4/2014
 = Send access credentials
-    = Save results to remote cloud storage
+    + Save results to remote cloud storage
     Launch server if there are queued jobs but no corresponding processor
     Show picture of results
-    Let user upload files
-    Let them scan part of the image for free
-    Add payments
+    + Let user upload files
+    _ Let them scan part of the image for free
+    + Add payments
 Train generic classifier
     Pan sharpen images
     Make sure that each image has accurate labels

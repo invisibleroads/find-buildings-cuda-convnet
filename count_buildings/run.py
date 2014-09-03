@@ -1,71 +1,62 @@
+import pickle
+import subprocess
 import sys
-from os import makedirs
-from os.path import basename, expanduser, join
-from tempfile import mkstemp
-from urllib2 import urlopen
+from os import makedirs, remove
+from os.path import abspath, dirname, expanduser, join
 
-from count_buildings.scripts.get_tiles_from_image import save_image_properties
-from crosscompute import models
 from crosscompute.libraries import disk
 from crosscompute.libraries import queue
 from crosscompute.libraries import script
 from crosscompute.models import Result, get_data_path
 
 
+CENTS_PER_SQUARE_KILOMETER = 50
 CLASSIFIER_FOLDER = expanduser('~/Documents/classifiers')
 DOWNLOAD_FOLDER = expanduser('~/Documents/downloads')
 try:
     makedirs(DOWNLOAD_FOLDER)
 except OSError:
     pass
+PACKAGE_FOLDER = dirname(dirname(abspath(__file__)))
+SCRIPT_FOLDER = join(PACKAGE_FOLDER, 'run_experiments/20140724-1114/myanmar')
+SCRIPT_PATH = join(SCRIPT_FOLDER, 'manage_scan.sh')
 
 
 def start(argv=sys.argv):
     with script.Starter(run, argv) as starter:
         starter.add_argument(
-            '--classifier_name', metavar='NAME', required=True)
+            '--image_path', metavar='PATH', required=True)
         starter.add_argument(
-            '--image_url', metavar='NAME', required=True)
+            '--classifier_name', metavar='NAME', required=True)
 
 
-def schedule(target_result_id, classifier_name, image_url):
+def schedule(target_result_id, source_geoimage_id, classifier_name):
     target_folder = Result(id=target_result_id).target_folder
     p53_path = get_data_path('p53')
     try:
-        os.remove(p53_path)
+        remove(p53_path)
     except OSError:
         pass
     disk.make_folder(target_folder)
-    summary = run(target_folder, classifier_name, image_url)
+
+    result = Result(id=source_geoimage_id)
+    result.download()
+    image_path = join(result.target_folder, 'image.tif')
+
+    summary = run(target_folder, image_path, classifier_name)
     queue.save(target_result_id, summary)
     open(p53_path, 'wt')
 
 
-def run(target_folder, classifier_name, image_url):
+def run(target_folder, image_path, classifier_name):
     classifier_path = join(CLASSIFIER_FOLDER, classifier_name)
-    image_path = download(image_url)
-    image_name = basename(image_url)
-    image_properties = save_image_properties(image_path)
-
-    import subprocess
     subprocess.call([
-        'bash',
-        '/home/ec2-user/Projects/count-buildings/run_experiments/20140724-1114/myanmar/manage_scan.sh',
-        target_folder, classifier_path, image_path])
-
-    import pickle
+        'bash', SCRIPT_PATH, target_folder, classifier_path, image_path])
     run_properties = pickle.load(open(join(target_folder, 'run.pkl')))
     estimated_count = run_properties['variables']['estimated_count']
-
-    return dict(
-        columns=['Dimensions', 'Bands', 'Count'],
-        rows=[[
-            '%ix%im' % tuple(image_properties['image_dimensions']),
-            image_properties['image_band_count'],
-            estimated_count]])
+    return dict(estimated_count=estimated_count)
 
 
-def download(url):
-    path = mkstemp(dir=DOWNLOAD_FOLDER)[1]
-    open(path, 'wb').write(urlopen(url).read())
-    return path
+def price(area_in_square_meters):
+    area_in_square_kilometers = area_in_square_meters / (1000 * 1000)
+    return CENTS_PER_SQUARE_KILOMETER * area_in_square_kilometers

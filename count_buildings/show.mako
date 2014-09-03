@@ -6,26 +6,60 @@
 
 <form id=questions role=form>
 
+  <div id=source_method_question class=form-group>
+    <div><label class=control-label>Where is the satellite image?</label></div>
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default" id="source_method_url"><input type="radio"> URL</label>
+      <label class="btn btn-default" id="source_method_upload"><input type="radio"> Upload</label>
+    </div>
+  </div>
+
+  <div id=source_url_question class=form-group>
+    <input id=source_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-201200,2314700,201500,2314400.tif'>
+    <button type="button" class="btn btn-primary" id=import_source_url>Import satellite image</button>
+  </div>
+
+  <div id=source_file_question>
+    <div class='btn btn-primary fileinput-button'>
+      <span>Upload satellite image</span>
+      <input id=source_file type=file>
+    </div>
+  </div>
+
+  <table id=geoimage_properties class='table hidden'>
+    <tr><td>Proj4</td><td id=proj4></td></tr>
+    <tr><td>Band count</td><td id=band_count></td></tr>
+    <tr><td>Pixel dimensions</td><td id=pixel_dimensions></td></tr>
+    <tr><td>Dimensions</td><td id=dimensions></td></tr>
+  </table>
+
   <div id=classifier_name_question class=form-group>
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
-      <option value='myanmar4-20140708-001953'>myanmar4</option>
-      ## <option value='uganda1-20140715-061930'>uganda1</option>
+      <option value='myanmar4-20140708-001953'>myanmar4-20140708-001953</option>
     </select>
   </div>
 
-  <div id=image_url_question class=form-group>
-    <label for=image_url class=control-label>From which URL will we download the image?</label>
-    <input id=image_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-201200,2314700,201500,2314400.tif'>
-  </div>
+  <button id=check type=button class='btn btn-info'>
+    Check price
+  </button>
 
-  <button id=run type=button class='btn btn-primary'>Count buildings</button>
+  <button id=run type=button class='btn btn-primary'>
+    Count buildings for <span id=price>free</span>
+  </button>
+
+  <button id=credit type=button class='btn btn-danger'>
+    Add credit 
+  </button>
 
 </form>
 
 <div id=results>
-  <table id=target_table class=table></table>
-  <button type=button class='btn btn-success download'>Download</button>
+  <div id=feedback class=hidden></div>
+  <table id=target_table class='table hidden'>
+    <tr><td>Estimated count</td><td id=estimated_count></td></tr>
+  </table>
+  <button type=button class='btn btn-success download hidden'>Download</button>
 </div>
 
 <div id=acknowledgments>
@@ -41,4 +75,5 @@ Thanks to
 
 <script>
 var run_url = '${request.route_path("count-buildings")}';
+var import_geoimage_url = "${request.route_path('import-geoimage')}";
 </script>
