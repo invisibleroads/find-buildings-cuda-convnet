@@ -6,7 +6,7 @@
 
 <form id=questions role=form>
 
-  <div id=source_method_question class=form-group>
+  <div id=source_method_question class='form-group hidden'>
     <div><label class=control-label>Where is the satellite image?</label></div>
     <div class="btn-group" data-toggle="buttons">
       <label class="btn btn-default" id="source_method_url"><input type="radio"> URL</label>
@@ -14,12 +14,12 @@
     </div>
   </div>
 
-  <div id=source_url_question class=form-group>
+  <div id=source_url_question class='form-group hidden'>
     <input id=source_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-201200,2314700,201500,2314400.tif'>
     <button type="button" class="btn btn-primary" id=import_source_url>Import satellite image</button>
   </div>
 
-  <div id=source_file_question>
+  <div id=source_file_question class=hidden>
     <div class='btn btn-primary fileinput-button'>
       <span>Upload satellite image</span>
       <input id=source_file type=file>
@@ -33,22 +33,22 @@
     <tr><td>Dimensions</td><td id=dimensions></td></tr>
   </table>
 
-  <div id=classifier_name_question class=form-group>
+  <div id=classifier_name_question class='form-group hidden'>
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
       <option value='myanmar4-20140708-001953'>myanmar4-20140708-001953</option>
     </select>
   </div>
 
-  <button id=check type=button class='btn btn-info'>
+  <button id=check type=button class='btn btn-info hidden'>
     Check price
   </button>
 
-  <button id=run type=button class='btn btn-primary'>
+  <button id=run type=button class='btn btn-primary hidden'>
     Count buildings for <span id=price>free</span>
   </button>
 
-  <button id=credit type=button class='btn btn-danger'>
+  <button id=credit type=button class='btn btn-danger hidden'>
     Add credit 
   </button>
 
@@ -62,7 +62,7 @@
   <button type=button class='btn btn-success download hidden'>Download</button>
 </div>
 
-<div id=acknowledgments>
+<div id=acknowledgments class=hidden>
 Thanks to
 <a target=_blank href=https://github.com/sherpashaky>Shaky Sherpa</a>,
 <a target=_blank href=http://www.earth.columbia.edu/articles/view/2770>Vijay Modi</a>,

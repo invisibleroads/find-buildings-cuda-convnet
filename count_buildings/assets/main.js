@@ -106,7 +106,7 @@ require(['base'], function(base) {
       window.location = '/manage';
     });
 
-    $('#source_method_question').show();
+    $('#source_method_question').reveal();
 
   });
 });
