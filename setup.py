@@ -9,6 +9,7 @@ DESCRIPTION = '\n\n'.join(open(os.path.join(HERE, _)).read() for _ in [
 ])
 REQUIREMENTS = [
     'crosscompute',
+    'pykdtree',
 ]
 ENTRY_POINTS = """\
 [paste.app_factory]
