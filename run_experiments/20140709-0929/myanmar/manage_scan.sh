@@ -1,8 +1,8 @@
 CLASSIFIER_PATHS="
-/home/ec2-user/Experiments/20140707-1149/myanmar0-1/classifiers/20140709-172831
-/home/ec2-user/Experiments/20140707-1149/myanmar0-2/classifiers/20140710-165500
-/home/ec2-user/Experiments/20140707-1149/myanmar0-3/classifiers/20140711-031019
-/home/ec2-user/Experiments/20140707-1149/myanmar0-4/classifiers/20140708-001953
+$HOME/Experiments/20140707-1149/myanmar0-1/classifiers/20140709-172831
+$HOME/20140707-1149/myanmar0-2/classifiers/20140710-165500
+$HOME/myanmar0-3/classifiers/20140711-031019
+$HOME/myanmar0-4/classifiers/20140708-001953
 "
 IMAGE_NAMES="
 myanmar0
