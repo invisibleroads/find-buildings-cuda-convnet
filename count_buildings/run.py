@@ -58,5 +58,5 @@ def run(target_folder, image_path, classifier_name):
 
 
 def price(area_in_square_meters):
-    area_in_square_kilometers = area_in_square_meters / (1000 * 1000)
-    return CENTS_PER_SQUARE_KILOMETER * area_in_square_kilometers
+    area_in_square_kilometers = area_in_square_meters / float(1000 * 1000)
+    return round(CENTS_PER_SQUARE_KILOMETER * area_in_square_kilometers)
