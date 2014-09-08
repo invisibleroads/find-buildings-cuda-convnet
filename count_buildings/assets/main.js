@@ -88,7 +88,7 @@ require(['base'], function(base) {
         source_geoimage: $('#geoimage_properties').data('result_id'),
         classifier_name: $('#classifier_name').val()
       }, {
-        message: 'Counting buildings...',
+        message: 'Counting buildings...<br>Please be patient as this can take anywhere from five minutes to several hours. You can check progress <a href=/manage>here</a>',
         end: true
       }, function(result) {
         var summary = result.summary;
