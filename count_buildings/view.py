@@ -47,8 +47,9 @@ def count_buildings_(request):
     classifier_name = params['classifier_name']
 
     geoimage_summary = source_geoimage.summary
+    area_in_square_meters = geoimage_summary['area_in_square_meters']
     try:
-        price = run.price(geoimage_summary['area_in_square_meters'])
+        price = run.price(area_in_square_meters)
     except KeyError:
         request.response.status_code = 400
         return {'errors': dict(
@@ -66,9 +67,13 @@ def count_buildings_(request):
         request.response.status_code = 400
         return {'errors': dict(price=price, balance=balance)}
 
+    if area_in_square_meters > 1000000:
+        queue_type = 'gpu_large'
+    else:
+        queue_type = 'gpu_small'
     target_name = '%s-%s' % (classifier_name, source_geoimage.name)
     return queue.schedule(
-        request, 'gpu', run, target_name, price,
+        request, queue_type, run, target_name, price,
         source_geoimage.id, classifier_name)
 
 
