@@ -1,26 +1,35 @@
 import unittest
+from geometryIO import proj4LL
 from numpy import random
 
-from ..libraries.satellite_image import Calibration
+from ..libraries.satellite_image import ProjectedCalibration
+from ..libraries.satellite_image import MetricCalibration
 
 
-class CalibrationTest(unittest.TestCase):
+class ProjectedCalibrationTest(unittest.TestCase):
 
     def setUp(self):
         self.calibration_pack = 1, 2, 3, 4, 5, 6
-        self.calibration = Calibration(self.calibration_pack)
+        self.calibration = ProjectedCalibration(self.calibration_pack)
 
-    def test_to_xy(self):
-        xy = random.random(2)
-        pixel_xy = self.calibration.to_pixel_xy(xy)
-        xy_ = self.calibration.to_xy(pixel_xy)
-        self.assert_((xy - xy_ < 0.0000001).all())
+    def test_to_projected_xy(self):
+        old_projected_xy = random.random(2)
+        new_projected_xy = self.calibration.to_projected_xy(
+            self.calibration.to_pixel_xy(old_projected_xy))
+        self.assert_((old_projected_xy - new_projected_xy < 0.0000001).all())
 
-    def test_to_dimensions(self):
-        dimensions = random.random(2)
-        pixel_dimensions = self.calibration.to_pixel_dimensions(dimensions)
-        dimensions_ = self.calibration.to_dimensions(pixel_dimensions)
-        margin = abs(dimensions - dimensions_)
+
+class MetricCalibrationTest(unittest.TestCase):
+
+    def setUp(self):
+        self.calibration_pack = 1, 2, 3, 4, 5, 6
+        self.calibration = MetricCalibration(self.calibration_pack, proj4LL)
+
+    def test_to_metric_dimensions(self):
+        old_metric_dimensions = random.random(2)
+        new_metric_dimensions = self.calibration.to_metric_dimensions(
+            self.calibration.to_pixel_dimensions(old_metric_dimensions))
+        margin = abs(old_metric_dimensions - new_metric_dimensions)
         self.assert_(margin[0] <= self.calibration_pack[1] / float(2))
         self.assert_(margin[1] <= self.calibration_pack[5] / float(2))
 

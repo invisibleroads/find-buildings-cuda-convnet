@@ -34,4 +34,4 @@ log get_counts_from_probabilities \
     --probabilities_folder $PROBABILITIES_FOLDER \
     --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
     --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
-    --minimum_radius $MINIMUM_RADIUS
+    --minimum_metric_radius $MINIMUM_METRIC_RADIUS

@@ -34,5 +34,5 @@ for POSITIVE_FRACTION in $POSITIVE_FRACTIONS; do
         --probabilities_folder $OUTPUT_FOLDER/probabilities_$POSITIVE_FRACTION \
         --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
         --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
-        --minimum_radius $MINIMUM_RADIUS
+        --minimum_metric_radius $MINIMUM_METRIC_RADIUS
 done

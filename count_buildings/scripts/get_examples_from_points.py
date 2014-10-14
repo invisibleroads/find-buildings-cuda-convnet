@@ -1,10 +1,9 @@
 import h5py
 import operator
-import os
 import sys
 from crosscompute.libraries import script
-from geometryIO import get_transformPoint
-from geometryIO import load_points
+from geometryIO import get_transformPoint, load_points
+from os.path import join
 from scipy.sparse import lil_matrix
 
 from ..libraries import calculator
@@ -22,9 +21,9 @@ def start(argv=sys.argv):
             '--image_path', metavar='PATH', required=True,
             help='satellite image')
         starter.add_argument(
-            '--example_dimensions', metavar='WIDTH,HEIGHT', required=True,
-            type=script.parse_dimensions,
-            help='dimensions of extracted example in geographic units')
+            '--example_metric_dimensions', metavar='WIDTH,HEIGHT',
+            type=script.parse_dimensions, required=True,
+            help='dimensions of extracted example in metric units')
         starter.add_argument(
             '--positive_points_paths', metavar='PATH', required=True,
             nargs='+',
@@ -47,11 +46,12 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, image_path, example_dimensions,
+        target_folder, image_path, example_metric_dimensions,
         positive_points_paths, negative_points_paths,
         maximum_positive_count, maximum_negative_count, save_images):
     examples_h5 = get_examples_h5(target_folder)
-    image_scope = satellite_image.ImageScope(image_path, example_dimensions)
+    image_scope = satellite_image.ImageScope(
+        image_path, example_metric_dimensions)
     positive_pixel_centers = get_pixel_centers(
         positive_points_paths, image_scope)
     negative_pixel_centers = get_pixel_centers(
@@ -81,7 +81,7 @@ def run(
 
 
 def get_examples_h5(target_folder):
-    return h5py.File(os.path.join(target_folder, EXAMPLES_NAME), 'w')
+    return h5py.File(join(target_folder, EXAMPLES_NAME), 'w')
 
 
 def get_pixel_centers(points_paths, image_scope):
@@ -89,10 +89,11 @@ def get_pixel_centers(points_paths, image_scope):
         return []
     pixel_centers = []
     for points_path in points_paths:
-        points_proj4, centers = load_points(points_path)[:2]
+        points_proj4, projected_centers = load_points(points_path)[:2]
         transform_point = get_transformPoint(points_proj4, image_scope.proj4)
         pixel_centers.extend(filter(image_scope.is_pixel_center, (
-            image_scope.to_pixel_xy(transform_point(*_)) for _ in centers)))
+            image_scope.to_pixel_xy(transform_point(
+                *_)) for _ in projected_centers)))
     return pixel_centers
 
 
@@ -119,7 +120,7 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
         positive_pixel_area)
     # Estimate the required number of negative examples
     positive_count = len(positive_pixel_centers)
-    return calculator.round_integer(
+    return calculator.round_number(
         negative_area_over_positive_area * positive_count)
 
 
@@ -172,8 +173,7 @@ def save_example_array(target_folder, image_scope, pixel_center):
     array = image_scope.get_array_from_pixel_center(pixel_center)
     try:
         image_scope.save_image(
-            os.path.join(target_folder, 'pce%dx%d.jpg' % tuple(pixel_center)),
-            array[:, :, :3])
+            join(target_folder, 'pce%dx%d.jpg' % tuple(pixel_center)), array)
     except AttributeError:
         pass
     return array
@@ -182,8 +182,7 @@ def save_example_array(target_folder, image_scope, pixel_center):
 def save_pixel_centers(examples_h5, category, pixel_centers, image_scope):
     pixel_centers = examples_h5.create_dataset(
         '%s/pixel_centers' % category,
-        data=pixel_centers,
-        dtype=image_scope.pixel_dtype)
+        data=pixel_centers, dtype=image_scope.pixel_coordinate_dtype)
     pixel_centers.attrs['calibration_pack'] = image_scope.calibration_pack
     pixel_centers.attrs['proj4'] = image_scope.proj4
 

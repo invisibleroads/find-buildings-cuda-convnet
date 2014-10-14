@@ -7,13 +7,13 @@ myanmar3
 myanmar4
 "
 export EXPERIMENT_NAME=`basename $(dirname $(dirname $(pwd)/$0))`
-export EXAMPLE_DIMENSIONS=16x16
-export OVERLAP_DIMENSIONS=8x8
+export EXAMPLE_METRIC_DIMENSIONS=16x16
+export OVERLAP_METRIC_DIMENSIONS=8x8
 export ARRAY_SHAPE=32,32,4
-export MINIMUM_RADIUS=8
+export MINIMUM_METRIC_RADIUS=8
 export RANDOM_SEED=crosscompute
 export BATCH_SIZE=5k
-export TILE_DIMENSIONS=1000,1000
+export TILE_METRIC_DIMENSIONS=1000,1000
 for IMAGE_NAME in $IMAGE_NAMES; do
     export IMAGE_NAME
     export IMAGE_PATH=~/Links/satellite-images/$IMAGE_NAME

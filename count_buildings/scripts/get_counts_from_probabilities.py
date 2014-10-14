@@ -30,27 +30,27 @@ def start(argv=sys.argv):
             type=int,
             help='')
         starter.add_argument(
-            '--actual_radius', metavar='METERS',
+            '--actual_metric_radius', metavar='METERS',
             type=float,
             help='')
         starter.add_argument(
-            '--minimum_radius', metavar='METERS',
+            '--minimum_metric_radius', metavar='METERS',
             type=float,
             help='')
         starter.add_argument(
-            '--maximum_radius', metavar='METERS',
+            '--maximum_metric_radius', metavar='METERS',
             type=float,
             help='')
 
 
 def run(
         target_folder, probabilities_folder,
-        image_path, points_path, actual_count, actual_radius,
-        minimum_radius, maximum_radius):
+        image_path, points_path, actual_count, actual_metric_radius,
+        minimum_metric_radius, maximum_metric_radius):
     value_by_key = {}
     probability_packs = get_probability_packs(probabilities_folder)
     image = SatelliteImage(image_path)
-    if not points_path and not actual_count and not actual_radius:
+    if not points_path and not actual_count and not actual_metric_radius:
         pixel_centers = probability_packs[[
             'pixel_center_x', 'pixel_center_y']].values
         target_path = os.path.join(target_folder, PROBABILITIES_SHP)
@@ -61,24 +61,28 @@ def run(
         actual_count = get_actual_count(image, points_path, pixel_bounds)
         value_by_key['pixel_bounds'] = pixel_bounds
 
-    if actual_radius is not None:
-        selected_pixel_radius = min(image.to_pixel_dimensions((
-            actual_radius, actual_radius)))
+    to_pixel_radius = lambda metric_radius: min(image.to_pixel_dimensions((
+        metric_radius, metric_radius)))
+    to_metric_radius = lambda pixel_radius: min(image.to_metric_dimensions((
+        pixel_radius, pixel_radius)))
+
+    if actual_metric_radius is not None:
+        selected_pixel_radius = to_pixel_radius(actual_metric_radius)
         selected_pixel_centers = get_selected_pixel_centers(
             probability_packs, selected_pixel_radius)
-        value_by_key['selected_radius'] = image.to_width(
+        value_by_key['selected_metric_radius'] = to_metric_radius(
             selected_pixel_radius)
     elif actual_count is not None:
-        minimum_pixel_radius = image.to_pixel_width(
-            minimum_radius) if minimum_radius else 1
-        maximum_pixel_radius = image.to_pixel_width(
-            maximum_radius) if maximum_radius else np.inf
+        minimum_pixel_radius = to_pixel_radius(
+            minimum_metric_radius) if minimum_metric_radius else 1
+        maximum_pixel_radius = to_pixel_radius(
+            maximum_metric_radius) if maximum_metric_radius else np.inf
         best_pixel_radiuses, selected_pixel_centers = determine_pixel_radius(
             probability_packs, actual_count,
             minimum_pixel_radius, maximum_pixel_radius)
-        value_by_key['minimum_best_radius'] = image.to_width(
+        value_by_key['minimum_best_metric_radius'] = to_metric_radius(
             min(best_pixel_radiuses))
-        value_by_key['maximum_best_radius'] = image.to_width(
+        value_by_key['maximum_best_metric_radius'] = to_metric_radius(
             max(best_pixel_radiuses))
     target_path = os.path.join(target_folder, COUNTS_SHP)
     save_pixel_centers(target_path, selected_pixel_centers, image)
@@ -128,17 +132,16 @@ def get_actual_count(image, points_path, pixel_bounds):
 
 
 def save_pixel_centers(target_path, pixel_centers, image):
-    centers = [image.to_xy(_) for _ in pixel_centers]
-    if not centers:
+    projected_centers = [image.to_projected_xy(_) for _ in pixel_centers]
+    if not projected_centers:
         return
-    geometryIO.save_points(target_path, image.proj4, centers)
+    geometryIO.save_points(target_path, image.proj4, projected_centers)
 
 
 def determine_pixel_radius(
         probability_packs, actual_count,
         minimum_pixel_radius, maximum_pixel_radius):
     best_margin = np.inf
-    best_pixel_radius = 0
     best_pixel_centers = []
     best_pixel_radiuses = []
     pixel_radius = minimum_pixel_radius
@@ -163,10 +166,10 @@ def determine_pixel_radius(
     return best_pixel_radiuses, best_pixel_centers
 
 
-def get_selected_pixel_centers(probability_packs, actual_radius):
+def get_selected_pixel_centers(probability_packs, actual_metric_radius):
     xys = probability_packs[['pixel_center_x', 'pixel_center_y']].values
     return list(yield_hotspot_via_metric(
-        xys, radius=actual_radius,
+        xys, radius=actual_metric_radius,
         get_metric=lambda index: probability_packs['1'].values[index]))
 
 

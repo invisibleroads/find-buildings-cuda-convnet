@@ -58,14 +58,13 @@ def save_predictions_h5(
         target_folder, predictions, pixel_centers, arrays_path):
     arrays_h5 = h5py.File(arrays_path, 'r')
     pixel_upper_lefts = arrays_h5['pixel_upper_lefts']
-    pixel_dtype = pixel_upper_lefts.dtype
     # Save
     predictions_h5 = h5py.File(
         os.path.join(target_folder, 'predictions.h5'), 'w')
     predictions = predictions_h5.create_dataset(
         'predictions', data=predictions, dtype=bool)
     pixel_centers = predictions_h5.create_dataset(
-        'pixel_centers', data=pixel_centers, dtype=pixel_dtype)
+        'pixel_centers', data=pixel_centers, dtype=pixel_upper_lefts.dtype)
     for key, value in pixel_upper_lefts.attrs.iteritems():
         pixel_centers.attrs[key] = value
 
@@ -77,11 +76,11 @@ def save_predictions_shapefile(
     calibration_pack = pixel_upper_lefts.attrs['calibration_pack']
     proj4 = pixel_upper_lefts.attrs['proj4']
     # Convert pixel coordinates to spatial coordinates
-    calibration = satellite_image.Calibration(calibration_pack)
-    centers = [calibration.to_xy(_) for _ in pixel_centers]
+    calibration = satellite_image.ProjectedCalibration(calibration_pack)
+    projected_centers = [calibration.to_projected_xy(_) for _ in pixel_centers]
     field_packs = [(_,) for _ in predictions]
     field_definitions = [('Prediction', ogr.OFTReal)]
     # Save
     geometryIO.save_points(
-        os.path.join(target_folder, 'predictions.shp'), proj4, centers,
-        field_packs, field_definitions)
+        os.path.join(target_folder, 'predictions.shp'),
+        proj4, projected_centers, field_packs, field_definitions)

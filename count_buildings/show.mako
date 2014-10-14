@@ -30,7 +30,7 @@
     <tr><td>Proj4</td><td id=proj4></td></tr>
     <tr><td>Band count</td><td id=band_count></td></tr>
     <tr><td>Pixel dimensions</td><td id=pixel_dimensions></td></tr>
-    <tr><td>Dimensions</td><td id=dimensions></td></tr>
+    <tr><td>Metric dimensions</td><td id=metric_dimensions></td></tr>
   </table>
 
   <div id=classifier_name_question class='form-group hidden'>

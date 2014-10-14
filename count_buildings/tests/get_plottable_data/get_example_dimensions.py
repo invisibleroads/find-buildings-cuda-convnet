@@ -7,7 +7,7 @@ for country in countries.split():
     image_path = os.path.join(
         os.path.expanduser('~/Links/satellite-images'), country)
     image = satellite_image.SatelliteImage(image_path)
-    print 'country = %s\tband_count = %s\texample_dimensions = %s' % (
+    print 'country = %s\tband_count = %s\texample_metric_dimensions = %s' % (
         country,
         image.band_count,
         str(image.to_pixel_dimensions((10, 10))))

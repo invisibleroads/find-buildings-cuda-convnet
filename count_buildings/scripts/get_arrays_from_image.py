@@ -25,13 +25,13 @@ def start(argv=sys.argv):
             '--points_path', metavar='PATH',
             help='building locations')
         starter.add_argument(
-            '--tile_dimensions', metavar='WIDTH,HEIGHT',
+            '--tile_metric_dimensions', metavar='WIDTH,HEIGHT',
             type=script.parse_dimensions,
-            help='dimensions of extracted tile in geographic units')
+            help='dimensions of extracted tile in metric units')
         starter.add_argument(
-            '--overlap_dimensions', metavar='WIDTH,HEIGHT', default=(0, 0),
-            type=script.parse_dimensions,
-            help='dimensions of tile overlap in geographic units')
+            '--overlap_metric_dimensions', metavar='WIDTH,HEIGHT',
+            type=script.parse_dimensions, default=(0, 0),
+            help='dimensions of tile overlap in metric units')
         starter.add_argument(
             '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
             type=script.parse_bounds,
@@ -40,16 +40,17 @@ def start(argv=sys.argv):
 
 def run(
         target_folder, image_path, points_path,
-        tile_dimensions, overlap_dimensions,
+        tile_metric_dimensions, overlap_metric_dimensions,
         included_pixel_bounds):
-    if tile_dimensions is None and included_pixel_bounds is None:
+    if tile_metric_dimensions is None and included_pixel_bounds is None:
         return save_image_properties(image_path)
-    elif tile_dimensions is None:
+    elif tile_metric_dimensions is None:
         return save_pixel_bounds(
             target_folder, image_path, included_pixel_bounds)
     return save_arrays(
         target_folder, image_path, points_path,
-        tile_dimensions, overlap_dimensions, included_pixel_bounds)
+        tile_metric_dimensions, overlap_metric_dimensions,
+        included_pixel_bounds)
 
 
 def save_pixel_bounds(
@@ -59,28 +60,29 @@ def save_pixel_bounds(
     tile_pixel_dimensions = pixel_frame[1]
     image = SatelliteImage(image_path)
 
-    tile_dimensions = image.to_dimensions(tile_pixel_dimensions)
+    tile_metric_dimensions = image.to_metric_dimensions(tile_pixel_dimensions)
     arrays, pixel_centers = get_target_pack(
-        target_folder, image_path, tile_dimensions, tile_count=1)[:2]
+        target_folder, image_path, tile_metric_dimensions, tile_count=1)[:2]
     arrays[0, :, :, :] = image.get_array_from_pixel_frame(pixel_frame)
     pixel_centers[0, :] = get_pixel_center_from_pixel_frame(pixel_frame)
     return dict(
-        tile_dimensions=tile_dimensions,
+        tile_metric_dimensions=tile_metric_dimensions,
         tile_pixel_dimensions=tile_pixel_dimensions)
 
 
 def save_arrays(
         target_folder, image_path, points_path,
-        tile_dimensions, overlap_dimensions, included_pixel_bounds):
-    image_scope = ImageScope(image_path, tile_dimensions)
+        tile_metric_dimensions, overlap_metric_dimensions,
+        included_pixel_bounds):
+    image_scope = ImageScope(image_path, tile_metric_dimensions)
     points_tree = KDTree(get_pixel_centers(
         [points_path], image_scope)) if points_path else None
     tile_pixel_dimensions = image_scope.scope_pixel_dimensions
     tile_packs = list(image_scope.yield_tile_pack(
-        overlap_dimensions, included_pixel_bounds))
+        overlap_metric_dimensions, included_pixel_bounds))
     array_count = len(tile_packs)
     arrays, pixel_centers, labels = get_target_pack(
-        target_folder, image_path, tile_dimensions, array_count)
+        target_folder, image_path, tile_metric_dimensions, array_count)
     array_index = 0
     for array_index, (tile_index, pixel_upper_left) in enumerate(tile_packs):
         if array_index % 1000 == 0:
@@ -95,14 +97,15 @@ def save_arrays(
     return dict(
         tile_pixel_dimensions=tile_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.to_pixel_dimensions(
-            overlap_dimensions),
+            overlap_metric_dimensions),
         array_count=array_count,
         positive_fraction=np.sum(labels) / float(array_count))
 
 
-def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):
+def get_target_pack(
+        target_folder, image_path, tile_metric_dimensions, tile_count):
     image = SatelliteImage(image_path)
-    tile_pixel_dimensions = image.to_pixel_dimensions(tile_dimensions)
+    tile_pixel_dimensions = image.to_pixel_dimensions(tile_metric_dimensions)
     tile_pixel_width, tile_pixel_height = tile_pixel_dimensions
     arrays_h5 = get_arrays_h5(target_folder)
     arrays = arrays_h5.create_dataset(
@@ -110,7 +113,8 @@ def get_target_pack(target_folder, image_path, tile_dimensions, tile_count):
             tile_count, tile_pixel_height, tile_pixel_width,
             image.band_count), dtype=image.array_dtype)
     pixel_centers = arrays_h5.create_dataset(
-        'pixel_centers', shape=(tile_count, 2), dtype=image.pixel_dtype)
+        'pixel_centers', shape=(
+            tile_count, 2), dtype=image.pixel_coordinate_dtype)
     pixel_centers.attrs['calibration_pack'] = image.calibration_pack
     pixel_centers.attrs['proj4'] = image.proj4
     labels = arrays_h5.create_dataset(

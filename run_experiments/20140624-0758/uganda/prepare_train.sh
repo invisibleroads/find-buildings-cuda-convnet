@@ -8,8 +8,8 @@ LOG_PATH=$OUTPUT_FOLDER/`basename $0`-$TIMESTAMP.log
     # --target_folder $OUTPUT_FOLDER/test_arrays \
     # --image_path ~/Links/satellite-images/$TEST_IMAGE_NAME \
     # --points_path ~/Links/building-locations/$TEST_IMAGE_NAME \
-    # --overlap_dimensions $OVERLAP_DIMENSIONS \
-    # --tile_dimensions $EXAMPLE_DIMENSIONS \
+    # --overlap_metric_dimensions $OVERLAP_METRIC_DIMENSIONS \
+    # --tile_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
     # --included_pixel_bounds $TEST_PIXEL_BOUNDS
 # log get_batches_from_arrays \
     # --target_folder $OUTPUT_FOLDER/test_batches \
@@ -37,7 +37,7 @@ for IMAGE_NAME in $TRAINING_IMAGE_NAMES; do
         # --target_folder $OUTPUT_FOLDER/examples/$IMAGE_NAME \
         # --random_seed $RANDOM_SEED \
         # --image_path ~/Links/satellite-images/$IMAGE_NAME \
-        # --example_dimensions $EXAMPLE_DIMENSIONS \
+        # --example_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
         # --positive_points_paths \
             # ~/Links/building-locations/$IMAGE_NAME \
         # $GET_EXAMPLES_FROM_POINTS

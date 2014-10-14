@@ -6,8 +6,8 @@ PIXEL_BOUNDS_LIST=`\
     get_tiles_from_image \
         --target_folder ~/Downloads/$IMAGE_NAME/tiles \
         --image_path $IMAGE_PATH \
-        --tile_dimensions $TILE_DIMENSIONS \
-        --overlap_dimensions $EXAMPLE_DIMENSIONS \
+        --tile_metric_dimensions $TILE_METRIC_DIMENSIONS \
+        --overlap_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
         --list_pixel_bounds`
 for PIXEL_BOUNDS in $PIXEL_BOUNDS_LIST; do
     MAX_BATCH_INDEX=`get_index_from_batches \
@@ -38,4 +38,4 @@ log get_counts_from_probabilities \
     --target_folder $TARGET_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
     --image_path $IMAGE_PATH \
-    --actual_radius $ACTUAL_RADIUS
+    --actual_metric_radius $ACTUAL_RADIUS

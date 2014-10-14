@@ -10,10 +10,10 @@ uganda1
 IMAGE_FOLDER=~/Links/satellite-images
 POINTS_FOLDER=~/Links/building-locations
 EXAMPLE_COUNT=10
-EXAMPLE_DIMENSIONS=$1
-OUTPUT_FOLDER=/tmp/see_countries/$EXAMPLE_DIMENSIONS
+EXAMPLE_METRIC_DIMENSIONS=$1
+OUTPUT_FOLDER=/tmp/see_countries/$EXAMPLE_METRIC_DIMENSIONS
 
-if [ -z "$EXAMPLE_DIMENSIONS" ]; then
+if [ -z "$EXAMPLE_METRIC_DIMENSIONS" ]; then
     echo 'Please specify example dimensions'
     exit 1
 fi
@@ -23,7 +23,7 @@ for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
         --target_folder $OUTPUT_FOLDER/$COUNTRY_IMAGE \
         --image_path $IMAGE_FOLDER/$COUNTRY_IMAGE \
         --points_path $POINTS_FOLDER/$COUNTRY_IMAGE \
-        --example_dimensions $EXAMPLE_DIMENSIONS \
+        --example_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
         --maximum_positive_count $EXAMPLE_COUNT \
         --maximum_negative_count $EXAMPLE_COUNT \
         --save_images

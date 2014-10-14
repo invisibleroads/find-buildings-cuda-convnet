@@ -7,7 +7,7 @@ OUTPUT_FOLDER=~/Experiments/get_plottable_data
 # get_arrays_from_image \
     # --target_folder $OUTPUT_FOLDER/arrays \
     # --image_path ~/Links/satellite-images/myanmar0 \
-    # --tile_dimensions 100x200 \
+    # --tile_metric_dimensions 100x200 \
     # --included_pixel_bounds 500,500,2500,1500 
 # python plot_arrays.py
 
@@ -35,7 +35,7 @@ for COUNTRY_IMAGE in $COUNTRY_IMAGES; do
         # --target_folder $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE \
         # --image_path ~/Links/satellite-images/$COUNTRY_IMAGE \
         # --points_path ~/Links/building-locations/$COUNTRY_IMAGE \
-        # --example_dimensions 100x50 \
+        # --example_metric_dimensions 100x50 \
         # --maximum_positive_count 1 \
         # --maximum_negative_count 1
     # python plot_example.py $OUTPUT_FOLDER/examples/$COUNTRY_IMAGE

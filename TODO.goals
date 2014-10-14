@@ -1,28 +1,21 @@
-# US/Pacific 8/4/2014
-= Send access credentials
-    + Save results to remote cloud storage
-    Launch server if there are queued jobs but no corresponding processor
-    Show picture of results
-    + Let user upload files
-    _ Let them scan part of the image for free
-    + Add payments
+# US/Pacific 10/14/2014
 Train generic classifier
-    Pan sharpen images
     Make sure that each image has accurate labels
         Label unlabelled images
-    Consider training classifiers for each ecological zone
 Improve development classifier
     Use cuda-convnet2
     Use dropout
+    Use hyperopt
+    Use overfeat
     Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
     Experiment with autoencoders to pretrain neural network
-Combine Amazon Mechanical Turk results into a clean dataset [8h]
-    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
 Update interface
-    Add Yann LeCun to credits
+    Show picture of results
     Let them see building examples with each classifier
     Show map of results
         Update preview dynamically
     Let them label a few to auto select optimal classifier
+Combine Amazon Mechanical Turk results into a clean dataset [8h]
+    Set up Amazon Mechanical Turk to estimate the building count in a window [10h]

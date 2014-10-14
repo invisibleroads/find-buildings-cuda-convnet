@@ -1,1 +1,1 @@
-round_integer = lambda x: int(round(abs(x)))
+round_number = lambda x: int(round(abs(x)))

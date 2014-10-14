@@ -31,15 +31,10 @@ require(['base'], function(base) {
 
     function process_import_geoimage(result) {
         var summary = result.summary;
-        try {
-          var units = /\+units=(\S+)/.exec(summary.proj4)[1];
-        } catch(e) {
-          var units = '';
-        }
         $('#proj4').html(summary.proj4);
         $('#band_count').html(summary.band_count);
         $('#pixel_dimensions').html(summary.pixel_dimensions[0] + 'x' + summary.pixel_dimensions[0] + ' pixels');
-        $('#dimensions').html(summary.dimensions[0] + 'x' + summary.dimensions[1] + ' ' + units);
+        $('#metric_dimensions').html(summary.metric_dimensions[0] + 'x' + summary.metric_dimensions[1] + ' meters');
         $('#geoimage_properties').data('result_id', result.id).reveal();
         $('#classifier_name_question').reveal().find('select').click(function() {
           $('#check').prop('disabled', false).reveal()

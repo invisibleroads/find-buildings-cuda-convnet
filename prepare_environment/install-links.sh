@@ -48,7 +48,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     get_examples_from_points \
         --target_folder /tmp/get_examples_from_points/$IMAGE_NAME \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
-        --example_dimensions 19x19 \
+        --example_metric_dimensions 19x19 \
         --positive_points_paths ~/Links/building-locations/$IMAGE_NAME \
         --maximum_positive_count 10 \
         --maximum_negative_count 10 \
@@ -66,7 +66,7 @@ for IMAGE_NAME in $IMAGE_NAMES; do
     get_examples_from_points \
         --target_folder /tmp/get_examples_from_points/$IMAGE_NAME \
         --image_path ~/Links/satellite-images/$IMAGE_NAME \
-        --example_dimensions 16x16 \
+        --example_metric_dimensions 16x16 \
         --positive_points_paths ~/Links/building-locations/$IMAGE_NAME \
         --maximum_positive_count 10 \
         --maximum_negative_count 10 \
