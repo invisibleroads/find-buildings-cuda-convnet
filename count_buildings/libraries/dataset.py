@@ -3,10 +3,16 @@ import numpy as np
 import operator
 import os
 from decorator import decorator
-from PIL import Image
 from random import shuffle
+from scipy.ndimage.interpolation import zoom
 
 from . import disk
+
+
+pil_mode_by_array_dtype = {
+    np.dtype('uint8'): None,
+    np.dtype('uint16'): 'I;16',
+}
 
 
 class BatchGroup(object):
@@ -117,8 +123,10 @@ class BatchGroup(object):
         array = array[:, :, :band_count]
         if tuple(array.shape) == tuple(self.array_shape):
             return array
-        return np.array(Image.fromarray(array).resize(
-            (pixel_height, pixel_width), Image.ANTIALIAS))
+        return zoom(array, (
+            pixel_height / float(array.shape[0]),
+            pixel_width / float(array.shape[1]),
+            1))
 
 
 @decorator

@@ -13,7 +13,11 @@ from . import calculator
 class ProjectedCalibration(object):
 
     def __init__(self, calibration_pack):
-        self._calibration_pack = calibration_pack
+        self._calibration_pack = tuple(calibration_pack)
+
+    @property
+    def calibration_pack(self):
+        return self._calibration_pack
 
     def to_projected_xy(self, (pixel_x, pixel_y)):
         'Get projected coordinates given pixel coordinates'
