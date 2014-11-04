@@ -121,6 +121,7 @@ class SatelliteImage(MetricCalibration):
             max(self.pixel_dimensions))
         self.band_count = image.RasterCount
         self.array_dtype = _get_array_dtype(image)
+        self.path = image_path
 
     def save_image(self, target_path, array, band_index=None):
         target_dtype = np.dtype('uint8')
@@ -130,7 +131,7 @@ class SatelliteImage(MetricCalibration):
         if band_index is None:
             array = array[:, :, :3]
             for band_index in xrange(array.shape[-1]):
-                mean, stddev = self._band_packs[band_index][-2:]
+                mean, stddev = self.get_band_statistics(band_index)[-2:]
                 array[:, :, band_index] = enhance_array(
                     array[:, :, band_index],
                     mean - 2 * stddev, mean + 2 * stddev, target_dtype)
@@ -139,7 +140,7 @@ class SatelliteImage(MetricCalibration):
                 array = array[:, :, band_index]
             except IndexError:
                 pass
-            mean, stddev = self._band_packs[band_index][-2:]
+            mean, stddev = self.get_band_statistics(band_index)[-2:]
             array = enhance_array(
                 array, mean - 2 * stddev, mean + 2 * stddev, target_dtype)
         image = toimage(array, cmin=target_min, cmax=target_max)
@@ -175,6 +176,9 @@ class SatelliteImage(MetricCalibration):
                     :array.shape[0], :array.shape[1], :array.shape[2]] = array
                 array = padded_array
         return array
+
+    def get_band_statistics(self, band_index):
+        return self._band_packs[band_index]
 
     def _get_clipped_array(self, (pixel_upper_left, pixel_dimensions)):
         pixel_upper_left = np.array(pixel_upper_left)
