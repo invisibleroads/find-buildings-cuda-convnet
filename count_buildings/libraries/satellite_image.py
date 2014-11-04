@@ -4,8 +4,8 @@ import random
 import utm
 from geometryIO import get_transformPoint
 from itertools import product
-from matplotlib import pyplot as plt
 from osgeo import gdal, osr
+from scipy.misc import toimage
 
 from . import calculator
 
@@ -111,31 +111,39 @@ class MetricCalibration(ProjectedCalibration):
 class SatelliteImage(MetricCalibration):
 
     def __init__(self, image_path):
-        image = gdal.Open(image_path)
-        self._image = image
-        self._vmin, self._vmax = _get_extreme_values(image)
-        spatial_reference = osr.SpatialReference()
-        spatial_reference.ImportFromWkt(image.GetProjectionRef())
+        self._image = image = gdal.Open(image_path)
+        self._band_packs = _get_band_packs(image)
         super(SatelliteImage, self).__init__(
-            calibration_pack=image.GetGeoTransform(),
-            proj4=spatial_reference.ExportToProj4().strip())
+            calibration_pack=image.GetGeoTransform(), proj4=_get_proj4(image))
         self.pixel_dimensions = np.array((
             image.RasterXSize, image.RasterYSize))
         self.pixel_coordinate_dtype = np.min_scalar_type(
             max(self.pixel_dimensions))
         self.band_count = image.RasterCount
-        self.array_dtype = self._get_array_dtype()
+        self.array_dtype = _get_array_dtype(image)
 
-    def _get_array_dtype(self):
-        return self._image.ReadAsArray(0, 0, 0, 0).dtype
-
-    def save_image(self, target_path, array):
-        kw = dict(vmin=self._vmin, vmax=self._vmax)
-        try:
+    def save_image(self, target_path, array, band_index=None):
+        target_dtype = np.dtype('uint8')
+        target_min, target_max = get_dtype_bounds(target_dtype)
+        if len(array.shape) == 2:
+            band_index = 0
+        if band_index is None:
             array = array[:, :, :3]
-        except IndexError:
-            kw['cmap'] = plt.cm.Greys_r
-        return plt.imsave(target_path, array, **kw)
+            for band_index in xrange(array.shape[-1]):
+                mean, stddev = self._band_packs[band_index][-2:]
+                array[:, :, band_index] = enhance_array(
+                    array[:, :, band_index],
+                    mean - 2 * stddev, mean + 2 * stddev, target_dtype)
+        else:
+            try:
+                array = array[:, :, band_index]
+            except IndexError:
+                pass
+            mean, stddev = self._band_packs[band_index][-2:]
+            array = enhance_array(
+                array, mean - 2 * stddev, mean + 2 * stddev, target_dtype)
+        image = toimage(array, cmin=target_min, cmax=target_max)
+        image.save(target_path)
 
     def save_image_from_pixel_frame(
             self, target_path, (pixel_upper_left, pixel_dimensions)):
@@ -307,20 +315,6 @@ class ImageScope(SatelliteImage):
         return self.pixel_dimensions - self.scope_pixel_dimensions
 
 
-def _get_extreme_values(image):
-    'Get minimum and maximum pixel values'
-    band_count = image.RasterCount
-    bands = [image.GetRasterBand(x + 1) for x in xrange(band_count)]
-    minimums = [x.GetMinimum() for x in bands]
-    maximums = [x.GetMaximum() for x in bands]
-    try:
-        values = [x for x in minimums + maximums if x is not None]
-        return min(values), max(values)
-    except ValueError:
-        values = [band.ComputeRasterMinMax() for band in bands]
-        return np.min(values), np.max(values)
-
-
 def get_pixel_bounds_from_pixel_center(
         pixel_center, pixel_dimensions):
     pixel_frame = get_pixel_frame_from_pixel_center(
@@ -368,6 +362,41 @@ def get_tile_index(pixel_upper_left, interval_pixel_dimensions, row_count):
 
 def get_row_count(height, interval_y):
     return int(math.ceil(height / float(interval_y)))
+
+
+def enhance_array(source_array, source_min, source_max, target_dtype):
+    target_min, target_max = get_dtype_bounds(target_dtype)
+    if source_min == target_min and source_max == target_max:
+        return source_array.astype(target_dtype, copy=False)
+    lookup_index = np.arange(source_max + 1) - source_min
+    lookup_index *= target_max / float(lookup_index.max())
+    lookup_index[:source_min] = target_min
+    lookup_index = lookup_index.astype(target_dtype, copy=False)
+    return np.take(lookup_index, source_array, mode='clip')
+
+
+def get_dtype_bounds(dtype):
+    iinfo = np.iinfo(dtype)
+    return iinfo.min, iinfo.max
+
+
+def _get_band_packs(image):
+    'Get minimum, maximum, mean, standard deviation for each band'
+    band_packs = []
+    for band_number in xrange(1, image.RasterCount + 1):
+        band = image.GetRasterBand(band_number)
+        band_packs.append(band.GetStatistics(1, 0))
+    return band_packs
+
+
+def _get_array_dtype(image):
+    return image.ReadAsArray(0, 0, 0, 0).dtype
+
+
+def _get_proj4(image):
+    spatial_reference = osr.SpatialReference()
+    spatial_reference.ImportFromWkt(image.GetProjectionRef())
+    return spatial_reference.ExportToProj4().strip()
 
 
 gdal.UseExceptions()
