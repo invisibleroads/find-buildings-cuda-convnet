@@ -43,26 +43,25 @@ def run(
     band_count = image.band_count
     band_extremes = [image.get_band_statistics(
         x)[:2] for x in xrange(band_count)]
-    translated_path = mkstemp('.tif')
+    translated_path = mkstemp('.tif')[1]
     del image
     # Translate
-    gdal_translate_args = ['gdal_translate'] + get_gdal_options(target_dtype)
+    gdal_translate_args = get_gdal_options(target_dtype)
     for band_index in xrange(band_count):
         source_min, source_max = band_extremes[band_index]
-        gdal_translate_args.append('-scale_b%s %s %s %s %s' % (
+        gdal_translate_args.append('-scale_%s %s %s %s %s' % (
             band_index + 1, source_min, source_max, target_min, target_max))
-    subprocess.call(gdal_translate_args + [image_path, translated_path])
+    launch('gdal_translate', gdal_translate_args, image_path, translated_path)
     # Warp
-    gdal_warp_args = ['gdalwarp'] + get_gdal_options(target_dtype)
-    gdal_warp_args.extend([
+    gdal_warp_args = get_gdal_options(target_dtype) + [
         '-ts %s %s' % target_pixel_dimensions,
         '-r cubic',
-        '-multi'
-        '-wo NUM_THREADS=ALL_CPUS'
+        '-multi',
+        '-wo NUM_THREADS=ALL_CPUS',
         '-wo OPTIMIZE_SIZE=TRUE',
         '-wo WRITE_FLUSH=YES',
-        '-overwrite'])
-    subprocess.call(gdal_warp_args + [translated_path, target_path])
+        '-overwrite']
+    launch('gdalwarp', gdal_warp_args, translated_path, target_path)
     # Return
     return dict(
         pixel_dimensions=target_pixel_dimensions)
@@ -88,13 +87,19 @@ def get_pixel_dimensions(image, target_meters_per_pixel_dimensions):
 
 
 def get_gdal_options(target_dtype):
-    output_type = OUTPUT_TYPE_BY_ARRAY_DTYPE[target_dtype]
     return [
-        '-ot %s' % output_type,
+        '-ot %s' % OUTPUT_TYPE_BY_ARRAY_DTYPE[target_dtype],
         '-of GTiff',
         '-co INTERLEAVE=BAND',
         '-co SPARSE_OK=TRUE',
         '-co COMPRESS=LZW',
-        '-co PREDICTOR=%s' % (2 if output_type == 'Byte' else 3),
+        '-co PREDICTOR=2',
         '-co PHOTOMETRIC=RGB',
-        '-co ALPHA=NO']
+        '-co ALPHA=NO',
+        '-co BIGTIFF=YES']
+
+
+def launch(command, options, source_path, target_path):
+    command_string = ' '.join([command] + options + [source_path, target_path])
+    print command_string
+    subprocess.call(command_string.split())
