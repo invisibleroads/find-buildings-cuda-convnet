@@ -389,7 +389,7 @@ def _get_band_packs(image):
     band_packs = []
     for band_number in xrange(1, image.RasterCount + 1):
         band = image.GetRasterBand(band_number)
-        band_packs.append(band.GetStatistics(1, 0))
+        band_packs.append(band.GetStatistics(0, 1))
     return band_packs
 
 
