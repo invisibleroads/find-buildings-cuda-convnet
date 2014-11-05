@@ -6,6 +6,7 @@ from count_buildings.libraries.satellite_image import SatelliteImage
 from count_buildings.libraries.satellite_image import get_dtype_bounds
 from crosscompute.libraries import script
 from os.path import join
+from tempfile import mkstemp
 
 
 OUTPUT_TYPE_BY_ARRAY_DTYPE = {
@@ -32,20 +33,39 @@ def start(argv=sys.argv):
 def run(
         target_folder, image_path, target_dtype,
         target_meters_per_pixel_dimensions):
+    # Prepare
     image = SatelliteImage(image_path)
     target_dtype = get_target_dtype(image, target_dtype)
-    target_path = join(target_folder, 'image.tif')
-
-
-
-    translate
-    warp
-
-    zoom_dimensions = get_zoom_dimensions(
+    target_min, target_max = get_dtype_bounds(target_dtype)
+    target_pixel_dimensions = get_pixel_dimensions(
         image, target_meters_per_pixel_dimensions)
-    normalize(target_path, image, target_dtype, zoom_dimensions)
+    target_path = join(target_folder, 'image.tif')
+    band_count = image.band_count
+    band_extremes = [image.get_band_statistics(
+        x)[:2] for x in xrange(band_count)]
+    translated_path = mkstemp('.tif')
+    del image
+    # Translate
+    gdal_translate_args = ['gdal_translate'] + get_gdal_options(target_dtype)
+    for band_index in xrange(band_count):
+        source_min, source_max = band_extremes[band_index]
+        gdal_translate_args.append('-scale_b%s %s %s %s %s' % (
+            band_index + 1, source_min, source_max, target_min, target_max))
+    subprocess.call(gdal_translate_args + [image_path, translated_path])
+    # Warp
+    gdal_warp_args = ['gdalwarp'] + get_gdal_options(target_dtype)
+    gdal_warp_args.extend([
+        '-ts %s %s' % target_pixel_dimensions,
+        '-r cubic',
+        '-multi'
+        '-wo NUM_THREADS=ALL_CPUS'
+        '-wo OPTIMIZE_SIZE=TRUE',
+        '-wo WRITE_FLUSH=YES',
+        '-overwrite'])
+    subprocess.call(gdal_warp_args + [translated_path, target_path])
+    # Return
     return dict(
-        zoom_dimensions=zoom_dimensions)
+        pixel_dimensions=target_pixel_dimensions)
 
 
 def get_target_dtype(image, target_dtype):
@@ -65,31 +85,6 @@ def get_pixel_dimensions(image, target_meters_per_pixel_dimensions):
     except TypeError:
         pixel_width, pixel_height = image.pixel_dimensions
     return pixel_width, pixel_height
-
-
-def translate(target_path, image, target_dtype):
-    target_min, target_max = get_dtype_bounds(target_dtype)
-    arguments = ['gdal_translate'] + get_gdal_options(target_dtype)
-    for band_index in xrange(image.band_count):
-        source_min, source_max = image.get_band_statistics(band_index)[:2]
-        arguments.append('-scale_b%s %s %s %s %s' % (
-            band_index + 1, source_min, source_max, target_min, target_max))
-    subprocess.call(arguments + [image.path, target_path])
-
-
-def warp(target_path, image, target_dtype, target_meters_per_pixel_dimensions):
-    arguments = ['gdalwarp'] + get_gdal_options(target_dtype)
-    pixel_dimensions = get_pixel_dimensions(
-        image, target_meters_per_pixel_dimensions)
-    arguments.extend([
-        '-ts %s %s' % pixel_dimensions,
-        '-r cubic',
-        '-multi'
-        '-wo NUM_THREADS=ALL_CPUS'
-        '-wo OPTIMIZE_SIZE=TRUE',
-        '-wo WRITE_FLUSH=YES',
-        '-overwrite'])
-    subprocess.call(arguments + [image.path, target_path])
 
 
 def get_gdal_options(target_dtype):
