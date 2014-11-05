@@ -45,7 +45,17 @@ def run(
         x)[:2] for x in xrange(band_count)]
     translated_path = mkstemp('.tif')[1]
     del image
+    if the range has already been expanded badn_extremes
+        then make link for translated_path to original image_path
+
+    if resolution is the same pixel_dimensions  
+        hten make link for target_path to translated_path
+
     # Translate
+    if should_translate():
+        pass
+    else:
+        pass
     gdal_translate_args = get_gdal_options(target_dtype)
     for band_index in xrange(band_count):
         source_min, source_max = band_extremes[band_index]
@@ -53,11 +63,14 @@ def run(
             band_index + 1, source_min, source_max, target_min, target_max))
     launch('gdal_translate', gdal_translate_args, image_path, translated_path)
     # Warp
+    if should_warp():
+        pass
+    else:
+        pass
     gdal_warp_args = get_gdal_options(target_dtype) + [
         '-ts %s %s' % target_pixel_dimensions,
         '-r cubic',
-        '-multi',
-        '-wo NUM_THREADS=ALL_CPUS',
+        '-multi -wo NUM_THREADS=ALL_CPUS',
         '-wo OPTIMIZE_SIZE=TRUE',
         '-wo WRITE_FLUSH=YES',
         '-overwrite']
@@ -92,10 +105,8 @@ def get_gdal_options(target_dtype):
         '-of GTiff',
         '-co INTERLEAVE=BAND',
         '-co SPARSE_OK=TRUE',
-        '-co COMPRESS=LZW',
-        '-co PREDICTOR=2',
-        '-co PHOTOMETRIC=RGB',
-        '-co ALPHA=NO',
+        '-co COMPRESS=LZW -co PREDICTOR=2',
+        '-co PHOTOMETRIC=RGB -co ALPHA=NO',
         '-co BIGTIFF=YES']
 
 
