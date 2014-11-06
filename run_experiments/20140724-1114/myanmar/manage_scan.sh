@@ -13,14 +13,17 @@ export RANDOM_SEED=crosscompute
 export BATCH_SIZE=5k
 export TILE_METRIC_DIMENSIONS=1000,1000
 
-
-
+normalize_image \
+    --target_folder $TEMPORARY_FOLDER/normalize_image \
+    --image_path $IMAGE_PATH \
+    --target_dtype uint8 \
+    --target_meters_per_pixel_dimensions 0.5x0.5
+export NORMALIZED_IMAGE_PATH=$TEMPORARY_FOLDER/normalize_image/image.tif
 
 if [ ! -d $TEMPORARY_FOLDER/batches-* ]; then
     bash prepare_scan.sh
     rm -rf $TEMPORARY_FOLDER/arrays-*
 fi
-
 export CLASSIFIER_PATH
 export CLASSIFIER_NAME=`basename $CLASSIFIER_PATH`
 bash scan.sh
