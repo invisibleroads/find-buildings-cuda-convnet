@@ -1,6 +1,5 @@
-# US/Pacific 10/14/2014
+# US/Pacific 11/6/2014
 Train generic classifier
-    + Experiment with arcpy.env.resamplingmethod
     Make sure that each image has accurate labels
         Label unlabelled images
 Improve development classifier
@@ -19,5 +18,3 @@ Update interface
     Show map of results
         Update preview dynamically
     Let them label a few to auto select optimal classifier
-_ Combine Amazon Mechanical Turk results into a clean dataset [8h]
-    _ Set up Amazon Mechanical Turk to estimate the building count in a window [10h]
