@@ -13,22 +13,18 @@ from . import calculator
 class ProjectedCalibration(object):
 
     def __init__(self, calibration_pack):
-        self._calibration_pack = tuple(calibration_pack)
-
-    @property
-    def calibration_pack(self):
-        return self._calibration_pack
+        self.calibration_pack = tuple(calibration_pack)
 
     def to_projected_xy(self, (pixel_x, pixel_y)):
         'Get projected coordinates given pixel coordinates'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         projected_x = g0 + pixel_x * g1 + pixel_y * g2
         projected_y = g3 + pixel_x * g4 + pixel_y * g5
         return np.array([projected_x, projected_y])
 
     def to_pixel_xy(self, (projected_x, projected_y)):
         'Get pixel coordinates given projected coordinates'
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         k = float(g1 * g5 - g2 * g4)
         x = -g0 * g5 + g2 * g3 - g2 * projected_y + g5 * projected_x
         y = -g1 * (g3 - projected_y) + g4 * (g0 - projected_x)
@@ -37,19 +33,19 @@ class ProjectedCalibration(object):
             calculator.round_number(y / k)])
 
     def _to_projected_width(self, pixel_width):
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return abs(pixel_width * g1)
 
     def _to_pixel_width(self, projected_width):
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return calculator.round_number(projected_width / float(g1))
 
     def _to_projected_height(self, pixel_height):
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return abs(pixel_height * g5)
 
     def _to_pixel_height(self, projected_height):
-        g0, g1, g2, g3, g4, g5 = self._calibration_pack
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
         return calculator.round_number(projected_height / float(g5))
 
 
@@ -112,7 +108,6 @@ class SatelliteImage(MetricCalibration):
 
     def __init__(self, image_path):
         self._image = image = gdal.Open(image_path)
-        self._band_packs = _get_band_packs(image)
         super(SatelliteImage, self).__init__(
             calibration_pack=image.GetGeoTransform(), proj4=_get_proj4(image))
         self.pixel_dimensions = np.array((
@@ -120,6 +115,7 @@ class SatelliteImage(MetricCalibration):
         self.pixel_coordinate_dtype = np.min_scalar_type(
             max(self.pixel_dimensions))
         self.band_count = image.RasterCount
+        self.band_packs = _get_band_packs(image)
         self.array_dtype = _get_array_dtype(image)
         self.path = image_path
 
@@ -131,7 +127,7 @@ class SatelliteImage(MetricCalibration):
         if band_index is None:
             array = array[:, :, :3]
             for band_index in xrange(array.shape[-1]):
-                mean, stddev = self.get_band_statistics(band_index)[-2:]
+                mean, stddev = self.band_packs[band_index][-2:]
                 array[:, :, band_index] = enhance_array(
                     array[:, :, band_index],
                     mean - 2 * stddev, mean + 2 * stddev, target_dtype)
@@ -140,7 +136,7 @@ class SatelliteImage(MetricCalibration):
                 array = array[:, :, band_index]
             except IndexError:
                 pass
-            mean, stddev = self.get_band_statistics(band_index)[-2:]
+            mean, stddev = self.band_packs[band_index][-2:]
             array = enhance_array(
                 array, mean - 2 * stddev, mean + 2 * stddev, target_dtype)
         image = toimage(array, cmin=target_min, cmax=target_max)
@@ -176,9 +172,6 @@ class SatelliteImage(MetricCalibration):
                     :array.shape[0], :array.shape[1], :array.shape[2]] = array
                 array = padded_array
         return array
-
-    def get_band_statistics(self, band_index):
-        return self._band_packs[band_index]
 
     def _get_clipped_array(self, (pixel_upper_left, pixel_dimensions)):
         pixel_upper_left = np.array(pixel_upper_left)
