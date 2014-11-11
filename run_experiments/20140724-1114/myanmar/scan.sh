@@ -5,7 +5,7 @@ rm $TEMPORARY_FOLDER/probabilities-*.csv
 PIXEL_BOUNDS_LIST=`\
     get_tiles_from_image \
         --target_folder $TEMPORARY_FOLDER/tiles \
-        --image_path $IMAGE_PATH \
+        --image_path $NORMALIZED_IMAGE_PATH \
         --tile_metric_dimensions $TILE_METRIC_DIMENSIONS \
         --overlap_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
         --list_pixel_bounds`
@@ -33,9 +33,9 @@ COUNTS_FOLDER=$TEMPORARY_FOLDER/${CLASSIFIER_NAME}-counts
 log get_counts_from_probabilities \
     --target_folder $COUNTS_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
-    --image_path $IMAGE_PATH
+    --image_path $NORMALIZED_IMAGE_PATH
 log get_counts_from_probabilities \
     --target_folder $TARGET_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
-    --image_path $IMAGE_PATH \
+    --image_path $NORMALIZED_IMAGE_PATH \
     --actual_metric_radius $ACTUAL_RADIUS
