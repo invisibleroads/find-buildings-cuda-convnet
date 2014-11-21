@@ -1,10 +1,10 @@
 import h5py
+import numpy as np
 import operator
 import sys
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint, load_points
 from os.path import join
-from scipy.sparse import lil_matrix
 
 from ..libraries import calculator
 from ..libraries import disk
@@ -102,7 +102,7 @@ def trim_to_minimum(actual_maximum, desired_maximum):
 
 
 def estimate_negative_count(image_scope, positive_pixel_centers):
-    canvas = lil_matrix(tuple(image_scope.pixel_dimensions), dtype='bool')
+    canvas = np.zeros(tuple(image_scope.pixel_dimensions), dtype='bool')
     # Compute the positive pixel area
     for index, positive_pixel_center in enumerate(positive_pixel_centers):
         pixel_frame = image_scope.get_pixel_frame_from_pixel_center(
