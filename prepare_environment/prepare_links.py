@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 from count_buildings.scripts import get_examples_from_points
 from crosscompute.libraries import disk, script
 from glob import glob
-from os.path import basename, dirname, exists, join
+from os.path import basename, dirname, join
 from pandas import read_csv
 
 
@@ -31,7 +31,8 @@ def run(
             source_shapefile_path)
         print('--> %s' % shapefile_link_path)
         save_examples(
-            target_examples_folder, source_image_path, source_shapefile_path,
+            join(target_examples_folder, source_nickname),
+            source_image_path, source_shapefile_path,
             example_metric_dimensions,
             maximum_positive_count, maximum_negative_count)
 
@@ -46,7 +47,11 @@ def prepare_examples_folder(script_path):
 def find_shapefile_path(image_path):
     base_folder = dirname(find_parent_folder('Images', image_path))
     shapefile_folder = join(base_folder, 'Features', 'Buildings', 'Interim')
-    return glob(join(shapefile_folder, '*.shp'))[0]
+    shapefile_paths = glob(join(shapefile_folder, '*.shp'))
+    if len(shapefile_paths) > 1:
+        shapefile_name = disk.get_basename(image_path) + '.shp'
+        shapefile_paths = glob(join(shapefile_folder, shapefile_name))
+    return shapefile_paths[0]
 
 
 def find_parent_folder(folder_name, file_path):
@@ -63,8 +68,10 @@ def make_link(target_path, source_path):
     target_folder = dirname(target_path)
     disk.make_folder(target_folder)
     os.chdir(target_folder)
-    if exists(target_path):
+    try:
         os.remove(target_path)
+    except OSError:
+        pass
     os.symlink(source_path, basename(target_path))
     return target_path
 
@@ -73,10 +80,11 @@ def save_examples(
         target_folder, image_path, shapefile_path,
         example_metric_dimensions,
         maximum_positive_count, maximum_negative_count):
+    disk.make_folder(target_folder)
     get_examples_from_points.run(
         target_folder, image_path,
         positive_points_paths=[shapefile_path],
-        negative_points_paths=[None],
+        negative_points_paths=[],
         example_metric_dimensions=example_metric_dimensions,
         maximum_positive_count=maximum_positive_count,
         maximum_negative_count=maximum_negative_count,
@@ -109,4 +117,7 @@ if __name__ == '__main__':
     run(
         arguments.target_link_folder,
         arguments.source_image_folder,
-        arguments.source_table_path)
+        arguments.source_table_path,
+        arguments.example_metric_dimensions,
+        arguments.maximum_positive_count,
+        arguments.maximum_negative_count)
