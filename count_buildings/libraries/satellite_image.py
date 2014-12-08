@@ -127,18 +127,17 @@ class SatelliteImage(MetricCalibration):
         if band_index is None:
             array = array[:, :, :3]
             for band_index in xrange(array.shape[-1]):
-                mean, stddev = self.band_packs[band_index][-2:]
+                source_min, source_max = self._get_band_extremes(band_index)
                 array[:, :, band_index] = enhance_array(
                     array[:, :, band_index],
-                    mean - 2 * stddev, mean + 2 * stddev, target_dtype)
+                    source_min, source_max, target_dtype)
         else:
             try:
                 array = array[:, :, band_index]
             except IndexError:
                 pass
-            mean, stddev = self.band_packs[band_index][-2:]
-            array = enhance_array(
-                array, mean - 2 * stddev, mean + 2 * stddev, target_dtype)
+            source_min, source_max = self._get_band_extremes(band_index)
+            array = enhance_array(array, source_min, source_max, target_dtype)
         image = toimage(array, cmin=target_min, cmax=target_max)
         image.save(target_path)
 
@@ -149,41 +148,37 @@ class SatelliteImage(MetricCalibration):
         self.save_image(target_path, array)
         return array
 
-    def get_array_from_pixel_frame(self, (pixel_upper_left, pixel_dimensions)):
+    def get_array_from_pixel_frame(
+            self, (pixel_upper_left, pixel_dimensions), fill_value=0):
+        pixel_x, pixel_y = pixel_upper_left
         pixel_width, pixel_height = pixel_dimensions
-        array = self._get_clipped_array((pixel_upper_left, pixel_dimensions))
-        is_clipped = array.shape[-2:] != (pixel_height, pixel_width)
         try:
-            array = np.rollaxis(array, 0, start=3)
+            array = self._image.ReadAsArray(
+                pixel_x, pixel_y, pixel_width, pixel_height)
         except ValueError:
-            if is_clipped:
-                padded_array = np.zeros((
-                    pixel_height, pixel_width),
-                    dtype=array.dtype)
-                padded_array[
-                    :array.shape[0], :array.shape[1]] = array
-                array = padded_array
+            raise ValueError('Pixel frame exceeds image bounds')
+        if self.band_count > 1:
+            array = np.rollaxis(array, 0, start=3)
+        void_values = [self._image.GetRasterBand(
+            x + 1).GetNoDataValue() for x in xrange(self.band_count)]
+        if len(set(void_values)) == 1:
+            void_value = void_values[0]
+            if void_value is not None:
+                array[array == void_value] = fill_value
         else:
-            if is_clipped:
-                padded_array = np.zeros((
-                    pixel_height, pixel_width, array.shape[-1]),
-                    dtype=array.dtype)
-                padded_array[
-                    :array.shape[0], :array.shape[1], :array.shape[2]] = array
-                array = padded_array
+            for band_index in self.band_count:
+                void_value = void_values[band_index]
+                if void_value is None:
+                    continue
+                band_array = array[:, :, band_index]
+                band_array[band_array == void_value] = fill_value
         return array
 
-    def _get_clipped_array(self, (pixel_upper_left, pixel_dimensions)):
-        pixel_upper_left = np.array(pixel_upper_left)
-        pixel_x1, pixel_y1 = self._clip_pixel_xy(
-            pixel_upper_left)
-        pixel_x2, pixel_y2 = self._clip_pixel_xy(
-            pixel_upper_left + pixel_dimensions)
-        return self._image.ReadAsArray(
-            pixel_x1, pixel_y1, pixel_x2 - pixel_x1, pixel_y2 - pixel_y1)
-
-    def _clip_pixel_xy(self, pixel_xy):
-        return np.maximum((0, 0), np.minimum(self.pixel_dimensions, pixel_xy))
+    def _get_band_extremes(self, band_index, stddev_count=None):
+        minimum, maximum, mean, stddev = self.band_packs[band_index]
+        if stddev_count is None:
+            return minimum, maximum
+        return mean - stddev_count * stddev, mean + stddev_count * stddev
 
 
 class ImageScope(SatelliteImage):

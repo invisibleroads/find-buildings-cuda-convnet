@@ -1,4 +1,4 @@
-# US/Pacific 11/6/2014
+# US/Pacific 12/7/2014
 Train generic classifier
     Make sure that each image has accurate labels
         Label unlabelled images
@@ -11,7 +11,7 @@ Improve development classifier
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
     Experiment with autoencoders to pretrain neural network
-    Scale images to the bit depth of the classifier (8bit, 16bit, 32bit)
+    Use minimum and maximum to save array
 Update interface
     Show picture of results
     Let them see building examples with each classifier

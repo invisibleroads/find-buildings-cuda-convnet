@@ -1,4 +1,5 @@
-# UTC 11/06/2014
+# UTC 12/08/2014
++ Scale images to the bit depth of the classifier (8bit, 16bit, 32bit) [12/08/2014]
 + Experiment with arcpy.env.resamplingmethod [11/06/2014]
 + Handle images in LL projection [10/14/2014]
 + Open images with one band like panchromatic [10/14/2014]
