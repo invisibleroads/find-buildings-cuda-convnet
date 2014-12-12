@@ -150,29 +150,8 @@ class SatelliteImage(MetricCalibration):
 
     def get_array_from_pixel_frame(
             self, (pixel_upper_left, pixel_dimensions), fill_value=0):
-        pixel_x, pixel_y = pixel_upper_left
-        pixel_width, pixel_height = pixel_dimensions
-        try:
-            array = self._image.ReadAsArray(
-                pixel_x, pixel_y, pixel_width, pixel_height)
-        except ValueError:
-            raise ValueError('Pixel frame exceeds image bounds')
-        if self.band_count > 1:
-            array = np.rollaxis(array, 0, start=3)
-        void_values = [self._image.GetRasterBand(
-            x + 1).GetNoDataValue() for x in xrange(self.band_count)]
-        if len(set(void_values)) == 1:
-            void_value = void_values[0]
-            if void_value is not None:
-                array[array == void_value] = fill_value
-        else:
-            for band_index in self.band_count:
-                void_value = void_values[band_index]
-                if void_value is None:
-                    continue
-                band_array = array[:, :, band_index]
-                band_array[band_array == void_value] = fill_value
-        return array
+        return _get_array(
+            self._image, (pixel_upper_left, pixel_dimensions), fill_value)
 
     def _get_band_extremes(self, band_index, stddev_count=None):
         minimum, maximum, mean, stddev = self.band_packs[band_index]
@@ -372,6 +351,38 @@ def get_dtype_bounds(dtype):
     return iinfo.min, iinfo.max
 
 
+def _get_array(
+        gdal_image, (pixel_upper_left, pixel_dimensions), fill_value=0):
+    band_count = gdal_image.RasterCount
+    pixel_x, pixel_y = pixel_upper_left
+    pixel_width, pixel_height = pixel_dimensions
+    try:
+        array = gdal_image.ReadAsArray(
+            pixel_x, pixel_y, pixel_width, pixel_height)
+    except ValueError:
+        raise ValueError('Pixel frame exceeds image bounds')
+    if band_count > 1:
+        array = np.rollaxis(array, 0, start=3)
+    void_values = [gdal_image.GetRasterBand(
+        x + 1).GetNoDataValue() for x in xrange(band_count)]
+    if len(set(void_values)) == 1:
+        void_value = void_values[0]
+        if void_value is not None:
+            array[array == void_value] = fill_value
+    else:
+        for band_index in xrange(band_count):
+            void_value = void_values[band_index]
+            if void_value is None:
+                continue
+            band_array = array[:, :, band_index]
+            band_array[band_array == void_value] = fill_value
+    return array
+
+
+def _get_array_dtype(gdal_image):
+    return gdal_image.ReadAsArray(0, 0, 0, 0).dtype
+
+
 def _get_band_packs(image):
     'Get minimum, maximum, mean, standard deviation for each band'
     band_packs = []
@@ -379,10 +390,6 @@ def _get_band_packs(image):
         band = image.GetRasterBand(band_number)
         band_packs.append(band.GetStatistics(0, 1))
     return band_packs
-
-
-def _get_array_dtype(image):
-    return image.ReadAsArray(0, 0, 0, 0).dtype
 
 
 def _get_proj4(image):
