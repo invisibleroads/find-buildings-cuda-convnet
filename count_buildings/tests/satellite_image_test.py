@@ -1,12 +1,21 @@
 import numpy as np
 import unittest
 from geometryIO import proj4LL
-from mock import MagicMock
+from mock import patch
 from numpy import random
+from osgeo.osr import SpatialReference
 
 from ..libraries.satellite_image import ProjectedCalibration
 from ..libraries.satellite_image import MetricCalibration
-from ..libraries.satellite_image import _get_array
+from ..libraries.satellite_image import SatelliteImage
+
+
+LIBRARY_ROUTE = 'count_buildings.libraries.satellite_image'
+spatial_reference = SpatialReference()
+spatial_reference.ImportFromEPSG(4326)
+WKT = spatial_reference.ExportToWkt()
+PIXEL_FRAME = (0, 0), (10, 10)
+CALIBRATION_PACK = 0, 0.5, 0, 0, 0, -0.5
 
 
 class ProjectedCalibrationTest(unittest.TestCase):
@@ -39,41 +48,55 @@ class MetricCalibrationTest(unittest.TestCase):
 
 class SatelliteImageTest(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def test_get_array(self):
-        pixel_frame = (0, 0), (10, 10)
-        # Pixel frame exceeds image bounds
-        gdal_image = MagicMock()
+    @patch(LIBRARY_ROUTE + '.gdal')
+    def test_get_array_from_pixel_frame_outside_image_bounds(self, mock_gdal):
+        gdal_image = get_gdal_image(mock_gdal)
+        image = SatelliteImage('/tmp/image.tif')
         gdal_image.ReadAsArray.side_effect = ValueError
         self.assertRaises(
-            ValueError, _get_array, gdal_image, pixel_frame)
-        # Image has multiple spectral bands
-        gdal_image = MagicMock()
-        gdal_array_shape = 6, 4, 5
+            ValueError, image.get_array_from_pixel_frame, PIXEL_FRAME)
+
+    @patch(LIBRARY_ROUTE + '.gdal')
+    def test_get_array_from_pixel_frame_with_many_bands(self, mock_gdal):
+        gdal_image = get_gdal_image(mock_gdal)
         gdal_image.RasterCount = 3
+        image = SatelliteImage('/tmp/image.tif')
+        gdal_array_shape = 6, 4, 5
         gdal_image.ReadAsArray.return_value = np.random.rand(*gdal_array_shape)
-        self.assertEqual(
-            _get_array(gdal_image, pixel_frame).shape,
-            gdal_array_shape[-2:] + gdal_array_shape[:-2])
-        # make void value only not be none and be only one
-        gdal_image = MagicMock()
-        gdal_image.RasterCount = 1
+        array = image.get_array_from_pixel_frame(PIXEL_FRAME)
+        expected_array_shape = gdal_array_shape[-2:] + gdal_array_shape[:-2]
+        self.assertEqual(array.shape, expected_array_shape)
+
+    @patch(LIBRARY_ROUTE + '.gdal')
+    def test_get_array_from_pixel_frame_with_one_null_value(self, mock_gdal):
+        gdal_image = get_gdal_image(mock_gdal)
+        gdal_band = gdal_image.GetRasterBand
+        gdal_band.return_value.GetNoDataValue.return_value = 2
+        image = SatelliteImage('/tmp/image.tif')
         gdal_image.ReadAsArray.return_value = np.array([0, 1, 2])
-        gdal_image.GetRasterBand.return_value.GetNoDataValue.return_value = 2
-        self.assert_((
-            _get_array(gdal_image, pixel_frame) == np.array([0, 1, 0])).all())
-        # make there be many void values, but one of which is none
-        gdal_image = MagicMock()
+        array = image.get_array_from_pixel_frame(PIXEL_FRAME)
+        expected_array = np.array([0, 1, 0])
+        self.assert_((array == expected_array).all())
+
+    @patch(LIBRARY_ROUTE + '.gdal')
+    def test_get_array_from_pixel_frame_with_many_null_values(self, mock_gdal):
+        gdal_image = get_gdal_image(mock_gdal)
         gdal_image.RasterCount = 2
+        gdal_band = gdal_image.GetRasterBand
+        gdal_band.return_value.GetNoDataValue.side_effect = 2, None
+        image = SatelliteImage('/tmp/image.tif')
         gdal_image.ReadAsArray.return_value = np.array([
             [[2, 2], [2, 2]], [[2, 2], [2, 2]]])
-        gdal_image.GetRasterBand.return_value.GetNoDataValue.side_effect = (
-            2, None)
-        self.assert_((
-            _get_array(gdal_image, pixel_frame) == np.array([
-                [[0, 2], [0, 2]], [[0, 2], [0, 2]]])).all())
+        array = image.get_array_from_pixel_frame(PIXEL_FRAME)
+        expected_array = np.array([[[0, 2], [0, 2]], [[0, 2], [0, 2]]])
+        self.assert_((array == expected_array).all())
+
+
+def get_gdal_image(mock_gdal):
+    gdal_image = mock_gdal.Open.return_value
+    gdal_image.GetProjectionRef.return_value = WKT
+    gdal_image.GetGeoTransform.return_value = CALIBRATION_PACK
+    return gdal_image
 
 
 if __name__ == '__main__':

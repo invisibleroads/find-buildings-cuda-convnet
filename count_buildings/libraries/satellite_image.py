@@ -117,6 +117,8 @@ class SatelliteImage(MetricCalibration):
         self.band_count = image.RasterCount
         self.band_packs = _get_band_packs(image)
         self.array_dtype = _get_array_dtype(image)
+        self.null_values = [image.GetRasterBand(
+            x + 1).GetNoDataValue() for x in xrange(self.band_count)]
         self.path = image_path
 
     def save_image(self, target_path, array, band_index=None):
@@ -150,8 +152,27 @@ class SatelliteImage(MetricCalibration):
 
     def get_array_from_pixel_frame(
             self, (pixel_upper_left, pixel_dimensions), fill_value=0):
-        return _get_array(
-            self._image, (pixel_upper_left, pixel_dimensions), fill_value)
+        pixel_x, pixel_y = pixel_upper_left
+        pixel_width, pixel_height = pixel_dimensions
+        try:
+            array = self._image.ReadAsArray(
+                pixel_x, pixel_y, pixel_width, pixel_height)
+        except ValueError:
+            raise ValueError('Pixel frame exceeds image bounds')
+        if self.band_count > 1:
+            array = np.rollaxis(array, 0, start=3)
+        if len(set(self.null_values)) == 1:
+            null_value = self.null_values[0]
+            if null_value is not None:
+                array[array == null_value] = fill_value
+        else:
+            for band_index in xrange(self.band_count):
+                null_value = self.null_values[band_index]
+                if null_value is None:
+                    continue
+                band_array = array[:, :, band_index]
+                band_array[band_array == null_value] = fill_value
+        return array
 
     def _get_band_extremes(self, band_index, stddev_count=None):
         minimum, maximum, mean, stddev = self.band_packs[band_index]
@@ -349,34 +370,6 @@ def enhance_array(source_array, source_min, source_max, target_dtype):
 def get_dtype_bounds(dtype):
     iinfo = np.iinfo(dtype)
     return iinfo.min, iinfo.max
-
-
-def _get_array(
-        gdal_image, (pixel_upper_left, pixel_dimensions), fill_value=0):
-    band_count = gdal_image.RasterCount
-    pixel_x, pixel_y = pixel_upper_left
-    pixel_width, pixel_height = pixel_dimensions
-    try:
-        array = gdal_image.ReadAsArray(
-            pixel_x, pixel_y, pixel_width, pixel_height)
-    except ValueError:
-        raise ValueError('Pixel frame exceeds image bounds')
-    if band_count > 1:
-        array = np.rollaxis(array, 0, start=3)
-    void_values = [gdal_image.GetRasterBand(
-        x + 1).GetNoDataValue() for x in xrange(band_count)]
-    if len(set(void_values)) == 1:
-        void_value = void_values[0]
-        if void_value is not None:
-            array[array == void_value] = fill_value
-    else:
-        for band_index in xrange(band_count):
-            void_value = void_values[band_index]
-            if void_value is None:
-                continue
-            band_array = array[:, :, band_index]
-            band_array[band_array == void_value] = fill_value
-    return array
 
 
 def _get_array_dtype(gdal_image):
