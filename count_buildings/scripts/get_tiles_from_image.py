@@ -73,6 +73,8 @@ def save_tiles(
     if not tile_indices:
         tile_indices = xrange(image_scope.tile_count)
     for tile_index in tile_indices:
+        if tile_index > maximum_tile_index:
+            break
         if tile_index % 100 == 0:
             print('%s / %s' % (tile_index, maximum_tile_index))
         pixel_frame = image_scope.get_pixel_frame_from_tile_index(

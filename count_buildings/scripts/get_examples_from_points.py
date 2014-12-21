@@ -8,7 +8,7 @@ from os.path import join
 
 from ..libraries import calculator
 from ..libraries import disk
-from ..libraries import satellite_image
+from ..libraries.satellite_image import SatelliteImage, MetricScope
 from ..libraries.tree import RTree
 
 
@@ -51,8 +51,8 @@ def run(
         example_metric_dimensions,
         maximum_positive_count, maximum_negative_count, save_images):
     examples_h5 = get_examples_h5(target_folder)
-    image_scope = satellite_image.ImageScope(
-        image_path, example_metric_dimensions)
+    image = SatelliteImage(image_path)
+    image_scope = MetricScope(image, example_metric_dimensions)
     positive_pixel_centers = get_pixel_centers(
         positive_points_paths, image_scope)
     negative_pixel_centers = get_pixel_centers(
@@ -75,7 +75,7 @@ def run(
         image_scope, negative_pixel_centers, negative_count, examples_h5,
         positive_pixel_centers)
     return dict(
-        example_pixel_dimensions=image_scope.scope_pixel_dimensions,
+        example_pixel_dimensions=image_scope.tile_pixel_dimensions,
         positive_fraction=positive_count / float(example_count),
         positive_count=positive_count,
         negative_count=negative_count)
@@ -128,7 +128,7 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
 def save_positive_examples(
         target_folder, image_scope, positive_pixel_centers,
         positive_count, examples_h5):
-    pixel_width, pixel_height = image_scope.scope_pixel_dimensions
+    pixel_width, pixel_height = image_scope.tile_pixel_dimensions
     positive_arrays = examples_h5.create_dataset(
         'positive/arrays', shape=(
             positive_count, pixel_height, pixel_width,
@@ -149,7 +149,7 @@ def save_positive_examples(
 def save_negative_examples(
         target_folder, image_scope, negative_pixel_centers,
         negative_count, examples_h5, positive_pixel_centers):
-    pixel_width, pixel_height = image_scope.scope_pixel_dimensions
+    pixel_width, pixel_height = image_scope.tile_pixel_dimensions
     negative_arrays = examples_h5.create_dataset(
         'negative/arrays', shape=(
             negative_count, pixel_height, pixel_width,

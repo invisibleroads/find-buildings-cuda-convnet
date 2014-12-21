@@ -205,7 +205,7 @@ class SatelliteImage(MetricCalibration):
 class PixelScope(SatelliteImage):
 
     def __init__(
-            self, image, tile_pixel_dimensions, overlap_pixel_dimensions):
+            self, image, tile_pixel_dimensions, overlap_pixel_dimensions=(0, 0)):
         self._become(image)
         self.tile_pixel_dimensions = np.array(tile_pixel_dimensions)
         self.overlap_pixel_dimensions = overlap_pixel_dimensions
@@ -307,7 +307,7 @@ class PixelScope(SatelliteImage):
 class MetricScope(PixelScope):
 
     def __init__(
-            self, image, tile_metric_dimensions, overlap_metric_dimensions):
+            self, image, tile_metric_dimensions, overlap_metric_dimensions=(0, 0)):
         tile_pixel_dimensions = image.to_pixel_dimensions(
             tile_metric_dimensions)
         overlap_pixel_dimensions = image.to_pixel_dimensions(
