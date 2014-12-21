@@ -1,8 +1,9 @@
-import os
+import math
 import sys
 from crosscompute.libraries import script
+from os.path import join
 
-from ..libraries import satellite_image
+from ..libraries.satellite_image import SatelliteImage, MetricScope
 
 
 def start(argv=sys.argv):
@@ -20,38 +21,30 @@ def start(argv=sys.argv):
             help='dimensions of tile overlap in metric units')
         starter.add_argument(
             '--tile_indices', metavar='INTEGER',
-            type=int, nargs='+',
-            help='indices to extract')
+            type=script.parse_indices,
+            help='comma-separated indices and ranges')
         starter.add_argument(
-            '--included_pixel_bounds', metavar='MIN_X,MIN_Y,MAX_X,MAX_Y',
-            type=script.parse_bounds,
-            help='target specified bounds')
-        starter.add_argument(
-            '--list_pixel_bounds', action='store_true',
+            '--count_tiles', action='store_true',
             help='')
 
 
 def run(
         target_folder, image_path,
-        tile_metric_dimensions, overlap_metric_dimensions, tile_indices,
-        included_pixel_bounds, list_pixel_bounds):
-    if tile_metric_dimensions is None and included_pixel_bounds is None:
+        tile_metric_dimensions, overlap_metric_dimensions,
+        tile_indices, count_tiles):
+    if tile_metric_dimensions is None:
         return save_image_properties(image_path)
-    elif tile_metric_dimensions is None:
-        return save_pixel_bounds(
-            target_folder, image_path, included_pixel_bounds)
-    elif list_pixel_bounds:
-        return print_pixel_bounds(
+    elif count_tiles:
+        return print_tile_count(
             image_path, tile_metric_dimensions, overlap_metric_dimensions,
-            tile_indices, included_pixel_bounds)
+            tile_indices)
     return save_tiles(
         target_folder, image_path,
-        tile_metric_dimensions, overlap_metric_dimensions, tile_indices,
-        included_pixel_bounds, list_pixel_bounds)
+        tile_metric_dimensions, overlap_metric_dimensions, tile_indices)
 
 
 def save_image_properties(image_path):
-    image = satellite_image.SatelliteImage(image_path)
+    image = SatelliteImage(image_path)
     return dict(
         image_metric_dimensions=image.to_metric_dimensions(
             image.pixel_dimensions),
@@ -59,62 +52,46 @@ def save_image_properties(image_path):
         image_band_count=image.band_count)
 
 
-def save_pixel_bounds(
-        target_folder, image_path, included_pixel_bounds):
-    pixel_frame = [
-        pixel_upper_left, pixel_dimensions
-    ] = satellite_image.get_pixel_frame_from_pixel_bounds(
-        included_pixel_bounds)
-    image = satellite_image.SatelliteImage(image_path)
-
-    target_path = get_tile_path(target_folder, pixel_upper_left)
-    image.save_image_from_pixel_frame(target_path, pixel_frame)
-    return dict(
-        tile_metric_dimensions=image.to_metric_dimensions(pixel_dimensions),
-        tile_pixel_dimensions=pixel_dimensions)
-
-
-def print_pixel_bounds(
+def print_tile_count(
         image_path, tile_metric_dimensions, overlap_metric_dimensions,
-        tile_indices, included_pixel_bounds):
-    image_scope = satellite_image.ImageScope(
-        image_path, tile_metric_dimensions)
-    tile_packs = image_scope.yield_tile_pack(
-        overlap_metric_dimensions, included_pixel_bounds, tile_indices)
-    for tile_indices, pixel_upper_left in tile_packs:
-        print '%s,%s,%s,%s' % (
-            pixel_upper_left[0],
-            pixel_upper_left[1],
-            pixel_upper_left[0] + image_scope.scope_pixel_dimensions[0],
-            pixel_upper_left[1] + image_scope.scope_pixel_dimensions[1])
+        tile_indices):
+    image = SatelliteImage(image_path)
+    image_scope = MetricScope(
+        image, tile_metric_dimensions, overlap_metric_dimensions)
+    print(image_scope.tile_count)
 
 
 def save_tiles(
         target_folder, image_path,
-        tile_metric_dimensions, overlap_metric_dimensions, tile_indices,
-        included_pixel_bounds, list_pixel_bounds):
-    image_scope = satellite_image.ImageScope(
-        image_path, tile_metric_dimensions)
-    tile_packs = list(image_scope.yield_tile_pack(
-        overlap_metric_dimensions, included_pixel_bounds, tile_indices))
-    tile_count = len(tile_packs)
-    tile_index = 0
-    for tile_index, pixel_upper_left in tile_packs:
-        if tile_index % 10 == 0:
-            print '%s / %s' % (tile_index, tile_count - 1)
-        array = image_scope.get_array_from_pixel_upper_left(pixel_upper_left)
+        tile_metric_dimensions, overlap_metric_dimensions, tile_indices):
+    image = SatelliteImage(image_path)
+    image_scope = MetricScope(
+        image, tile_metric_dimensions, overlap_metric_dimensions)
+    maximum_tile_index = image_scope.tile_count - 1
+    tile_path_template = get_tile_path_template(
+        target_folder, maximum_tile_index)
+    if not tile_indices:
+        tile_indices = xrange(image_scope.tile_count)
+    for tile_index in tile_indices:
+        if tile_index % 100 == 0:
+            print('%s / %s' % (tile_index, maximum_tile_index))
+        pixel_frame = image_scope.get_pixel_frame_from_tile_index(
+            tile_index)
         image_scope.save_image(
-            get_tile_path(target_folder, pixel_upper_left, tile_index), array)
-    print '%s / %s' % (tile_index, tile_count - 1)
+            get_tile_path(tile_path_template, tile_index, pixel_frame),
+            image_scope.get_array_from_pixel_frame(pixel_frame))
+    print('%s / %s' % (tile_index, maximum_tile_index))
     return dict(
-        tile_pixel_dimensions=image_scope.scope_pixel_dimensions,
-        overlap_pixel_dimensions=image_scope.to_pixel_dimensions(
-            overlap_metric_dimensions))
+        tile_pixel_dimensions=image_scope.tile_pixel_dimensions,
+        overlap_pixel_dimensions=image_scope.overlap_pixel_dimensions)
 
 
-def get_tile_path(target_folder, pixel_upper_left, tile_index=None):
-    tile_name_parts = ['pul%dx%d' % pixel_upper_left]
-    if tile_index is not None:
-        tile_name_parts.append('i%d' % tile_index)
-    tile_name = '%s.jpg' % '-'.join(tile_name_parts)
-    return os.path.join(target_folder, tile_name)
+def get_tile_path_template(target_folder, maximum_tile_index):
+    placeholder_count = int(math.floor(math.log10(maximum_tile_index))) + 1
+    return join(target_folder, 'i%%0%dd-pul%%dx%%d.jpg' % placeholder_count)
+
+
+def get_tile_path(path_template, tile_index, pixel_frame):
+    pixel_upper_left = pixel_frame[0]
+    return path_template % (
+        tile_index, pixel_upper_left[0], pixel_upper_left[1])

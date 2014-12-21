@@ -1,9 +1,7 @@
-import math
 import numpy as np
 import random
 import utm
 from geometryIO import get_transformPoint
-from itertools import product
 from osgeo import gdal, osr
 from scipy.misc import toimage
 
@@ -14,6 +12,25 @@ class ProjectedCalibration(object):
 
     def __init__(self, calibration_pack):
         self.calibration_pack = tuple(calibration_pack)
+
+    def _become(self, c):
+        self.calibration_pack = c.calibration_pack
+
+    def _to_projected_width(self, pixel_width):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return abs(pixel_width * g1)
+
+    def _to_pixel_width(self, projected_width):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return calculator.round_number(projected_width / float(g1))
+
+    def _to_projected_height(self, pixel_height):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return abs(pixel_height * g5)
+
+    def _to_pixel_height(self, projected_height):
+        g0, g1, g2, g3, g4, g5 = self.calibration_pack
+        return calculator.round_number(projected_height / float(g5))
 
     def to_projected_xy(self, (pixel_x, pixel_y)):
         'Get projected coordinates given pixel coordinates'
@@ -32,22 +49,6 @@ class ProjectedCalibration(object):
             calculator.round_number(x / k),
             calculator.round_number(y / k)])
 
-    def _to_projected_width(self, pixel_width):
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return abs(pixel_width * g1)
-
-    def _to_pixel_width(self, projected_width):
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return calculator.round_number(projected_width / float(g1))
-
-    def _to_projected_height(self, pixel_height):
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return abs(pixel_height * g5)
-
-    def _to_pixel_height(self, projected_height):
-        g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return calculator.round_number(projected_height / float(g5))
-
 
 class MetricCalibration(ProjectedCalibration):
 
@@ -61,6 +62,15 @@ class MetricCalibration(ProjectedCalibration):
         self._transform_to_projected_xy = get_transformPoint(
             self._metric_proj4, self.proj4)
         self._metric_xy1 = self._to_metric_xy((0, 0))
+
+    def _become(self, c):
+        super(MetricCalibration, self)._become(c)
+        self.proj4 = c.proj4
+        self._metric_proj4 = c._metric_proj4
+        self._in_metric_projection = c._in_metric_projection
+        self._transform_to_metric_xy = c._transform_to_metric_xy
+        self._transform_to_projected_xy = c._transform_to_projected_xy
+        self._metric_xy1 = c._to_metric_xy
 
     def _get_metric_proj4(self):
         if '+proj=utm' in self.proj4:
@@ -121,34 +131,22 @@ class SatelliteImage(MetricCalibration):
             x + 1).GetNoDataValue() for x in xrange(self.band_count)]
         self.path = image_path
 
-    def save_image(self, target_path, array, band_index=None):
-        target_dtype = np.dtype('uint8')
-        target_min, target_max = get_dtype_bounds(target_dtype)
-        if len(array.shape) == 2:
-            band_index = 0
-        if band_index is None:
-            array = array[:, :, :3]
-            for band_index in xrange(array.shape[-1]):
-                source_min, source_max = self._get_band_extremes(band_index)
-                array[:, :, band_index] = enhance_array(
-                    array[:, :, band_index],
-                    source_min, source_max, target_dtype)
-        else:
-            try:
-                array = array[:, :, band_index]
-            except IndexError:
-                pass
-            source_min, source_max = self._get_band_extremes(band_index)
-            array = enhance_array(array, source_min, source_max, target_dtype)
-        image = toimage(array, cmin=target_min, cmax=target_max)
-        image.save(target_path)
+    def _become(self, i):
+        self._image = i._image
+        super(SatelliteImage, self)._become(i)
+        self.pixel_dimensions = i.pixel_dimensions
+        self.pixel_coordinate_dtype = i.pixel_coordinate_dtype
+        self.band_count = i.band_count
+        self.band_packs = i.band_packs
+        self.array_dtype = i.array_dtype
+        self.null_values = i.null_values
+        self.path = i.path
 
-    def save_image_from_pixel_frame(
-            self, target_path, (pixel_upper_left, pixel_dimensions)):
-        array = self.get_array_from_pixel_frame((
-            pixel_upper_left, pixel_dimensions))
-        self.save_image(target_path, array)
-        return array
+    def _get_band_extremes(self, band_index, stddev_count=None):
+        minimum, maximum, mean, stddev = self.band_packs[band_index]
+        if stddev_count is None:
+            return minimum, maximum
+        return mean - stddev_count * stddev, mean + stddev_count * stddev
 
     def get_array_from_pixel_frame(
             self, (pixel_upper_left, pixel_dimensions), fill_value=0):
@@ -174,94 +172,85 @@ class SatelliteImage(MetricCalibration):
                 band_array[band_array == null_value] = fill_value
         return array
 
-    def _get_band_extremes(self, band_index, stddev_count=None):
-        minimum, maximum, mean, stddev = self.band_packs[band_index]
-        if stddev_count is None:
-            return minimum, maximum
-        return mean - stddev_count * stddev, mean + stddev_count * stddev
+    def save_image_from_pixel_frame(
+            self, target_path, (pixel_upper_left, pixel_dimensions)):
+        array = self.get_array_from_pixel_frame((
+            pixel_upper_left, pixel_dimensions))
+        self.save_image(target_path, array)
+        return array
+
+    def save_image(self, target_path, array, band_index=None):
+        target_dtype = np.dtype('uint8')
+        target_min, target_max = get_dtype_bounds(target_dtype)
+        if len(array.shape) == 2:
+            band_index = 0
+        if band_index is None:
+            array = array[:, :, :3]
+            for band_index in xrange(array.shape[-1]):
+                source_min, source_max = self._get_band_extremes(band_index)
+                array[:, :, band_index] = enhance_array(
+                    array[:, :, band_index],
+                    source_min, source_max, target_dtype)
+        else:
+            try:
+                array = array[:, :, band_index]
+            except IndexError:
+                pass
+            source_min, source_max = self._get_band_extremes(band_index)
+            array = enhance_array(array, source_min, source_max, target_dtype)
+        image = toimage(array, cmin=target_min, cmax=target_max)
+        image.save(target_path)
 
 
-class ImageScope(SatelliteImage):
+class PixelScope(SatelliteImage):
 
-    def __init__(self, image_path, scope_metric_dimensions):
-        super(ImageScope, self).__init__(image_path)
-        self.scope_metric_dimensions = scope_metric_dimensions
-        self.scope_pixel_dimensions = self.to_pixel_dimensions(
-            scope_metric_dimensions)
-
-    def yield_tile_pack(
-            self, overlap_metric_dimensions,
-            pixel_bounds=None, tile_indices=None):
-        image_pixel_width, image_pixel_height = self.pixel_dimensions
-        interval_pixel_dimensions = self.to_pixel_dimensions(
-            self.scope_metric_dimensions - overlap_metric_dimensions)
-        interval_pixel_width, interval_pixel_height = interval_pixel_dimensions
-        min_pixel_x, min_pixel_y = 0, 0
-        max_pixel_x, max_pixel_y = self.pixel_dimensions
-        try:
-            pixel_x1, pixel_y1, pixel_x2, pixel_y2 = pixel_bounds
-        except TypeError:
-            pixel_x1, pixel_y1 = min_pixel_x, min_pixel_y
-            pixel_x2, pixel_y2 = max_pixel_x, max_pixel_y
-        pixel_x_iter = get_covering_xrange(
-            pixel_x1, pixel_x2, interval_pixel_width,
-            min_pixel_x, max_pixel_x)
-        pixel_y_iter = get_covering_xrange(
-            pixel_y1, pixel_y2, interval_pixel_height,
-            min_pixel_y, max_pixel_y)
-        row_count = get_row_count(image_pixel_height, interval_pixel_height)
-        for pixel_upper_left in product(pixel_x_iter, pixel_y_iter):
-            tile_index = get_tile_index(
-                pixel_upper_left, interval_pixel_dimensions, row_count)
-            if tile_indices and tile_index not in tile_indices:
-                continue
-            yield tile_index, pixel_upper_left
-
-    def save_image_from_projected_center(self, target_path, projected_center):
-        pixel_center = self.to_pixel_xy(projected_center)
-        return self.save_image_from_pixel_center(target_path, pixel_center)
-
-    def save_image_from_pixel_center(self, target_path, pixel_center):
-        pixel_frame = self.get_pixel_frame_from_pixel_center(pixel_center)
-        return self.save_image_from_pixel_frame(target_path, pixel_frame)
-
-    def save_image_from_projected_upper_left(
-            self, target_path, projected_upper_left):
-        pixel_upper_left = self.to_pixel_xy(projected_upper_left)
-        return self.save_image_from_pixel_upper_left(
-            target_path, pixel_upper_left)
-
-    def save_image_from_pixel_upper_left(self, target_path, pixel_upper_left):
-        pixel_frame = pixel_upper_left, self.scope_pixel_dimensions
-        return self.save_image_from_pixel_frame(target_path, pixel_frame)
-
-    def get_array_from_projected_center(self, projected_center):
-        pixel_center = self.to_pixel_xy(projected_center)
-        return self.get_array_from_pixel_center(pixel_center)
+    def __init__(
+            self, image, tile_pixel_dimensions, overlap_pixel_dimensions):
+        self._become(image)
+        self.tile_pixel_dimensions = np.array(tile_pixel_dimensions)
+        self.overlap_pixel_dimensions = overlap_pixel_dimensions
+        self.interval_pixel_dimensions = (
+            self.tile_pixel_dimensions - overlap_pixel_dimensions)
+        self.column_count = _chop(
+            self.pixel_dimensions[0],
+            self.tile_pixel_dimensions[0],
+            self.interval_pixel_dimensions[0])
+        self.row_count = _chop(
+            self.pixel_dimensions[1],
+            self.tile_pixel_dimensions[1],
+            self.interval_pixel_dimensions[1])
+        self.tile_count = self.column_count * self.row_count
 
     def get_array_from_pixel_center(self, pixel_center):
         pixel_frame = self.get_pixel_frame_from_pixel_center(pixel_center)
         return self.get_array_from_pixel_frame(pixel_frame)
 
-    def get_array_from_projected_upper_left(self, projected_upper_left):
-        pixel_upper_left = self.to_pixel_xy(projected_upper_left)
-        return self.get_array_from_pixel_upper_left(pixel_upper_left)
-
     def get_array_from_pixel_upper_left(self, pixel_upper_left):
-        pixel_frame = pixel_upper_left, self.scope_pixel_dimensions
+        pixel_frame = pixel_upper_left, self.tile_pixel_dimensions
         return self.get_array_from_pixel_frame(pixel_frame)
 
     def get_pixel_bounds_from_pixel_center(self, pixel_center):
         return get_pixel_bounds_from_pixel_center(
-            pixel_center, self.scope_pixel_dimensions)
+            pixel_center, self.tile_pixel_dimensions)
 
     def get_pixel_bounds_from_pixel_upper_left(self, pixel_upper_left):
         return get_pixel_bounds_from_pixel_upper_left(
-            pixel_upper_left, self.scope_pixel_dimensions)
+            pixel_upper_left, self.tile_pixel_dimensions)
+
+    def get_pixel_frame_from_tile_coordinates(self, (tile_column, tile_row)):
+        pixel_upper_left = np.array(
+            self.interval_pixel_dimensions) * (tile_column, tile_row)
+        return pixel_upper_left, self.tile_pixel_dimensions
+
+    def get_pixel_frame_from_tile_index(self, tile_index):
+        tile_column = tile_index % self.column_count
+        tile_row = tile_index / self.column_count
+        return self.get_pixel_frame_from_tile_coordinates((
+            tile_column, tile_row))
 
     def get_pixel_frame_from_pixel_center(self, pixel_center):
         return get_pixel_frame_from_pixel_center(
-            pixel_center, self.scope_pixel_dimensions)
+            pixel_center, self.tile_pixel_dimensions)
 
     def get_random_pixel_center(self):
         x1, y1 = self.minimum_pixel_center
@@ -278,17 +267,6 @@ class ImageScope(SatelliteImage):
         is_y = min_y <= y and y <= max_y
         return is_x and is_y
 
-    @property
-    def minimum_pixel_center(self):
-        return get_pixel_center_from_pixel_frame((
-            self.minimum_pixel_upper_left, self.scope_pixel_dimensions))
-
-    @property
-    def maximum_pixel_center(self):
-        'Get maximum pixel_center that will return full array'
-        return get_pixel_center_from_pixel_frame((
-            self.maximum_pixel_upper_left, self.scope_pixel_dimensions))
-
     def is_pixel_upper_left(self, pixel_upper_left):
         x, y = pixel_upper_left
         min_x, min_y = self.minimum_pixel_upper_left
@@ -298,13 +276,64 @@ class ImageScope(SatelliteImage):
         return is_x and is_y
 
     @property
-    def minimum_pixel_upper_left(self):
-        return 0, 0
+    def maximum_pixel_center(self):
+        'Get maximum pixel_center that will return full array'
+        return get_pixel_center_from_pixel_frame((
+            self.maximum_pixel_upper_left, self.tile_pixel_dimensions))
 
     @property
     def maximum_pixel_upper_left(self):
         'Get maximum pixel_upper_left that will return full array'
-        return self.pixel_dimensions - self.scope_pixel_dimensions
+        return self.pixel_dimensions - self.tile_pixel_dimensions
+
+    @property
+    def minimum_pixel_center(self):
+        return get_pixel_center_from_pixel_frame((
+            self.minimum_pixel_upper_left, self.tile_pixel_dimensions))
+
+    @property
+    def minimum_pixel_upper_left(self):
+        return 0, 0
+
+    def save_image_from_pixel_center(self, target_path, pixel_center):
+        pixel_frame = self.get_pixel_frame_from_pixel_center(pixel_center)
+        return self.save_image_from_pixel_frame(target_path, pixel_frame)
+
+    def save_image_from_pixel_upper_left(self, target_path, pixel_upper_left):
+        pixel_frame = pixel_upper_left, self.tile_pixel_dimensions
+        return self.save_image_from_pixel_frame(target_path, pixel_frame)
+
+
+class MetricScope(PixelScope):
+
+    def __init__(
+            self, image, tile_metric_dimensions, overlap_metric_dimensions):
+        tile_pixel_dimensions = image.to_pixel_dimensions(
+            tile_metric_dimensions)
+        overlap_pixel_dimensions = image.to_pixel_dimensions(
+            overlap_metric_dimensions)
+        super(MetricScope, self).__init__(
+            image, tile_pixel_dimensions, overlap_pixel_dimensions)
+        self.tile_metric_dimensions = tile_metric_dimensions
+        self.overlap_metric_dimensions = overlap_metric_dimensions
+
+    def get_array_from_projected_center(self, projected_center):
+        pixel_center = self.to_pixel_xy(projected_center)
+        return self.get_array_from_pixel_center(pixel_center)
+
+    def get_array_from_projected_upper_left(self, projected_upper_left):
+        pixel_upper_left = self.to_pixel_xy(projected_upper_left)
+        return self.get_array_from_pixel_upper_left(pixel_upper_left)
+
+    def save_image_from_projected_center(self, target_path, projected_center):
+        pixel_center = self.to_pixel_xy(projected_center)
+        return self.save_image_from_pixel_center(target_path, pixel_center)
+
+    def save_image_from_projected_upper_left(
+            self, target_path, projected_upper_left):
+        pixel_upper_left = self.to_pixel_xy(projected_upper_left)
+        return self.save_image_from_pixel_upper_left(
+            target_path, pixel_upper_left)
 
 
 def get_pixel_bounds_from_pixel_center(
@@ -340,22 +369,6 @@ def get_pixel_center_from_pixel_frame((pixel_upper_left, pixel_dimensions)):
     return pixel_upper_left + np.array(pixel_dimensions) / 2
 
 
-def get_covering_xrange(a, b, interval, minimum, maximum):
-    a_cover = int(math.ceil(-1 + a / float(interval)) * interval)
-    b_cover = int(math.floor(+1 + b / float(interval)) * interval)
-    return xrange(max(a_cover, minimum), min(b_cover, maximum + 1), interval)
-
-
-def get_tile_index(pixel_upper_left, interval_pixel_dimensions, row_count):
-    pixel_x, pixel_y = pixel_upper_left
-    interval_pixel_x, interval_pixel_y = interval_pixel_dimensions
-    return row_count * pixel_x / interval_pixel_x + pixel_y / interval_pixel_y
-
-
-def get_row_count(height, interval_y):
-    return int(math.ceil(height / float(interval_y)))
-
-
 def enhance_array(source_array, source_min, source_max, target_dtype):
     target_min, target_max = get_dtype_bounds(target_dtype)
     if source_min == target_min and source_max == target_max:
@@ -389,6 +402,10 @@ def _get_proj4(image):
     spatial_reference = osr.SpatialReference()
     spatial_reference.ImportFromWkt(image.GetProjectionRef())
     return spatial_reference.ExportToProj4().strip()
+
+
+def _chop(canvas_length, tile_length, interval_length):
+    return ((canvas_length - tile_length) / interval_length) + 1
 
 
 gdal.UseExceptions()
