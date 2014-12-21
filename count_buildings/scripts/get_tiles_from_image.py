@@ -82,7 +82,7 @@ def save_tiles(
         image_scope.save_image(
             get_tile_path(tile_path_template, tile_index, pixel_frame),
             image_scope.get_array_from_pixel_frame(pixel_frame))
-    print('%s / %s' % (tile_index, maximum_tile_index))
+    print('%s / %s' % (maximum_tile_index, maximum_tile_index))
     return dict(
         tile_pixel_dimensions=image_scope.tile_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.overlap_pixel_dimensions)

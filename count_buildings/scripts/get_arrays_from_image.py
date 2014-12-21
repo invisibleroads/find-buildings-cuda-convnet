@@ -55,7 +55,7 @@ def save_arrays(
     maximum_tile_index = image_scope.tile_count - 1
     if not tile_indices:
         tile_indices = xrange(image_scope.tile_count)
-    array_count = len(tile_indices)
+    array_count = min(len(tile_indices), image_scope.tile_count)
     arrays, pixel_centers, labels = get_target_pack(
         target_folder, image_scope, array_count)
     for array_index, tile_index in enumerate(tile_indices):
@@ -70,7 +70,7 @@ def save_arrays(
         pixel_centers[array_index, :] = get_pixel_center_from_pixel_frame(
             pixel_frame)
         labels[array_index] = get_label(points_tree, pixel_frame)
-    print('%s / %s' % (array_index, array_count - 1))
+    print('%s / %s' % (array_count - 1, array_count - 1))
     return dict(
         tile_pixel_dimensions=image_scope.tile_pixel_dimensions,
         overlap_pixel_dimensions=image_scope.overlap_pixel_dimensions,

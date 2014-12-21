@@ -6,11 +6,10 @@ TILE_COUNT=`
     get_tiles_from_image \
         --target_folder $TEMPORARY_FOLDER/tiles \
         --image_path $NORMALIZED_IMAGE_PATH \
-        --tile_metric_dimensions $TILE_METRIC_DIMENSIONS \
-        --overlap_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
+        --tile_metric_dimensions $EXAMPLE_METRIC_DIMENSIONS \
+        --overlap_metric_dimensions $OVERLAP_METRIC_DIMENSIONS \
         --count_tiles`
 TILE_START_INDEX=0
-INTERVAL_LENGTH=1000
 
 while [ $TILE_START_INDEX -lt $TILE_COUNT ]; do
     let TILE_END_INDEX=TILE_START_INDEX+INTERVAL_LENGTH-1
