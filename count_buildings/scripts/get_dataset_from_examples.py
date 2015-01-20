@@ -37,8 +37,8 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, examples_folder, maximum_dataset_size,
-        positive_fraction, excluded_pixel_bounds, batch_size):
+        target_folder, examples_folder, maximum_dataset_size=None,
+        positive_fraction=None, excluded_pixel_bounds=None, batch_size=None):
     examples_h5 = h5py.File(os.path.join(examples_folder, EXAMPLES_NAME), 'r')
     positive_indices = get_indices(
         examples_h5['positive'], maximum_dataset_size, excluded_pixel_bounds)

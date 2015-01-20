@@ -32,8 +32,9 @@ def run(target_folder, configuration_path):
         tasks = tasks_by_script_name[script_name]
         for task_name, task in tasks:
             task_folder = disk.make_folder(join(target_folder, task_name))
+            task = trim_arguments(task, run_script)
             print_task(task_folder, task)
-            # run_script(task_folder, **task)
+            run_script(task_folder, **task)
 
 
 def get_tasks_by_script_name(target_folder, configuration_path):
@@ -58,7 +59,9 @@ def get_tasks_by_script_name(target_folder, configuration_path):
 
 
 def interpret(option, value):
-    if option.endswith('_dimensions'):
+    if option.endswith('_count'):
+        value = int(value)
+    elif option.endswith('_dimensions'):
         value = script.parse_dimensions(value)
     elif option.endswith('_name'):
         option = option.replace('_name', '_folder')
@@ -67,6 +70,8 @@ def interpret(option, value):
         value = expanduser(value)
     elif option.endswith('_paths'):
         value = [expanduser(x) for x in value.split()]
+    elif option.endswith('_size'):
+        value = script.parse_size(value)
     return option, value
 
 
@@ -82,6 +87,16 @@ def expand_string(value, variables):
     for variable_name, variable_value in variables.iteritems():
         value = value.replace('${%s}' % variable_name, variable_value)
     return value
+
+
+def trim_arguments(task, run):
+    value_by_key = {}
+    for argument_name in inspect.getargspec(run).args:
+        try:
+            value_by_key[argument_name] = task[argument_name]
+        except KeyError:
+            pass
+    return value_by_key
 
 
 def print_task(task_folder, task):
