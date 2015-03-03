@@ -65,7 +65,5 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    test_suite='count_buildings',
-    tests_require=REQUIREMENTS,
     install_requires=REQUIREMENTS,
     entry_points=ENTRY_POINTS)
