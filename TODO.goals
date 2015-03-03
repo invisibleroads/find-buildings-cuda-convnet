@@ -1,4 +1,8 @@
 # US/Pacific 12/7/2014
+= Train interim classifier
+    = Save task logs
+    Save overall log
+    Consider using better progress bars
 Train generic classifier
     Make sure that each image has accurate labels
         Label unlabelled images

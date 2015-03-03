@@ -40,6 +40,8 @@ get_counts_from_probabilities =\
     count_buildings.scripts.get_counts_from_probabilities:start
 normalize_image =\
     count_buildings.scripts.normalize_image:start
+train_classifier =\
+    count_buildings.scripts.train_classifier:start
 [crosscompute.tools]
 describe = count_buildings:describe
 include = count_buildings:includeme

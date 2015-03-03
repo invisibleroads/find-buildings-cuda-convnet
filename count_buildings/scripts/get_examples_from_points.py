@@ -21,6 +21,10 @@ def start(argv=sys.argv):
             '--image_path', metavar='PATH', required=True,
             help='satellite image')
         starter.add_argument(
+            '--example_metric_dimensions', metavar='WIDTH,HEIGHT',
+            type=script.parse_dimensions, required=True,
+            help='dimensions of extracted example in metric units')
+        starter.add_argument(
             '--positive_points_paths', metavar='PATH', required=True,
             nargs='+',
             help='positive locations')
@@ -28,10 +32,6 @@ def start(argv=sys.argv):
             '--negative_points_paths', metavar='PATH',
             nargs='+',
             help='negative locations')
-        starter.add_argument(
-            '--example_metric_dimensions', metavar='WIDTH,HEIGHT',
-            type=script.parse_dimensions, required=True,
-            help='dimensions of extracted example in metric units')
         starter.add_argument(
             '--maximum_positive_count', metavar='INTEGER',
             type=script.parse_size,
@@ -46,10 +46,14 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, image_path,
-        positive_points_paths, negative_points_paths,
+        target_folder,
+        image_path,
         example_metric_dimensions,
-        maximum_positive_count, maximum_negative_count, save_images):
+        positive_points_paths,
+        negative_points_paths=None,
+        maximum_positive_count=None,
+        maximum_negative_count=None,
+        save_images=False):
     examples_h5 = get_examples_h5(target_folder)
     image = SatelliteImage(image_path)
     image_scope = MetricScope(image, example_metric_dimensions)
@@ -135,7 +139,7 @@ def save_positive_examples(
             image_scope.band_count), dtype=image_scope.array_dtype)
     positive_index = 0
     for positive_index in xrange(positive_count):
-        if positive_index % 1000 == 0:
+        if positive_index % 10000 == 0:
             print '%s / %s' % (positive_index, positive_count - 1)
         pixel_center = positive_pixel_centers[positive_index]
         array = save_example_array(target_folder, image_scope, pixel_center)
@@ -158,7 +162,7 @@ def save_negative_examples(
     negative_pixel_center_iter = yield_negative_pixel_center(
         image_scope, negative_pixel_centers, positive_pixel_centers)
     for negative_index in xrange(negative_count):
-        if negative_index % 1000 == 0:
+        if negative_index % 10000 == 0:
             print '%s / %s' % (negative_index, negative_count - 1)
         pixel_center = negative_pixel_center_iter.next()
         array = save_example_array(target_folder, image_scope, pixel_center)
