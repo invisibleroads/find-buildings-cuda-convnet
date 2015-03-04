@@ -1,9 +1,8 @@
 # Install kernel 3.12.9
-sudo yum -y install https://kojipkgs.fedoraproject.org//packages/kernel/3.12.9/301.fc20/x86_64/kernel-3.12.9-301.fc20.x86_64.rpm
-sudo yum -y install https://kojipkgs.fedoraproject.org//packages/kernel/3.12.9/301.fc20/x86_64/kernel-devel-3.12.9-301.fc20.x86_64.rpm
-
-# Install cuda dependencies
+sudo yum -y install https://kojipkgs.fedoraproject.org/packages/kernel/3.12.9/301.fc20/x86_64/kernel-3.12.9-301.fc20.x86_64.rpm
+sudo yum -y install https://kojipkgs.fedoraproject.org/packages/kernel/3.12.9/301.fc20/x86_64/kernel-devel-3.12.9-301.fc20.x86_64.rpm
 sudo yum -y install libvdpau-devel
+# sudo reboot
 
 # Install cuda 6.5
 cd ~/Storage/programs/cuda
