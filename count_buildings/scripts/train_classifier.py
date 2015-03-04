@@ -4,6 +4,7 @@ from collections import defaultdict
 from ConfigParser import ConfigParser
 from count_buildings.scripts import get_examples_from_points
 from count_buildings.scripts import get_dataset_from_examples
+from count_buildings.scripts import get_batches_from_datasets
 from crosscompute.libraries import disk, script
 from os.path import join, expanduser
 
@@ -11,11 +12,14 @@ from os.path import join, expanduser
 SCRIPT_BY_NAME = {
     'get_examples_from_points': get_examples_from_points.run,
     'get_dataset_from_examples': get_dataset_from_examples.run,
+    'get_batches_from_datasets': get_batches_from_datasets.run,
 }
 SCRIPT_NAMES = [
     'get_examples_from_points',
     'get_dataset_from_examples',
+    'get_batches_from_datasets',
 ]
+HOME_FOLDER = expanduser('~')
 
 
 def start(argv=sys.argv):
@@ -61,17 +65,22 @@ def get_tasks_by_script_name(target_folder, configuration_path):
 def interpret(option, value):
     if option.endswith('_count'):
         value = int(value)
-    elif option.endswith('_dimensions'):
+    elif option.endswith('_dimensions') or option.endswith('_shape'):
         value = script.parse_dimensions(value)
+    elif option.endswith('_size'):
+        value = script.parse_size(value)
     elif option.endswith('_name'):
         option = option.replace('_name', '_folder')
         value = join('${TARGET_FOLDER}', value)
+    elif option.endswith('_names'):
+        o = option.replace('_names', '_name')
+        option = option.replace('_names', '_folders')
+        value = [interpret(o, x)[1] for x in value.split()]
     elif option.endswith('_path'):
         value = expanduser(value)
     elif option.endswith('_paths'):
-        value = [expanduser(x) for x in value.split()]
-    elif option.endswith('_size'):
-        value = script.parse_size(value)
+        o = option.replace('_paths', '_path')
+        value = [interpret(o, x)[1] for x in value.split()]
     return option, value
 
 
@@ -89,6 +98,14 @@ def expand_string(value, variables):
     return value
 
 
+def shrink_string(value):
+    if not hasattr(value, 'startswith'):
+        return value
+    if value.startswith(HOME_FOLDER):
+        value = value.replace(HOME_FOLDER, '~')
+    return value
+
+
 def trim_arguments(task, run):
     value_by_key = {}
     for argument_name in inspect.getargspec(run).args:
@@ -100,6 +117,11 @@ def trim_arguments(task, run):
 
 
 def print_task(task_folder, task):
-    print(task_folder)
+    print(shrink_string(task_folder))
     for option, value in task.iteritems():
-        print('\t%s = %s' % (option, value))
+        if option.endswith('_paths') or option.endswith('_folders'):
+            print('    %s =' % option)
+            for x in value:
+                print('        %s' % shrink_string(x))
+        else:
+            print('    %s = %s' % (option, shrink_string(value)))

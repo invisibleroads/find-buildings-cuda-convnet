@@ -26,7 +26,7 @@ def start(argv=sys.argv):
 
 
 def run(
-        target_folder, dataset_folders, batch_size, array_shape):
+        target_folder, dataset_folders, batch_size, array_shape=None):
     batch_group = BatchGroup(
         DATASET_NAME, dataset_folders, batch_size, array_shape)
     keys = batch_group.keys
