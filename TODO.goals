@@ -1,6 +1,6 @@
-# US/Pacific 12/7/2014
-= Train interim classifier
-    = Save task logs
+# US/Pacific 3/6/2015
+Train interim classifier
+    Save task logs
     Save overall log
     Consider using better progress bars
 Train generic classifier
@@ -8,9 +8,9 @@ Train generic classifier
         Label unlabelled images
 Improve development classifier
     Use cuda-convnet2
+        Check whether ec2 is compatible with cuda-convnet2
     Use dropout
     Use hyperopt
-    Use overfeat
     Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed

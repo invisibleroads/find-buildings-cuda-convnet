@@ -24,8 +24,8 @@ get_dataset_from_examples =\
     count_buildings.scripts.get_dataset_from_examples:start
 get_batches_from_datasets =\
     count_buildings.scripts.get_batches_from_datasets:start
-get_marker_from_dataset =\
-    count_buildings.scripts.get_marker_from_dataset:start
+get_marker_from_datasets =\
+    count_buildings.scripts.get_marker_from_datasets:start
 get_array_shape_from_batches =\
     count_buildings.scripts.get_array_shape_from_batches:start
 get_index_from_batches =\
