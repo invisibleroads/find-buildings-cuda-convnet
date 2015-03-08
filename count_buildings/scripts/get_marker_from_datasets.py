@@ -41,16 +41,14 @@ def run(
 
 
 """
-    # Convert function parameters to class parameters
-    # Identify class parameters
-    # Load class
+# Convert function parameters to class parameters
+# Identify class parameters
+# Load class
 
 from .libraries.markers.ccn import CroppedZeroMeanDataProvider
 from .libraries.markers.ccn.providers import CroppedZeroMeanDataProvider
 from .libraries.markers.ccn import ConvNet
 
-from .libraries.markers.cudaconv2 import ConvNet
-from .ccn import gpumodel
 data.DataProvider
 op, load_dic = gpumodel.IGPUModel.parse_options(parser)
 run_model(ConvNet, 'train')
