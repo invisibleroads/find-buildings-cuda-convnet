@@ -2,10 +2,9 @@ import numpy as np
 import random
 import utm
 from geometryIO import get_transformPoint
+from invisibleroads_macros.calculator import round_number
 from osgeo import gdal, osr
 from scipy.misc import toimage
-
-from . import calculator
 
 
 class ProjectedCalibration(object):
@@ -22,7 +21,7 @@ class ProjectedCalibration(object):
 
     def _to_pixel_width(self, projected_width):
         g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return calculator.round_number(projected_width / float(g1))
+        return round_number(projected_width / float(g1))
 
     def _to_projected_height(self, pixel_height):
         g0, g1, g2, g3, g4, g5 = self.calibration_pack
@@ -30,7 +29,7 @@ class ProjectedCalibration(object):
 
     def _to_pixel_height(self, projected_height):
         g0, g1, g2, g3, g4, g5 = self.calibration_pack
-        return calculator.round_number(projected_height / float(g5))
+        return round_number(projected_height / float(g5))
 
     def to_projected_xy(self, (pixel_x, pixel_y)):
         'Get projected coordinates given pixel coordinates'
@@ -45,9 +44,7 @@ class ProjectedCalibration(object):
         k = float(g1 * g5 - g2 * g4)
         x = -g0 * g5 + g2 * g3 - g2 * projected_y + g5 * projected_x
         y = -g1 * (g3 - projected_y) + g4 * (g0 - projected_x)
-        return np.array([
-            calculator.round_number(x / k),
-            calculator.round_number(y / k)])
+        return np.array([round_number(x / k), round_number(y / k)])
 
 
 class MetricCalibration(ProjectedCalibration):

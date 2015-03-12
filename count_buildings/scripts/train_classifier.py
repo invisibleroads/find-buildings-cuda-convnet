@@ -5,19 +5,22 @@ from ConfigParser import ConfigParser
 from count_buildings.scripts import get_examples_from_points
 from count_buildings.scripts import get_dataset_from_examples
 from count_buildings.scripts import get_batches_from_datasets
+from count_buildings.scripts import get_marker_from_batches
 from crosscompute.libraries import disk, script
-from os.path import join, expanduser
+from os.path import basename, expanduser, join
 
 
 SCRIPT_BY_NAME = {
     'get_examples_from_points': get_examples_from_points.run,
     'get_dataset_from_examples': get_dataset_from_examples.run,
     'get_batches_from_datasets': get_batches_from_datasets.run,
+    'get_marker_from_batches': get_marker_from_batches.run,
 }
 SCRIPT_NAMES = [
     'get_examples_from_points',
     'get_dataset_from_examples',
     'get_batches_from_datasets',
+    'get_marker_from_batches',
 ]
 HOME_FOLDER = expanduser('~')
 
@@ -37,8 +40,12 @@ def run(target_folder, configuration_path):
         for task_name, task in tasks:
             task_folder = disk.make_folder(join(target_folder, task_name))
             task = trim_arguments(task, run_script)
-            print_task(task_folder, task)
-            run_script(task_folder, **task)
+            print_task(run_script, task_folder, task)
+            value_by_key = run_script(task_folder, **task)
+            print('    ' + '-' * 16)
+            for k, v in value_by_key.iteritems():
+                print('    %s = %s' % (k, format_value(k, v)))
+            print('=' * 64)
 
 
 def get_tasks_by_script_name(target_folder, configuration_path):
@@ -65,6 +72,8 @@ def get_tasks_by_script_name(target_folder, configuration_path):
 def interpret(option, value):
     if option.endswith('_count'):
         value = int(value)
+    elif option.endswith('_fraction'):
+        value = float(value)
     elif option.endswith('_dimensions') or option.endswith('_shape'):
         value = script.parse_dimensions(value)
     elif option.endswith('_size'):
@@ -98,14 +107,6 @@ def expand_string(value, variables):
     return value
 
 
-def shrink_string(value):
-    if not hasattr(value, 'startswith'):
-        return value
-    if value.startswith(HOME_FOLDER):
-        value = value.replace(HOME_FOLDER, '~')
-    return value
-
-
 def trim_arguments(task, run):
     value_by_key = {}
     for argument_name in inspect.getargspec(run).args:
@@ -116,12 +117,36 @@ def trim_arguments(task, run):
     return value_by_key
 
 
-def print_task(task_folder, task):
-    print(shrink_string(task_folder))
-    for option, value in task.iteritems():
+def print_task(run_script, task_folder, task):
+    script_name = basename(run_script.__module__.replace('.', '/'))
+    script_arguments = ['--target_folder %s' % shrink_value(task_folder)]
+    task_packs = sorted(task.items())
+    for option, value in task_packs:
+        script_arguments.append('--%s %s' % (
+            option, format_value(option, value)))
+    print('%s %s' % (script_name, ' '.join(script_arguments)))
+    for option, value in task_packs:
         if option.endswith('_paths') or option.endswith('_folders'):
             print('    %s =' % option)
             for x in value:
-                print('        %s' % shrink_string(x))
+                print('        %s' % shrink_value(x))
         else:
-            print('    %s = %s' % (option, shrink_string(value)))
+            print('    %s = %s' % (option, format_value(option, value)))
+
+
+def format_value(option, value):
+    if option.endswith('_dimensions'):
+        return 'x'.join(str(_) for _ in value)
+    if option.endswith('_shape'):
+        return ','.join(str(int(_)) for _ in value)
+    if option.endswith('_paths') or option.endswith('_folders'):
+        return ' '.join(shrink_value(x) for x in value)
+    return value
+
+
+def shrink_value(value):
+    if not hasattr(value, 'startswith'):
+        return value
+    if value.startswith(HOME_FOLDER):
+        value = value.replace(HOME_FOLDER, '~')
+    return value

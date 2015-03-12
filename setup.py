@@ -24,8 +24,8 @@ get_dataset_from_examples =\
     count_buildings.scripts.get_dataset_from_examples:start
 get_batches_from_datasets =\
     count_buildings.scripts.get_batches_from_datasets:start
-get_marker_from_datasets =\
-    count_buildings.scripts.get_marker_from_datasets:start
+get_marker_from_batches =\
+    count_buildings.scripts.get_marker_from_batches:start
 get_array_shape_from_batches =\
     count_buildings.scripts.get_array_shape_from_batches:start
 get_index_from_batches =\
@@ -50,7 +50,7 @@ include = count_buildings:includeme
 
 setup(
     name='count_buildings',
-    version='0.1',
+    version='0.2',
     description='count_buildings',
     long_description=DESCRIPTION,
     classifiers=[

@@ -4,9 +4,9 @@ import operator
 import sys
 from crosscompute.libraries import script
 from geometryIO import get_transformPoint, load_points
+from invisibleroads_macros.calculator import round_number
 from os.path import join
 
-from ..libraries import calculator
 from ..libraries import disk
 from ..libraries.satellite_image import SatelliteImage, MetricScope
 from ..libraries.tree import RTree
@@ -69,7 +69,6 @@ def run(
         estimate_negative_count(image_scope, positive_pixel_centers),
         maximum_negative_count)
     example_count = positive_count + negative_count
-    print 'positive_fraction = %s' % (positive_count / float(example_count))
 
     save_positive_examples(
         save_images and disk.replace_folder(target_folder, 'positives'),
@@ -125,8 +124,7 @@ def estimate_negative_count(image_scope, positive_pixel_centers):
         positive_pixel_area)
     # Estimate the required number of negative examples
     positive_count = len(positive_pixel_centers)
-    return calculator.round_number(
-        negative_area_over_positive_area * positive_count)
+    return round_number(negative_area_over_positive_area * positive_count)
 
 
 def save_positive_examples(

@@ -12,7 +12,7 @@ OUTPUT_FOLDER=~/Experiments/get_plottable_data
 # python plot_arrays.py
 
 # python plot_cifar_10.py
-# ccn-make-batches options.cfg; python plot_batches_noccn.py
+# ccn-make-batches options.cfg; python plot_batches.py
 
 # get_batches_from_arrays \
     # --target_folder $OUTPUT_FOLDER/get_batches_from_arrays \

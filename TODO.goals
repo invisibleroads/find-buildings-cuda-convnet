@@ -3,22 +3,15 @@ Train interim classifier
     Save task logs
     Save overall log
     Consider using better progress bars
-Train generic classifier
-    Make sure that each image has accurate labels
-        Label unlabelled images
 Improve development classifier
     Use cuda-convnet2
         Check whether ec2 is compatible with cuda-convnet2
     Use dropout
-    Use hyperopt
     Consider optimizing get_counts by searching maximums locally
     Consider adding random caching to get_next_batch
     Consider making coarse classifier to optimize speed
-    Experiment with autoencoders to pretrain neural network
     Use minimum and maximum to save array
 Update interface
-    Show picture of results
     Let them see building examples with each classifier
     Show map of results
-        Update preview dynamically
-    Let them label a few to auto select optimal classifier
+    Show picture of results

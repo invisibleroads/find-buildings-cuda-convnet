@@ -2,7 +2,10 @@ import h5py
 import numpy as np
 import operator
 import os
+import re
 from decorator import decorator
+from glob import glob
+from os.path import join
 from random import shuffle
 from scipy.ndimage.interpolation import zoom
 
@@ -153,3 +156,16 @@ def get_vector_from_array(array):
 
 def get_vectors_from_arrays(arrays):
     return arrays.swapaxes(1, 3).swapaxes(2, 3).reshape((arrays.shape[0], -1))
+
+
+def get_batch_range(batch_folder):
+    min_index = 1
+    max_index = 0
+    pattern_number = re.compile(r'data_batch_(\d+)')
+    for name in glob(join(batch_folder, 'data_batch_*')):
+        index = int(pattern_number.search(name).group(1))
+        if index < min_index:
+            min_index = index
+        if index > max_index:
+            max_index = index
+    return min_index, max_index

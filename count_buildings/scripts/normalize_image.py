@@ -3,9 +3,9 @@ import os
 import shlex
 import subprocess
 import sys
-from count_buildings.libraries.calculator import round_number
 from count_buildings.libraries.satellite_image import SatelliteImage
 from count_buildings.libraries.satellite_image import get_dtype_bounds
+from invisibleroads_macros.calculator import round_number
 from crosscompute.libraries import script
 from os.path import abspath, join
 from tempfile import mkstemp

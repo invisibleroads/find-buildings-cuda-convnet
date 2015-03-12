@@ -5,7 +5,7 @@ from convdata import CIFARDataProvider
 
 
 dp = CIFARDataProvider(
-    '/home/rhh/Experiments/get_plottable_data/batches_noccn', [1])
+    '/home/rhh/Experiments/get_plottable_data/batches', [1])
 batch = dp.get_next_batch()
 data, labels = batch[2]
 
