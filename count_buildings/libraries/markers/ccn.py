@@ -44,7 +44,8 @@ class ConvNet(convnet.ConvNet):
             print '=' * 64
             best_epoch = int(self.get_var('best_test_info').split('.', 1)[0])
             if best_epoch < self.epoch - self.patience_epoch_count:
-                print 'Patience exhausted'
+                message = 'Stopping after %s epochs without improvement'
+                print(message % self.patience_epoch_count)
                 sys.exit(0)
         else:
             self.set_var('best_test_error', this_test_error)
