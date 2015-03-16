@@ -1,8 +1,6 @@
 # US/Pacific 3/6/2015
 Write get_probabilities_from_arrays
-Train interim classifier
-    Save task logs
-    Save overall log
+    Show improved progress output total: partial1 partial2
 Improve development classifier
     Use cuda-convnet2
         Check whether ec2 is compatible with cuda-convnet2
