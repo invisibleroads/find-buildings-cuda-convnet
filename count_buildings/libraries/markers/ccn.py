@@ -240,7 +240,7 @@ def get_model_arguments(
         training_batch_range, testing_batch_range,
         data_provider, crop_border_pixel_length,
         layer_definition_path, layer_parameters_path,
-        patience_epoch_count):
+        patience_epoch_count, source_marker_folder=None):
     old_arguments = sys.argv
     sys.argv = sys.argv[:1] + [
         '--save-path=%s' % target_folder,
@@ -253,6 +253,8 @@ def get_model_arguments(
         '--layer-params=%s' % layer_parameters_path,
         '--patience-epoch-count=%s' % patience_epoch_count,
     ]
+    if source_marker_folder:
+        sys.argv.extend(('-f', source_marker_folder))
     options_parser = ConvNet.get_options_parser()
     options_parser, value_by_key = IGPUModel.parse_options(options_parser)
     sys.argv = old_arguments
