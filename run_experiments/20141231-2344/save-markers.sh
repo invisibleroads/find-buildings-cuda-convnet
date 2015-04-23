@@ -5,5 +5,5 @@ while :; do
     echo $FILE_NAME
     tar czvf $FILE_NAME generic
     cp $FILE_NAME ~/Documents/Dropbox
-    sleep 60 * 60 * 12;
+    sleep $(expr 60 \* 60 \* 12)
 done
