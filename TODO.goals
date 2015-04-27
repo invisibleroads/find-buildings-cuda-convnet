@@ -1,5 +1,8 @@
 # US/Pacific 3/6/2015
 Normalize images in train_classifier
+Add source_marker_folder to get_marker_from_batches
+Resume automatically if the target folder already has what is needed
+    Check that each section has what is needed
 Write get_probabilities_from_arrays
     Show improved progress output total: partial1 partial2
 Improve development classifier

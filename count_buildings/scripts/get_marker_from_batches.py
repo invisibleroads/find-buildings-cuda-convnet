@@ -16,7 +16,7 @@ def start(argv=sys.argv):
             type=float, default=0.2,
             help='')
         starter.add_argument(
-            '--data_provider', metavar='DATA-PROVIDER', required=True,
+            '--data_provider', metavar='PROVIDER', required=True,
             help='')
         starter.add_argument(
             '--crop_border_pixel_length', metavar='INTEGER',
@@ -32,13 +32,16 @@ def start(argv=sys.argv):
             '--patience_epoch_count', metavar='INTEGER',
             type=int, default=100,
             help='')
+        starter.add_argument(
+            '--source_marker_folder', metavar='FOLDER',
+            help='')
 
 
 def run(
         target_folder, batch_folder, testing_fraction,
         data_provider, crop_border_pixel_length,
         layer_definition_path, layer_parameters_path,
-        patience_epoch_count):
+        patience_epoch_count, source_marker_folder):
     batch_range = get_batch_range(batch_folder)
     training_batch_range, testing_batch_range = split_range(
         batch_range, testing_fraction)
@@ -47,7 +50,7 @@ def run(
         training_batch_range, testing_batch_range,
         data_provider, crop_border_pixel_length,
         layer_definition_path, layer_parameters_path,
-        patience_epoch_count)
+        patience_epoch_count, source_marker_folder)
     model = ConvNet(*model_arguments)
     model.start()
     return dict(
