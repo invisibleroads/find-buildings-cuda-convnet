@@ -36,7 +36,7 @@
   <div id=classifier_name_question class='form-group hidden'>
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
-      <option value='myanmar4-20140708-001953'>myanmar4-20140708-001953</option>
+      <option value='generic-20150424-024347'>generic-20150424-024347</option>
     </select>
   </div>
 

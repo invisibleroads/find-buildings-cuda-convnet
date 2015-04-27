@@ -18,7 +18,7 @@ try:
 except OSError:
     pass
 PACKAGE_FOLDER = dirname(dirname(abspath(__file__)))
-SCRIPT_FOLDER = join(PACKAGE_FOLDER, 'run_experiments/20140724-1114/myanmar')
+SCRIPT_FOLDER = join(PACKAGE_FOLDER, 'run_experiments/20141231-2344')
 SCRIPT_PATH = join(SCRIPT_FOLDER, 'manage_scan.sh')
 
 
