@@ -34,8 +34,6 @@ get_arrays_from_image =\
     count_buildings.scripts.get_arrays_from_image:start
 get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
-get_predictions_from_arrays =\
-    count_buildings.scripts.get_predictions_from_arrays:start
 get_counts_from_probabilities =\
     count_buildings.scripts.get_counts_from_probabilities:start
 normalize_image =\
