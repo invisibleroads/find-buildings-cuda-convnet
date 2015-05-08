@@ -79,9 +79,9 @@ def save_tiles(
             print('%s / %s' % (tile_index, maximum_tile_index))
         pixel_frame = image_scope.get_pixel_frame_from_tile_index(
             tile_index)
-        image_scope.save_image(
+        image_scope.render_array_from_pixel_frame(
             get_tile_path(tile_path_template, tile_index, pixel_frame),
-            image_scope.get_array_from_pixel_frame(pixel_frame))
+            pixel_frame)
     print('%s / %s' % (maximum_tile_index, maximum_tile_index))
     return dict(
         tile_pixel_dimensions=image_scope.tile_pixel_dimensions,

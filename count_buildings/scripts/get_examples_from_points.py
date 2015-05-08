@@ -8,7 +8,8 @@ from invisibleroads_macros.calculator import round_number
 from os.path import join
 
 from ..libraries import disk
-from ..libraries.satellite_image import SatelliteImage, MetricScope
+from ..libraries.satellite_image import (
+    SatelliteImage, MetricScope, render_array)
 from ..libraries.tree import RTree
 
 
@@ -174,11 +175,9 @@ def save_negative_examples(
 
 def save_example_array(target_folder, image_scope, pixel_center):
     array = image_scope.get_array_from_pixel_center(pixel_center)
-    try:
-        image_scope.save_image(
-            join(target_folder, 'pce%dx%d.jpg' % tuple(pixel_center)), array)
-    except AttributeError:
-        pass
+    if target_folder:
+        target_path = join(target_folder, 'pce%dx%d.jpg' % tuple(pixel_center))
+        render_array(target_path, array)
     return array
 
 

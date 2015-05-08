@@ -3,8 +3,10 @@ import random
 import utm
 from geometryIO import get_transformPoint
 from invisibleroads_macros.calculator import round_number
+from os.path import realpath
 from osgeo import gdal, osr
 from scipy.misc import toimage
+from skimage.exposure import rescale_intensity
 
 
 class ProjectedCalibration(object):
@@ -114,7 +116,8 @@ class MetricCalibration(ProjectedCalibration):
 class SatelliteImage(MetricCalibration):
 
     def __init__(self, image_path):
-        self._image = image = gdal.Open(image_path)
+        self.path = realpath(image_path)
+        self._image = image = gdal.Open(self.path)
         super(SatelliteImage, self).__init__(
             calibration_pack=image.GetGeoTransform(), proj4=_get_proj4(image))
         self.pixel_dimensions = np.array((
@@ -122,11 +125,9 @@ class SatelliteImage(MetricCalibration):
         self.pixel_coordinate_dtype = np.min_scalar_type(
             max(self.pixel_dimensions))
         self.band_count = image.RasterCount
-        self.band_packs = _get_band_packs(image)
         self.array_dtype = _get_array_dtype(image)
         self.null_values = [image.GetRasterBand(
             x + 1).GetNoDataValue() for x in xrange(self.band_count)]
-        self.path = image_path
 
     def _become(self, i):
         self._image = i._image
@@ -134,16 +135,9 @@ class SatelliteImage(MetricCalibration):
         self.pixel_dimensions = i.pixel_dimensions
         self.pixel_coordinate_dtype = i.pixel_coordinate_dtype
         self.band_count = i.band_count
-        self.band_packs = i.band_packs
         self.array_dtype = i.array_dtype
         self.null_values = i.null_values
         self.path = i.path
-
-    def _get_band_extremes(self, band_index, stddev_count=None):
-        minimum, maximum, mean, stddev = self.band_packs[band_index]
-        if stddev_count is None:
-            return minimum, maximum
-        return mean - stddev_count * stddev, mean + stddev_count * stddev
 
     def get_array_from_pixel_frame(
             self, (pixel_upper_left, pixel_dimensions), fill_value=0):
@@ -169,40 +163,18 @@ class SatelliteImage(MetricCalibration):
                 band_array[band_array == null_value] = fill_value
         return array
 
-    def save_image_from_pixel_frame(
+    def render_array_from_pixel_frame(
             self, target_path, (pixel_upper_left, pixel_dimensions)):
         array = self.get_array_from_pixel_frame((
             pixel_upper_left, pixel_dimensions))
-        self.save_image(target_path, array)
-        return array
-
-    def save_image(self, target_path, array, band_index=None):
-        target_dtype = np.dtype('uint8')
-        target_min, target_max = get_dtype_bounds(target_dtype)
-        if len(array.shape) == 2:
-            band_index = 0
-        if band_index is None:
-            array = array[:, :, :3]
-            for band_index in xrange(array.shape[-1]):
-                source_min, source_max = self._get_band_extremes(band_index)
-                array[:, :, band_index] = enhance_array(
-                    array[:, :, band_index],
-                    source_min, source_max, target_dtype)
-        else:
-            try:
-                array = array[:, :, band_index]
-            except IndexError:
-                pass
-            source_min, source_max = self._get_band_extremes(band_index)
-            array = enhance_array(array, source_min, source_max, target_dtype)
-        image = toimage(array, cmin=target_min, cmax=target_max)
-        image.save(target_path)
+        return render_array(target_path, array)
 
 
 class PixelScope(SatelliteImage):
 
     def __init__(
-            self, image, tile_pixel_dimensions, overlap_pixel_dimensions=(0, 0)):
+            self, image, tile_pixel_dimensions,
+            overlap_pixel_dimensions=(0, 0)):
         self._become(image)
         self.tile_pixel_dimensions = np.array(tile_pixel_dimensions)
         self.overlap_pixel_dimensions = overlap_pixel_dimensions
@@ -292,19 +264,21 @@ class PixelScope(SatelliteImage):
     def minimum_pixel_upper_left(self):
         return 0, 0
 
-    def save_image_from_pixel_center(self, target_path, pixel_center):
+    def render_array_from_pixel_center(self, target_path, pixel_center):
         pixel_frame = self.get_pixel_frame_from_pixel_center(pixel_center)
-        return self.save_image_from_pixel_frame(target_path, pixel_frame)
+        return self.render_array_from_pixel_frame(target_path, pixel_frame)
 
-    def save_image_from_pixel_upper_left(self, target_path, pixel_upper_left):
+    def render_array_from_pixel_upper_left(
+            self, target_path, pixel_upper_left):
         pixel_frame = pixel_upper_left, self.tile_pixel_dimensions
-        return self.save_image_from_pixel_frame(target_path, pixel_frame)
+        return self.render_array_from_pixel_frame(target_path, pixel_frame)
 
 
 class MetricScope(PixelScope):
 
     def __init__(
-            self, image, tile_metric_dimensions, overlap_metric_dimensions=(0, 0)):
+            self, image, tile_metric_dimensions,
+            overlap_metric_dimensions=(0, 0)):
         tile_pixel_dimensions = image.to_pixel_dimensions(
             tile_metric_dimensions)
         overlap_pixel_dimensions = image.to_pixel_dimensions(
@@ -322,14 +296,15 @@ class MetricScope(PixelScope):
         pixel_upper_left = self.to_pixel_xy(projected_upper_left)
         return self.get_array_from_pixel_upper_left(pixel_upper_left)
 
-    def save_image_from_projected_center(self, target_path, projected_center):
+    def render_array_from_projected_center(
+            self, target_path, projected_center):
         pixel_center = self.to_pixel_xy(projected_center)
-        return self.save_image_from_pixel_center(target_path, pixel_center)
+        return self.render_array_from_pixel_center(target_path, pixel_center)
 
-    def save_image_from_projected_upper_left(
+    def render_array_from_projected_upper_left(
             self, target_path, projected_upper_left):
         pixel_upper_left = self.to_pixel_xy(projected_upper_left)
-        return self.save_image_from_pixel_upper_left(
+        return self.render_array_from_pixel_upper_left(
             target_path, pixel_upper_left)
 
 
@@ -366,33 +341,47 @@ def get_pixel_center_from_pixel_frame((pixel_upper_left, pixel_dimensions)):
     return pixel_upper_left + np.array(pixel_dimensions) / 2
 
 
-def enhance_array(source_array, source_min, source_max, target_dtype):
-    target_min, target_max = get_dtype_bounds(target_dtype)
-    if source_min == target_min and source_max == target_max:
-        return source_array.astype(target_dtype, copy=False)
-    lookup_index = np.arange(source_max + 1) - source_min
-    lookup_index *= target_max / float(lookup_index.max())
-    lookup_index[:source_min] = target_min
-    lookup_index = lookup_index.astype(target_dtype, copy=False)
-    return np.take(lookup_index, source_array, mode='clip')
-
-
 def get_dtype_bounds(dtype):
     iinfo = np.iinfo(dtype)
     return iinfo.min, iinfo.max
 
 
+def render_array(target_path, array):
+    render_enhanced_array(target_path, enhance_array(array))
+    return array
+
+
+def render_enhanced_array(target_path, enhanced_array):
+    toimage(enhanced_array).save(target_path)
+    return enhanced_array
+
+
+def enhance_band_array_with_contrast_stretching(band_array):
+    source_min, source_max = band_array.min(), band_array.max()
+    try:
+        target_min, target_max = np.percentile(band_array[
+            (source_min < band_array) & (band_array < source_max)
+        ], (2, 98))
+    except IndexError:
+        return np.zeros(band_array.shape)
+    return rescale_intensity(band_array, in_range=(target_min, target_max))
+
+
+def enhance_array(
+        array, enhance_band_array=enhance_band_array_with_contrast_stretching,
+        for_visualization=True):
+    if for_visualization:
+        array = array[:, :, :3]
+    enhanced_array = np.zeros(array.shape)
+    band_count = array.shape[-1]
+    for band_index in xrange(band_count):
+        enhanced_array[:, :, band_index] = enhance_band_array(
+            array[:, :, band_index])
+    return enhanced_array
+
+
 def _get_array_dtype(gdal_image):
     return gdal_image.ReadAsArray(0, 0, 0, 0).dtype
-
-
-def _get_band_packs(image):
-    'Get minimum, maximum, mean, standard deviation for each band'
-    band_packs = []
-    for band_number in xrange(1, image.RasterCount + 1):
-        band = image.GetRasterBand(band_number)
-        band_packs.append(band.GetStatistics(0, 1))
-    return band_packs
 
 
 def _get_proj4(image):
