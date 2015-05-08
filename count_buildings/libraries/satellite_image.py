@@ -357,7 +357,7 @@ def render_enhanced_array(target_path, enhanced_array):
 
 
 def enhance_band_array_with_contrast_stretching(band_array):
-    source_min, source_max = band_array.min(), band_array.max()
+    source_min, source_max = get_dtype_bounds(band_array.dtype)
     try:
         target_min, target_max = np.percentile(band_array[
             (source_min < band_array) & (band_array < source_max)
