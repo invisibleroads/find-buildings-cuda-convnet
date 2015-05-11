@@ -36,6 +36,8 @@ get_batches_from_arrays =\
     count_buildings.scripts.get_batches_from_arrays:start
 get_counts_from_probabilities =\
     count_buildings.scripts.get_counts_from_probabilities:start
+get_preview_from_points =\
+    count_buildings.scripts.get_preview_from_points:start
 normalize_image =\
     count_buildings.scripts.normalize_image:start
 train_classifier =\
@@ -48,7 +50,7 @@ include = count_buildings:includeme
 
 setup(
     name='count_buildings',
-    version='0.2',
+    version='0.3',
     description='count_buildings',
     long_description=DESCRIPTION,
     classifiers=[

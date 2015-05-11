@@ -36,7 +36,7 @@ def run(
         target_folder, image_path, target_dtype,
         target_meters_per_pixel_dimensions):
     image = SatelliteImage(image_path)
-    band_packs = image.band_packs
+    band_extremes = image.band_extremes
     source_pixel_dimensions = image.pixel_dimensions
     target_dtype = get_target_dtype(image, target_dtype)
     target_pixel_dimensions = get_pixel_dimensions(
@@ -57,10 +57,10 @@ def run(
         temporary_path = image_path
     # Translate
     if should_translate(
-            band_packs, target_dtype):
+            band_extremes, target_dtype):
         translate(
             target_path, temporary_path, gdal_options,
-            band_packs, target_dtype)
+            band_extremes, target_dtype)
     else:
         os.symlink(abspath(temporary_path), target_path)
     # Return
@@ -112,10 +112,10 @@ def warp(
         source_image_path, target_image_path])
 
 
-def should_translate(band_packs, target_dtype):
+def should_translate(band_extremes, target_dtype):
     target_min, target_max = get_dtype_bounds(target_dtype)
-    for band_index in xrange(len(band_packs)):
-        source_min, source_max = band_packs[band_index][:2]
+    for band_index in xrange(len(band_extremes)):
+        source_min, source_max = band_extremes[band_index]
         if source_min != target_min or source_max != target_max:
             return True
     return False
@@ -123,14 +123,14 @@ def should_translate(band_packs, target_dtype):
 
 def translate(
         target_image_path, source_image_path, gdal_options,
-        band_packs, target_dtype):
+        band_extremes, target_dtype):
     target_min, target_max = get_dtype_bounds(target_dtype)
     gdal_translate_args = list(gdal_options) + [
         '-ot %s' % OUTPUT_TYPE_BY_ARRAY_DTYPE[target_dtype],
         '-a_nodata none',
     ]
-    for band_index in xrange(len(band_packs)):
-        source_min, source_max = band_packs[band_index][:2]
+    for band_index in xrange(len(band_extremes)):
+        source_min, source_max = band_extremes[band_index]
         gdal_translate_args.append('-scale_%s %s %s %s %s' % (
             band_index + 1, source_min, source_max, target_min, target_max))
     launch('gdal_translate', gdal_translate_args + [

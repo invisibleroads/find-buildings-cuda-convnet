@@ -131,6 +131,7 @@ class SatelliteImage(MetricCalibration):
 
     def _become(self, i):
         self._image = i._image
+        self._band_extremes = i._band_extremes
         super(SatelliteImage, self)._become(i)
         self.pixel_dimensions = i.pixel_dimensions
         self.pixel_coordinate_dtype = i.pixel_coordinate_dtype
@@ -138,6 +139,20 @@ class SatelliteImage(MetricCalibration):
         self.array_dtype = i.array_dtype
         self.null_values = i.null_values
         self.path = i.path
+
+    @property
+    def band_extremes(self):
+        try:
+            return self._band_extremes
+        except AttributeError:
+            pass
+        self._band_extremes = []
+        for band_number in xrange(1, self.band_count + 1):
+            band = self._image.GetRasterBand(band_number)
+            self._band_extremes.append((
+                band.GetMinimum(),
+                band.GetMaximum()))
+        return self._band_extremes
 
     def get_array_from_pixel_frame(
             self, (pixel_upper_left, pixel_dimensions), fill_value=0):
@@ -395,3 +410,4 @@ def _chop(canvas_length, tile_length, interval_length):
 
 
 gdal.UseExceptions()
+gdal.SetConfigOption('GDAL_NUM_THREADS', 'ALL_CPUS')
