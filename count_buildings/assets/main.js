@@ -30,15 +30,19 @@ require(['base'], function(base) {
     });
 
     function process_import_geoimage(result) {
-        var summary = result.summary;
-        $('#proj4').html(summary.proj4);
-        $('#band_count').html(summary.band_count);
-        $('#pixel_dimensions').html(summary.pixel_dimensions[0] + 'x' + summary.pixel_dimensions[0] + ' pixels');
-        $('#metric_dimensions').html(summary.metric_dimensions[0] + 'x' + summary.metric_dimensions[1] + ' meters');
-        $('#geoimage_properties').data('result_id', result.id).reveal();
-        $('#classifier_name_question').reveal().find('select').click(function() {
-          $('#check').prop('disabled', false).reveal()
-        });
+      var summary = result.summary;
+      $('#proj4').html(summary.proj4);
+      $('#band_count').html(summary.band_count);
+      $('#pixel_dimensions').html(summary.pixel_dimensions[0] + 'x' + summary.pixel_dimensions[0] + ' pixels');
+      $('#metric_dimensions').html(summary.metric_dimensions[0] + 'x' + summary.metric_dimensions[1] + ' meters');
+      $('#geoimage_properties').data('result_id', result.id).reveal();
+      $('#classifier_name_question').reveal().find('select').click(function() {
+        $('#check').prop('disabled', false).reveal()
+      });
+    }
+
+    function process_import_geoimage_error(result) {
+      $('#feedback').html('The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.').show();
     }
 
     $('#import_source_url').click(function() {
@@ -52,7 +56,7 @@ require(['base'], function(base) {
         source_url: $('#source_url').val()
       }, {
         message: 'Importing satellite image...'
-      }, process_import_geoimage);
+      }, process_import_geoimage, process_import_geoimage_error);
     });
 
     $('#source_file').make_upload_button({
@@ -62,7 +66,7 @@ require(['base'], function(base) {
         source_upload: upload_ids[0]
       }, {
         message: 'Importing satellite image...'
-      }, process_import_geoimage);
+      }, process_import_geoimage, process_import_geoimage_error);
     });
 
     $('#check').click(function() {

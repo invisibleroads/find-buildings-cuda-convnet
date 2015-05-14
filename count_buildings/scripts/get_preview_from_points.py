@@ -21,12 +21,18 @@ def start(argv=sys.argv):
             '--points_path', metavar='PATH', required=True,
             help='building locations')
         starter.add_argument(
-            '--tile_metric_dimensions', metavar='WIDTH,HEIGHT',
-            type=script.parse_dimensions, default=(1000, 1000),
-            help='dimensions of extracted tile in metric units')
+            '--tile_pixel_dimensions', metavar='WIDTH,HEIGHT',
+            type=script.parse_integer_dimensions, default=(500, 500),
+            help='dimensions of extracted tile in pixels')
+        starter.add_argument(
+            '--random_iteration_count', metavar='INTEGER',
+            type=int, default=25,
+            help='')
 
 
-def run(target_folder, image_path, points_path, tile_metric_dimensions):
+def run(
+        target_folder, image_path, points_path, tile_pixel_dimensions,
+        random_iteration_count):
     image = SatelliteImage(image_path)
     projected_xys = load_points(points_path, targetProj4=image.proj4)[1]
     pixel_xys = [image.to_pixel_xy(_) for _ in projected_xys]
@@ -34,9 +40,9 @@ def run(target_folder, image_path, points_path, tile_metric_dimensions):
     image_pixel_frame = (0, 0), image.pixel_dimensions
     image_pixel_xys = filter(get_in_frame(image_pixel_frame), pixel_xys)
 
-    selected_pixel_frame = get_pixel_frame(image.to_pixel_dimensions(
-        tile_metric_dimensions), image_pixel_xys, image,
-        random_iteration_count=10)
+    selected_pixel_frame = get_pixel_frame(
+        tile_pixel_dimensions, image_pixel_xys, image,
+        random_iteration_count)
     selected_pixel_xys = filter(
         get_in_frame(selected_pixel_frame), image_pixel_xys)
 
@@ -73,7 +79,10 @@ def get_pixel_frame(
     pixel_height = min(target_pixel_height, source_pixel_height)
     pixel_dimensions = pixel_width, pixel_height
     # Get pixel_frames
-    pixel_xys = sample(source_pixel_xys, random_iteration_count)
+    if len(source_pixel_xys) > random_iteration_count:
+        pixel_xys = sample(source_pixel_xys, random_iteration_count)
+    else:
+        pixel_xys = source_pixel_xys
     pixel_frames = get_pixel_frames(pixel_xys, pixel_dimensions, source_image)
     # Pick the pixel_frame with the most number of source_pixel_xys
     rank_pixel_frame = partial(count_pixel_xys_in_frame, source_pixel_xys)

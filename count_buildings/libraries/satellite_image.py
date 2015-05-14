@@ -131,7 +131,6 @@ class SatelliteImage(MetricCalibration):
 
     def _become(self, i):
         self._image = i._image
-        self._band_extremes = i._band_extremes
         super(SatelliteImage, self)._become(i)
         self.pixel_dimensions = i.pixel_dimensions
         self.pixel_coordinate_dtype = i.pixel_coordinate_dtype
@@ -160,7 +159,10 @@ class SatelliteImage(MetricCalibration):
         pixel_width, pixel_height = pixel_dimensions
         try:
             array = self._image.ReadAsArray(
-                pixel_x, pixel_y, pixel_width, pixel_height)
+                round_number(pixel_x),
+                round_number(pixel_y),
+                round_number(pixel_width),
+                round_number(pixel_height))
         except ValueError:
             raise ValueError('Pixel frame exceeds image bounds')
         if self.band_count > 1:

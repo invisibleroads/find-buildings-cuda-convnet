@@ -36,13 +36,22 @@ sed -i '1 i 0,1,pixel_center_x,pixel_center_y' \
 PROBABILITY_FOLDER=$TEMPORARY_FOLDER/${CLASSIFIER_NAME}-probabilities
 mkdir -p $PROBABILITY_FOLDER
 cp $TEMPORARY_FOLDER/probabilities.csv $PROBABILITY_FOLDER/probabilities.csv
-COUNTS_FOLDER=$TEMPORARY_FOLDER/${CLASSIFIER_NAME}-counts
-log get_counts_from_probabilities \
-    --target_folder $COUNTS_FOLDER \
-    --probabilities_folder $PROBABILITY_FOLDER \
-    --image_path $NORMALIZED_IMAGE_PATH
+# COUNTS_FOLDER=$TEMPORARY_FOLDER/${CLASSIFIER_NAME}-counts
+# log get_counts_from_probabilities \
+    # --target_folder $COUNTS_FOLDER \
+    # --probabilities_folder $PROBABILITY_FOLDER \
+    # --image_path $NORMALIZED_IMAGE_PATH
 log get_counts_from_probabilities \
     --target_folder $TARGET_FOLDER \
     --probabilities_folder $PROBABILITY_FOLDER \
     --image_path $NORMALIZED_IMAGE_PATH \
     --actual_metric_radius $ACTUAL_RADIUS
+PREVIEW_FOLDER=$TEMPORARY_FOLDER/previews
+log get_preview_from_points \
+    --target_folder $PREVIEW_FOLDER \
+    --random_seed $RANDOM_SEED \
+    --image_path $IMAGE_PATH \
+    --points_path $TARGET_FOLDER/counts.shp \
+    --tile_pixel_dimensions 500x500 \
+    --random_iteration_count 25
+mv $PREVIEW_FOLDER/*.jpg $TARGET_FOLDER/preview.jpg

@@ -36,7 +36,7 @@
   <div id=classifier_name_question class='form-group hidden'>
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
-      <option value='generic-20150424-024347'>generic-20150424-024347</option>
+      <option value='generic-20150507-123711'>generic-20150507-123711</option>
       <option value='myanmar4-20140708-001953'>myanmar4-20140708-001953</option>
     </select>
   </div>
@@ -57,6 +57,7 @@
 
 <div id=results>
   <div id=feedback class=hidden></div>
+  <img id=preview class='hidden'>
   <table id=target_table class='table hidden'>
     <tr><td>Estimated count</td><td id=estimated_count></td></tr>
   </table>

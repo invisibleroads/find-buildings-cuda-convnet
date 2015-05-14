@@ -54,7 +54,8 @@ def run(target_folder, image_path, classifier_name):
         'bash', SCRIPT_PATH, target_folder, classifier_path, image_path])
     run_properties = pickle.load(open(join(target_folder, 'run.pkl')))
     estimated_count = run_properties['variables']['estimated_count']
-    return dict(estimated_count=estimated_count)
+    return dict(
+        estimated_count=estimated_count)
 
 
 def price(area_in_square_meters):
