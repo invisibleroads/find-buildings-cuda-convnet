@@ -33,20 +33,25 @@
     <tr><td>Metric dimensions</td><td id=metric_dimensions></td></tr>
   </table>
 
+  <div id=geoimage_preview></div>
+
   <div id=classifier_name_question class='form-group hidden'>
     <label for=classifier_name class=control-label>Which classifier will we use?</label>
     <select id=classifier_name class=form-control>
       <option value='generic-20150507-123711'>generic-20150507-123711</option>
-      <option value='myanmar4-20140708-001953'>myanmar4-20140708-001953</option>
     </select>
   </div>
+
+  <button id=preview type=button class='btn btn-info hidden'>
+    Preview 
+  </button>
 
   <button id=check type=button class='btn btn-info hidden'>
     Check price
   </button>
 
   <button id=run type=button class='btn btn-primary hidden'>
-    Count buildings for <span id=price>free</span>
+    Get building locations as a shapefile for <span id=price>free</span>
   </button>
 
   <button id=credit type=button class='btn btn-danger hidden'>
@@ -57,11 +62,11 @@
 
 <div id=results>
   <div id=feedback class=hidden></div>
-  <img id=preview class='hidden'>
+  <div id=preview_images class=hidden></div>
   <table id=target_table class='table hidden'>
     <tr><td>Estimated count</td><td id=estimated_count></td></tr>
   </table>
-  <button type=button class='btn btn-success download hidden'>Download</button>
+  <button type=button class='btn btn-success download hidden'>Download building locations as a shapefile</button>
 </div>
 
 <div id=acknowledgments class=hidden>

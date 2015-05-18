@@ -1,8 +1,10 @@
 import pickle
+import shutil
 import subprocess
 import sys
+from glob import glob
 from os import makedirs, remove
-from os.path import abspath, dirname, expanduser, join
+from os.path import abspath, basename, dirname, expanduser, join, splitext
 
 from crosscompute.libraries import disk
 from crosscompute.libraries import queue
@@ -30,7 +32,8 @@ def start(argv=sys.argv):
             '--classifier_name', metavar='NAME', required=True)
 
 
-def schedule(target_result_id, source_geoimage_id, classifier_name):
+def schedule(
+        target_result_id, source_geoimage_id, classifier_name, is_preview):
     target_folder = Result(id=target_result_id).target_folder
     p53_path = get_data_path('p53')
     try:
@@ -41,21 +44,43 @@ def schedule(target_result_id, source_geoimage_id, classifier_name):
 
     result = Result(id=source_geoimage_id)
     result.download()
-    image_path = join(result.target_folder, 'image.tif')
 
-    summary = run(target_folder, image_path, classifier_name)
+    if is_preview:
+        summary = {'preview_image_names': []}
+        for image_index, image_path in enumerate(sorted(
+                glob(join(result.target_folder, 'preview*.tif')))):
+            run(target_folder, image_path, classifier_name, is_preview)
+
+            preview_image_path = join(target_folder, 'preview.jpg')
+            preview_image_name = splitext(basename(image_path))[0] + '.jpg'
+            shutil.move(
+                preview_image_path, join(target_folder, preview_image_name))
+            summary['preview_image_names'].append(preview_image_name)
+    else:
+        image_path = join(result.target_folder, 'image.tif')
+        summary = run(target_folder, image_path, classifier_name, is_preview)
+
     queue.save(target_result_id, summary)
     open(p53_path, 'wt')
 
 
-def run(target_folder, image_path, classifier_name):
+def run(target_folder, image_path, classifier_name, is_preview=False):
     classifier_path = join(CLASSIFIER_FOLDER, classifier_name)
     subprocess.call([
         'bash', SCRIPT_PATH, target_folder, classifier_path, image_path])
     run_properties = pickle.load(open(join(target_folder, 'run.pkl')))
     estimated_count = run_properties['variables']['estimated_count']
+
+    if is_preview:
+        for file_path in glob(join(target_folder, 'counts.*')):
+            try:
+                remove(file_path)
+            except OSError:
+                pass
+
     return dict(
-        estimated_count=estimated_count)
+        estimated_count=estimated_count,
+        preview_image_names=['preview.jpg'])
 
 
 def price(area_in_square_meters):

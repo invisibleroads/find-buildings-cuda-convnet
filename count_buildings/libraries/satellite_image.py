@@ -148,9 +148,10 @@ class SatelliteImage(MetricCalibration):
         self._band_extremes = []
         for band_number in xrange(1, self.band_count + 1):
             band = self._image.GetRasterBand(band_number)
-            self._band_extremes.append((
-                band.GetMinimum(),
-                band.GetMaximum()))
+            band_minimum, band_maximum = band.GetMinimum(), band.GetMaximum()
+            if band_minimum is None or band_maximum is None:
+                band_minimum, band_maximum = band.ComputeRasterMinMax()
+            self._band_extremes.append((band_minimum, band_maximum))
         return self._band_extremes
 
     def get_array_from_pixel_frame(
@@ -270,7 +271,8 @@ class PixelScope(SatelliteImage):
     @property
     def maximum_pixel_upper_left(self):
         'Get maximum pixel_upper_left that will return full array'
-        return self.pixel_dimensions - self.tile_pixel_dimensions
+        pixel_x, pixel_y = self.pixel_dimensions - self.tile_pixel_dimensions
+        return max(0, pixel_x), max(0, pixel_y)
 
     @property
     def minimum_pixel_center(self):
@@ -374,7 +376,7 @@ def render_enhanced_array(target_path, enhanced_array):
 
 
 def enhance_band_array_with_contrast_stretching(band_array):
-    source_min, source_max = get_dtype_bounds(band_array.dtype)
+    source_min, source_max = band_array.min(), band_array.max()
     try:
         target_min, target_max = np.percentile(band_array[
             (source_min < band_array) & (band_array < source_max)

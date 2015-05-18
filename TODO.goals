@@ -1,3 +1,4 @@
+Consider integrating save_geoimage_from_pixel_frame
 Fix normalize_image
     Choose source_min and source_max that are not the extremes
 

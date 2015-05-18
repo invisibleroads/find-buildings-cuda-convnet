@@ -152,4 +152,4 @@ def get_gdal_options(band_count):
 def launch(command, options):
     command_string = ' '.join([command] + options)
     print(command_string)
-    subprocess.call(shlex.split(command_string))
+    subprocess.check_call(shlex.split(command_string))

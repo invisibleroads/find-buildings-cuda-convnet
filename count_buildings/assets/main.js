@@ -24,6 +24,9 @@ require(['base'], function(base) {
     });
 
     $('#source_method_upload').click(function() {
+      $('#geoimage_properties').hide();
+      $('#geoimage_preview').hide();
+
       $('#source_url_question').hide();
       $('#source_file_question').reveal();
       reset();
@@ -36,13 +39,22 @@ require(['base'], function(base) {
       $('#pixel_dimensions').html(summary.pixel_dimensions[0] + 'x' + summary.pixel_dimensions[0] + ' pixels');
       $('#metric_dimensions').html(summary.metric_dimensions[0] + 'x' + summary.metric_dimensions[1] + ' meters');
       $('#geoimage_properties').data('result_id', result.id).reveal();
-      $('#classifier_name_question').reveal().find('select').click(function() {
+
+      $('#geoimage_preview').html('');
+      for (var i = 0; i < result.summary.preview_image_names.length; i++) {
+        $("#geoimage_preview").append(
+          "<img id=geoimage_preview" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
+      }
+      $('#geoimage_preview' + (i - 1)).load(function() {
+        $('#classifier_name_question').reveal();
+        $('#preview').reveal();
         $('#check').prop('disabled', false).reveal()
       });
+      $('#geoimage_preview').reveal();
     }
 
     function process_import_geoimage_error(result) {
-      $('#feedback').html('The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.').show();
+      $('#feedback').html('The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.').reveal();
     }
 
     $('#import_source_url').click(function() {
@@ -81,8 +93,39 @@ require(['base'], function(base) {
       });
     });
 
-    $('#run').click(function() {
+    $('#preview').click(function() {
+      $('#preview').prop('disabled', true);
       $('#run').prop('disabled', true);
+      $('#target_table').html('').hide();
+      cc.post(run_url, {
+        source_geoimage: $('#geoimage_properties').data('result_id'),
+        classifier_name: $('#classifier_name').val(),
+        is_preview: 1
+      }, {
+        message: '<p>Generating preview...</p>'
+      }, function(result) {
+        var summary = result.summary;
+
+        $('#preview_images').html('');
+        for (var i = 0; i < result.summary.preview_image_names.length; i++) {
+          $("#preview_images").append(
+            "<img id=preview_image" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
+        }
+        $('#preview_image' + (i - 1)).load(function() {
+          $('#acknowledgments').reveal();
+        });
+        $('#preview_images').reveal();
+
+        $('#target_table').data('result_id', result.id).reveal();
+        $('#preview').prop('disabled', false);
+        $('#run').prop('disabled', false);
+      });
+    });
+
+    $('#run').click(function() {
+      $('#preview').prop('disabled', true);
+      $('#run').prop('disabled', true);
+      $('#target_table').html('');
       cc.post(run_url, {
         source_geoimage: $('#geoimage_properties').data('result_id'),
         classifier_name: $('#classifier_name').val()
@@ -91,8 +134,21 @@ require(['base'], function(base) {
         end: true
       }, function(result) {
         var summary = result.summary;
-        $('#estimated_count').html(summary.estimated_count);
+        $('#target_table').append(
+            '<tr><td>Estimated count</td><td>' + summary.estimated_count + '</td></tr>');
+
+        $('#preview_images').html('');
+        for (var i = 0; i < result.summary.preview_image_names.length; i++) {
+          $("#preview_images").append(
+            "<img id=preview_image" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
+        }
+        $('#preview_image' + (i - 1)).load(function() {
+          $('#acknowledgments').reveal();
+        });
+        $('#preview_images').reveal();
+
         $('#target_table').data('result_id', result.id).reveal();
+        $('#preview').prop('disabled', false);
         $('#run').prop('disabled', false);
       });
     });
