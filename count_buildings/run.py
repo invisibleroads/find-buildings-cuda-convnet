@@ -49,7 +49,7 @@ def schedule(
         summary = {'preview_image_names': []}
         for image_index, image_path in enumerate(sorted(
                 glob(join(result.target_folder, 'preview*.tif')))):
-            run(target_folder, image_path, classifier_name, is_preview)
+            run(target_folder, image_path, classifier_name, is_preview=True)
 
             preview_image_path = join(target_folder, 'preview.jpg')
             preview_image_name = splitext(basename(image_path))[0] + '.jpg'
@@ -58,7 +58,8 @@ def schedule(
             summary['preview_image_names'].append(preview_image_name)
     else:
         image_path = join(result.target_folder, 'image.tif')
-        summary = run(target_folder, image_path, classifier_name, is_preview)
+        summary = run(
+            target_folder, image_path, classifier_name, is_preview=False)
 
     queue.save(target_result_id, summary)
     open(p53_path, 'wt')

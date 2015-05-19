@@ -16,14 +16,24 @@
 
   <div id=source_url_question class='form-group hidden'>
     <input id=source_url type=text class=form-control value='http://backpack.invisibleroads.com/count-buildings/images/myanmar4-201200,2314700,201500,2314400.tif'>
-    <button type="button" class="btn btn-primary" id=import_source_url>Import satellite image</button>
+    <button type="button" class="btn btn-primary" id=import_source_url>
+      Import satellite image
+    </button>
+    % if not user:
+      (requires login)
+    % endif
   </div>
 
   <div id=source_file_question class=hidden>
     <div class='btn btn-primary fileinput-button'>
-      <span>Upload satellite image</span>
+      <span>
+        Upload satellite image
+      </span>
       <input id=source_file type=file>
     </div>
+    % if not user:
+      (requires login)
+    % endif
   </div>
 
   <table id=geoimage_properties class='table hidden'>
@@ -43,7 +53,7 @@
   </div>
 
   <button id=preview type=button class='btn btn-info hidden'>
-    Preview 
+    Preview building locations in a part of the image
   </button>
 
   <button id=check type=button class='btn btn-info hidden'>
@@ -51,7 +61,7 @@
   </button>
 
   <button id=run type=button class='btn btn-primary hidden'>
-    Get building locations as a shapefile for <span id=price>free</span>
+    Get building locations as a shapefile over the whole image for <span id=price>free</span>
   </button>
 
   <button id=credit type=button class='btn btn-danger hidden'>
