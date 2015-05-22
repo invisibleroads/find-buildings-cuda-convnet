@@ -2,11 +2,14 @@ require.config({
   paths: {
     base: static_url + 'base',
     'stripe.checkout': [
-      'https://checkout.stripe.com/checkout'
+      '//checkout.stripe.com/checkout'
+    ],
+    'select2': [
+      '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min'
     ]
   }
 });
-require(['base', 'stripe.checkout'], function(base) {
+require(['base', 'stripe.checkout', 'select2'], function(base) {
   require(['cc'], function(cc) {
 
     function reset() {
@@ -19,6 +22,9 @@ require(['base', 'stripe.checkout'], function(base) {
     }
 
     $('#source_method_url').click(function() {
+      $('#geoimage_properties').hide();
+      $('#geoimage_preview').hide();
+
       $('#source_url_question').reveal();
       $('#source_url').prop('disabled', false);
       $('#source_file_question').hide();
@@ -30,6 +36,7 @@ require(['base', 'stripe.checkout'], function(base) {
       $('#geoimage_preview').hide();
 
       $('#source_url_question').hide();
+      $('#source_file').prop('disabled', false);
       $('#source_file_question').reveal();
       reset();
     });
@@ -39,7 +46,7 @@ require(['base', 'stripe.checkout'], function(base) {
       $('#proj4').html(summary.proj4);
       $('#band_count').html(summary.band_count);
       $('#pixel_dimensions').html(summary.pixel_dimensions[0] + 'x' + summary.pixel_dimensions[0] + ' pixels');
-      $('#metric_dimensions').html(summary.metric_dimensions[0] + 'x' + summary.metric_dimensions[1] + ' meters');
+      $('#metric_dimensions').html((summary.metric_dimensions[0]).toFixed(0) + 'x' + (summary.metric_dimensions[1]).toFixed(0) + ' meters');
       $('#geoimage_properties').data('result_id', result.id).reveal();
 
       $('#geoimage_preview').html('');
@@ -57,7 +64,16 @@ require(['base', 'stripe.checkout'], function(base) {
     }
 
     function process_import_geoimage_error(result) {
-      $('#feedback').html('The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.').reveal();
+      var message;
+      switch(result.summary.exception_arguments[0]) {
+        case 'invalid_url':
+          message = 'The URL does not exist or has restricted permissions.';
+          break;
+        case 'unsupported_format':
+          message = 'The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.';
+          break;
+      }
+      $('#feedback').html(message).reveal();
     }
 
     $('#import_source_url').click(function() {
@@ -115,6 +131,7 @@ require(['base', 'stripe.checkout'], function(base) {
     $('#run').click(function() {
       $('#preview').prop('disabled', true);
       $('#run').prop('disabled', true);
+      $('#credit').hide();
       cc.post(run_url, {
         source_geoimage: $('#geoimage_properties').data('result_id'),
         classifier_name: $('#classifier_name').val()
@@ -134,6 +151,7 @@ require(['base', 'stripe.checkout'], function(base) {
       });
     });
 
+    $('#source_url').select2({tags: true});
     $('#source_method_question').reveal();
 
   });

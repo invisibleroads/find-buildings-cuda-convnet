@@ -133,8 +133,6 @@ def get_actual_count(image, points_path, pixel_bounds):
 
 def save_pixel_centers(target_path, pixel_centers, image):
     projected_centers = [image.to_projected_xy(_) for _ in pixel_centers]
-    if not projected_centers:
-        return
     geometryIO.save_points(target_path, image.proj4, projected_centers)
 
 

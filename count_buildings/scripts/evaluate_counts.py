@@ -1,6 +1,9 @@
+import logging
+import numpy as np
 import sys
+from collections import OrderedDict
 from crosscompute.libraries import script
-from geometryIO import load_points
+from geometryIO import GeometryError, load_points
 
 from ..libraries.satellite_image import SatelliteImage
 from ..libraries.kdtree import KDTree
@@ -28,8 +31,16 @@ def run(
         maximum_metric_radius):
     image = SatelliteImage(image_path)
     assert '+units=m' in image.proj4
-    old_locations = load_points(points_path, targetProj4=image.proj4)[1]
-    new_locations = load_points(counts_path, targetProj4=image.proj4)[1]
+    try:
+        old_locations = load_points(points_path, targetProj4=image.proj4)[1]
+    except GeometryError:
+        logging.warn('could not load points_path=%s' % points_path)
+        old_locations = []
+    try:
+        new_locations = load_points(counts_path, targetProj4=image.proj4)[1]
+    except GeometryError:
+        logging.warn('could not load counts_path=%s' % counts_path)
+        new_locations = []
 
     old_locations = select_projected_xys(old_locations, image)
     new_locations = select_projected_xys(new_locations, image)
@@ -37,26 +48,33 @@ def run(
     old_location_count = len(old_locations)
     new_location_count = len(new_locations)
 
-    old_tree = KDTree(old_locations)
-    old_indices = old_tree.query(
-        new_locations, maximum_distance=maximum_metric_radius)[1]
+    if old_location_count == 0 or new_location_count == 0:
+        old_indices = []
+    else:
+        old_indices = KDTree(old_locations).query(
+            new_locations, maximum_distance=maximum_metric_radius)[1]
 
-    true_positive_count = len(old_indices)
+    true_positive_count = len(set(old_indices))
     false_positive_count = new_location_count - true_positive_count
     false_negative_count = old_location_count - true_positive_count
 
-    precision = true_positive_count / float(new_location_count)
-    recall = true_positive_count / float(old_location_count)
-
-    return {
-        'old_location_count': old_location_count,
-        'new_location_count': new_location_count,
-        'true_positive_count': true_positive_count,
-        'false_positive_count': false_positive_count,
-        'false_negative_count': false_negative_count,
-        'precision': precision,
-        'recall': recall,
-    }
+    try:
+        precision = true_positive_count / float(new_location_count)
+    except ZeroDivisionError:
+        precision = np.inf
+    try:
+        recall = true_positive_count / float(old_location_count)
+    except ZeroDivisionError:
+        recall = np.inf
+    return OrderedDict([
+        ('actual_count', old_location_count),
+        ('estimated_count', new_location_count),
+        ('true_positive_count', true_positive_count),
+        ('false_positive_count', false_positive_count),
+        ('false_negative_count', false_negative_count),
+        ('precision', precision),
+        ('recall', recall),
+    ])
 
 
 def select_projected_xys(projected_xys, image):
