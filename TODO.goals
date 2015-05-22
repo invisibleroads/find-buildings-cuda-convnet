@@ -1,9 +1,7 @@
 Consider integrating save_geoimage_from_pixel_frame
-Fix normalize_image
-    Choose source_min and source_max that are not the extremes
-
-Implement get_preview_from_points
-    Check sides to make sure we do not have an edge unless it is the last one
+Consider implementing image.projected_frame or image.projected_bounds
+Consider implementing image.select_pixel_xys
+Consider implementing image.select_projected_xys
 
 Normalize images in train_classifier
 Add source_marker_folder to get_marker_from_batches
@@ -21,5 +19,5 @@ Improve development classifier
     Use minimum and maximum to save array
 Update interface
     Let them see building examples with each classifier
-    Show map of results
-    Show picture of results
+
+Rename points to locations

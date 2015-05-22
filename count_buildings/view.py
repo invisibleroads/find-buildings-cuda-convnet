@@ -76,7 +76,7 @@ def count_buildings_(request):
     target_name = '%s-%s' % (classifier_name, source_geoimage.name)
     return queue.schedule(
         request, queue_type, run, target_name, price,
-        source_geoimage.id, classifier_name, is_preview)
+        source_geoimage.id, classifier_name, is_preview=is_preview)
 
 
 def SourceResult(user_id):

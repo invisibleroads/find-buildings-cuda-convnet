@@ -14,8 +14,12 @@ ENTRY_POINTS = """\
 [paste.app_factory]
 main = count_buildings:main
 [console_scripts]
+train_classifier =\
+    count_buildings.scripts.train_classifier:start
 count_buildings = \
     count_buildings.run:start
+evaluate_counts = \
+    count_buildings.scripts.evaluate_counts:start
 get_tiles_from_image =\
     count_buildings.scripts.get_tiles_from_image:start
 get_examples_from_points =\
@@ -40,8 +44,6 @@ get_preview_from_points =\
     count_buildings.scripts.get_preview_from_points:start
 normalize_image =\
     count_buildings.scripts.normalize_image:start
-train_classifier =\
-    count_buildings.scripts.train_classifier:start
 [crosscompute.tools]
 describe = count_buildings:describe
 include = count_buildings:includeme
@@ -50,7 +52,7 @@ include = count_buildings:includeme
 
 setup(
     name='count_buildings',
-    version='0.3',
+    version='0.4',
     description='count_buildings',
     long_description=DESCRIPTION,
     classifiers=[

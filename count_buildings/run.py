@@ -46,15 +46,22 @@ def schedule(
     result.download()
 
     if is_preview:
-        summary = {'preview_image_names': []}
+        summary = {'preview_image_names': [], 'estimated_counts': []}
         for image_index, image_path in enumerate(sorted(
                 glob(join(result.target_folder, 'preview*.tif')))):
-            run(target_folder, image_path, classifier_name, is_preview=True)
+            s = run(target_folder, image_path, classifier_name, is_preview=True)
+            summary['estimated_counts'].append(s['estimated_count'])
 
-            preview_image_path = join(target_folder, 'preview.jpg')
             preview_image_name = splitext(basename(image_path))[0] + '.jpg'
-            shutil.move(
-                preview_image_path, join(target_folder, preview_image_name))
+            target_preview_image_path = join(target_folder, preview_image_name)
+            try:
+                shutil.move(
+                    join(target_folder, 'preview.jpg'),
+                    target_preview_image_path)
+            except IOError:
+                shutil.copy(
+                    join(result.target_folder, preview_image_name),
+                    target_preview_image_path)
             summary['preview_image_names'].append(preview_image_name)
     else:
         image_path = join(result.target_folder, 'image.tif')
@@ -81,7 +88,7 @@ def run(target_folder, image_path, classifier_name, is_preview=False):
 
     return dict(
         estimated_count=estimated_count,
-        preview_image_names=['preview.jpg'])
+        preview_image_name='preview.jpg')
 
 
 def price(area_in_square_meters):

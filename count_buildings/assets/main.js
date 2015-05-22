@@ -1,19 +1,21 @@
 require.config({
   paths: {
-    base: static_url + 'base'
+    base: static_url + 'base',
+    'stripe.checkout': [
+      'https://checkout.stripe.com/checkout'
+    ]
   }
 });
-require(['base'], function(base) {
+require(['base', 'stripe.checkout'], function(base) {
   require(['cc'], function(cc) {
 
     function reset() {
       $('#import_source_url').prop('disabled', false);
       $('#geoimage_properties').hide();
+      $('#geoimage_preview').hide();
       $('#classifier_name_question').hide();
       $('#results > *').hide();
-      $('#check').hide();
       $('#run').hide();
-      $('#acknowledgments').hide();
     }
 
     $('#source_method_url').click(function() {
@@ -41,14 +43,15 @@ require(['base'], function(base) {
       $('#geoimage_properties').data('result_id', result.id).reveal();
 
       $('#geoimage_preview').html('');
-      for (var i = 0; i < result.summary.preview_image_names.length; i++) {
-        $("#geoimage_preview").append(
-          "<img id=geoimage_preview" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
+      for (var i = 0; i < summary.preview_image_names.length; i++) {
+        $('#geoimage_preview').append('<p><img id=geoimage_preview' + i + ' src=/download/' + result.id + '/' + summary.preview_image_names[i] + '></p>');
       }
+      var area_in_square_km = (summary.metric_dimensions[0] / 1000) * (summary.metric_dimensions[1] / 1000);
       $('#geoimage_preview' + (i - 1)).load(function() {
         $('#classifier_name_question').reveal();
         $('#preview').reveal();
-        $('#check').prop('disabled', false).reveal()
+        $('#price').html('$' + (area_in_square_km * 0.5).toFixed(2));
+        $('#run').prop('disabled', false).reveal();
       });
       $('#geoimage_preview').reveal();
     }
@@ -72,6 +75,9 @@ require(['base'], function(base) {
     });
 
     $('#source_file').make_upload_button({
+    }).on('uploading', function(e) {
+      reset();
+      $('#feedback').html('Uploading satellite image (this could take some time)...').reveal();
     }).on('uploaded', function(e, upload_ids) {
       reset();
       cc.post(import_geoimage_url, {
@@ -81,22 +87,9 @@ require(['base'], function(base) {
       }, process_import_geoimage, process_import_geoimage_error);
     });
 
-    $('#check').click(function() {
-      $('#check').prop('disabled', true);
-      $.post(run_url, {
-        check: 1,
-        source_geoimage: $('#geoimage_properties').data('result_id'),
-        classifier_name: $('#classifier_name').val()
-      }, function(data) {
-        $('#price').html('$' + (data.price / 100).toFixed(2));
-        $('#run').reveal();
-      });
-    });
-
     $('#preview').click(function() {
       $('#preview').prop('disabled', true);
       $('#run').prop('disabled', true);
-      $('#target_table').html('').hide();
       cc.post(run_url, {
         source_geoimage: $('#geoimage_properties').data('result_id'),
         classifier_name: $('#classifier_name').val(),
@@ -106,17 +99,14 @@ require(['base'], function(base) {
       }, function(result) {
         var summary = result.summary;
 
-        $('#preview_images').html('');
-        for (var i = 0; i < result.summary.preview_image_names.length; i++) {
-          $("#preview_images").append(
-            "<img id=preview_image" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
+        $('#preview_images').html('').reveal();
+        for (var i = 0; i < summary.preview_image_names.length; i++) {
+          $('#preview_images').append("<p><img id=preview_image" + i + " src=/download/" + result.id + "/" + summary.preview_image_names[i] + "><br>Estimated count in the above image = " + summary.estimated_counts[i] + "</p>");
         }
         $('#preview_image' + (i - 1)).load(function() {
-          $('#acknowledgments').reveal();
+          $('#run').reveal();
         });
-        $('#preview_images').reveal();
 
-        $('#target_table').data('result_id', result.id).reveal();
         $('#preview').prop('disabled', false);
         $('#run').prop('disabled', false);
       });
@@ -125,7 +115,6 @@ require(['base'], function(base) {
     $('#run').click(function() {
       $('#preview').prop('disabled', true);
       $('#run').prop('disabled', true);
-      $('#target_table').html('');
       cc.post(run_url, {
         source_geoimage: $('#geoimage_properties').data('result_id'),
         classifier_name: $('#classifier_name').val()
@@ -134,31 +123,15 @@ require(['base'], function(base) {
         end: true
       }, function(result) {
         var summary = result.summary;
-        $('#target_table').append(
-            '<tr><td>Estimated count</td><td>' + summary.estimated_count + '</td></tr>');
 
-        $('#preview_images').html('');
-        for (var i = 0; i < result.summary.preview_image_names.length; i++) {
-          $("#preview_images").append(
-            "<img id=preview_image" + i + " src=/download/" + result.id + "/" + result.summary.preview_image_names[i] + ">");
-        }
-        $('#preview_image' + (i - 1)).load(function() {
-          $('#acknowledgments').reveal();
+        $('#preview_images').html('<p><img id=preview_image src=/download/' + result.id + '/' + summary.preview_image_name + '><br>Estimated count over the whole image = ' + summary.estimated_count + '</p>').reveal();
+        $('#preview_image').load(function() {
+          $('.download').reveal();
         });
-        $('#preview_images').reveal();
 
-        $('#target_table').data('result_id', result.id).reveal();
-        $('#preview').prop('disabled', false);
-        $('#run').prop('disabled', false);
+        $('#preview').prop('disabled', false).hide();
+        $('#run').prop('disabled', false).hide();
       });
-    });
-
-    $('#credit').click(function() {
-      if (!window.user_id) {
-        window.location = login_url;
-        return;
-      };
-      window.location = '/manage';
     });
 
     $('#source_method_question').reveal();

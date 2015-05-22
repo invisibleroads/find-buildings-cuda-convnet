@@ -10,8 +10,8 @@ export OVERLAP_METRIC_DIMENSIONS=8x8
 export ARRAY_SHAPE=32,32,4
 export ACTUAL_RADIUS=8
 export RANDOM_SEED=crosscompute
-export BATCH_SIZE=5k
-export INTERVAL_LENGTH=5000
+export BATCH_SIZE=10k
+export INTERVAL_LENGTH=100000
 
 normalize_image \
     --target_folder $TEMPORARY_FOLDER/normalize_image \
