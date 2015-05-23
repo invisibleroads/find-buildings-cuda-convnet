@@ -69,7 +69,7 @@ def count_buildings_(request):
         request.response.status_code = 400
         return {'errors': dict(price=price, balance=balance)}
 
-    if not is_preview and area_in_square_meters > 1000000:
+    if not is_preview and area_in_square_meters > 5000000:
         queue_type = 'gpu_large'
     else:
         queue_type = 'gpu_small'
