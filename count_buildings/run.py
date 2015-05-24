@@ -50,7 +50,8 @@ def schedule(
         summary = {'preview_image_names': [], 'estimated_counts': []}
         for image_index, image_path in enumerate(sorted(
                 glob(join(result.target_folder, 'preview*.tif')))):
-            s = run(target_folder, image_path, classifier_name, is_preview=True)
+            s = run(
+                target_folder, image_path, classifier_name, is_preview=True)
             summary['estimated_counts'].append(s['estimated_count'])
 
             preview_image_name = splitext(basename(image_path))[0] + '.jpg'
@@ -92,7 +93,10 @@ def run(target_folder, image_path, classifier_name, is_preview=False):
     return dict(
         estimated_count=estimated_count,
         preview_image_name='preview.jpg',
-        execution_time_in_seconds=time.time() - start_time)
+        execution_time_in_seconds=time.time() - start_time,
+        execution_environment={
+            'gpus': subprocess.check_output(['nvidia-smi', '-L']).splitlines(),
+        })
 
 
 def price(area_in_square_meters):
