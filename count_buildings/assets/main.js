@@ -20,7 +20,9 @@ require(['base', 'stripe.checkout', 'select2'], function(base) {
       $('#results > *').hide();
       $('#run').hide();
     }
-
+    $('#source_method_url_link').click(function() {
+      $('#source_method_url').click();
+    });
     $('#source_method_url').click(function() {
       $('#geoimage_properties').hide();
       $('#geoimage_preview').hide();

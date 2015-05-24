@@ -25,7 +25,7 @@
   </div>
 
   <div id=source_url_question class='form-group hidden'>
-    <div><label class=control-label>Please paste a URL or choose an example</label></div>
+    <p><b>Paste the URL</b> of your satellite image</p>
     <select id=source_url class='form-control' style="width: 100%">
       <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif'>http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif</option>
       <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif'>http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif</option>
@@ -51,6 +51,7 @@
   </div>
 
   <div id=source_file_question class=hidden>
+    <p><b>If your image is larger than 500mb</b>, please upload it to <a href="https://www.dropbox.com">Dropbox</a> or <a href="https://drive.google.com">Drive</a>.</p><p>Then you can paste the resulting URL <a id=source_method_url_link style="cursor:pointer">here</a>.</p>
     <span class="btn btn-primary fileinput-button">
       <span>Upload satellite image from my computer</span>
       <input id="source_file" type="file">
