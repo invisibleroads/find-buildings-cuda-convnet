@@ -2,6 +2,7 @@ import pickle
 import shutil
 import subprocess
 import sys
+import time
 from glob import glob
 from os import makedirs, remove
 from os.path import abspath, basename, dirname, expanduser, join, splitext
@@ -73,6 +74,8 @@ def schedule(
 
 
 def run(target_folder, image_path, classifier_name, is_preview=False):
+    start_time = time.time()
+
     classifier_path = join(CLASSIFIER_FOLDER, classifier_name)
     subprocess.call([
         'bash', SCRIPT_PATH, target_folder, classifier_path, image_path])
@@ -88,7 +91,8 @@ def run(target_folder, image_path, classifier_name, is_preview=False):
 
     return dict(
         estimated_count=estimated_count,
-        preview_image_name='preview.jpg')
+        preview_image_name='preview.jpg',
+        execution_time_in_seconds=time.time() - start_time)
 
 
 def price(area_in_square_meters):
