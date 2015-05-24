@@ -27,34 +27,19 @@
   <div id=source_url_question class='form-group hidden'>
     <div><label class=control-label>Please paste a URL or choose an example</label></div>
     <select id=source_url class='form-control' style="width: 100%">
-      <option value='http://backpack.invisibleroads.com/count-buildings/ethiopia0-0.tif'>
-        http://backpack.invisibleroads.com/count-buildings/ethiopia0-0.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/ghana0-5.tif'>
-        http://backpack.invisibleroads.com/count-buildings/ghana0-5.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/kenya0-0.tif'>
-        http://backpack.invisibleroads.com/count-buildings/kenya0-0.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/malawi0-7.tif'>
-        http://backpack.invisibleroads.com/count-buildings/malawi0-7.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/mali0-4.tif'>
-        http://backpack.invisibleroads.com/count-buildings/mali0-4.tif</option>
-
-      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif'>
-        http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif'>
-        http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif</option>
-
-      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar0-8.tif'>
-        http://backpack.invisibleroads.com/count-buildings/myanmar0-8.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/nigeria0-3.tif'>
-        http://backpack.invisibleroads.com/count-buildings/nigeria0-3.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/rwanda0-8.tif'>
-        http://backpack.invisibleroads.com/count-buildings/rwanda0-8.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/senegal0-7.tif'>
-        http://backpack.invisibleroads.com/count-buildings/senegal0-7.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/tanzania0-7.tif'>
-        http://backpack.invisibleroads.com/count-buildings/tanzania0-7.tif</option>
-      <option value='http://backpack.invisibleroads.com/count-buildings/uganda0-9.tif'>
-        http://backpack.invisibleroads.com/count-buildings/uganda0-9.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif'>http://backpack.invisibleroads.com/count-buildings/myanmar4-201200,2314700,201500,2314400.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif'>http://backpack.invisibleroads.com/count-buildings/myanmar4-204500,2314400,205500,2313800.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/ethiopia0-0.tif'>http://backpack.invisibleroads.com/count-buildings/ethiopia0-0.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/ghana0-5.tif'>http://backpack.invisibleroads.com/count-buildings/ghana0-5.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/kenya0-0.tif'>http://backpack.invisibleroads.com/count-buildings/kenya0-0.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/malawi0-7.tif'>http://backpack.invisibleroads.com/count-buildings/malawi0-7.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/mali0-4.tif'>http://backpack.invisibleroads.com/count-buildings/mali0-4.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/myanmar0-8.tif'>http://backpack.invisibleroads.com/count-buildings/myanmar0-8.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/nigeria0-3.tif'>http://backpack.invisibleroads.com/count-buildings/nigeria0-3.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/rwanda0-8.tif'>http://backpack.invisibleroads.com/count-buildings/rwanda0-8.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/senegal0-7.tif'>http://backpack.invisibleroads.com/count-buildings/senegal0-7.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/tanzania0-7.tif'>http://backpack.invisibleroads.com/count-buildings/tanzania0-7.tif</option>
+      <option value='http://backpack.invisibleroads.com/count-buildings/uganda0-9.tif'>http://backpack.invisibleroads.com/count-buildings/uganda0-9.tif</option>
     </select>
 
     <button type="button" class="btn btn-primary" id=import_source_url>
