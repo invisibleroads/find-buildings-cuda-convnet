@@ -48,15 +48,27 @@ def run(
     old_location_count = len(old_locations)
     new_location_count = len(new_locations)
 
-    if old_location_count == 0 or new_location_count == 0:
-        old_indices = []
-    else:
-        old_indices = KDTree(old_locations).query(
-            new_locations, maximum_distance=maximum_metric_radius)[1]
+    true_positive_count = 0
+    false_positive_count = 0
+    false_negative_count = 0
 
-    true_positive_count = len(set(old_indices))
-    false_positive_count = new_location_count - true_positive_count
-    false_negative_count = old_location_count - true_positive_count
+    if old_locations:
+        old_tree = KDTree(old_locations)
+        for new_location in new_locations:
+            old_indices = old_tree.query(
+                new_location, maximum_distance=maximum_metric_radius)[1]
+            if not len(old_indices):
+                false_positive_count += 1
+            else:
+                true_positive_count += 1
+
+    if new_locations:
+        new_tree = KDTree(new_locations)
+        for old_location in old_locations:
+            new_indices = new_tree.query(
+                old_location, maximum_distance=maximum_metric_radius)[1]
+            if not len(new_indices):
+                false_negative_count += 1
 
     try:
         precision = true_positive_count / float(new_location_count)

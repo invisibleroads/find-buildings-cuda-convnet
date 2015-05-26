@@ -71,6 +71,9 @@ require(['base', 'stripe.checkout', 'select2'], function(base) {
         case 'invalid_url':
           message = 'The URL does not exist or has restricted permissions.';
           break;
+        case 'dropbox_limit':
+          message = 'It looks like you hit <a href="https://www.dropbox.com/help/4204" target="_blank">bandwidth limits for Dropbox</a>.';
+          break;
         case 'unsupported_format':
           message = 'The file format you uploaded is not supported. Please make sure that you upload a GeoTIFF satellite image. The image should ideally contain four bands (red, green, blue, near-infrared) and have a resolution between 0.5 meters per pixel and 0.6 meters per pixel.';
           break;
