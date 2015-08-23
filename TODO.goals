@@ -1,8 +1,9 @@
+# America/New_York 8/22/2015
 Consider integrating save_geoimage_from_pixel_frame
 Consider implementing image.projected_frame or image.projected_bounds
 Consider implementing image.select_pixel_xys
 Consider implementing image.select_projected_xys
-
+ 
 Normalize images in train_classifier
 Add source_marker_folder to get_marker_from_batches
 Resume automatically if the target folder already has what is needed
@@ -19,5 +20,5 @@ Improve development classifier
     Use minimum and maximum to save array
 Update interface
     Let them see building examples with each classifier
-
+ 
 Rename points to locations
