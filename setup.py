@@ -64,7 +64,7 @@ setup(
     ],
     author='Roy Hyunjin Han',
     author_email='rhh@crosscompute.com',
-    url='https://crosscompute.com/count-buildings',
+    url='https://github.com/crosscompute/count-buildings',
     keywords='web pyramid pylons crosscompute',
     packages=find_packages(),
     include_package_data=True,
