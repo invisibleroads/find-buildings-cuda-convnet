@@ -1,5 +1,9 @@
-Count buildings in satellite image
-==================================
+This project has been deprecated. Please see the following link for the latest work:
+https://crosscompute.com/n/DAyIrX65pdVFri4rUfDntj2NqT219PoC
+
+
+Find settlements using cuda-convnet
+===================================
 Reveal population density.
 
 
