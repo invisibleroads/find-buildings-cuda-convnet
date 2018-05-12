@@ -16,9 +16,9 @@ main = count_buildings:main
 [console_scripts]
 train_classifier =\
     count_buildings.scripts.train_classifier:start
-count_buildings = \
+count_buildings =\
     count_buildings.run:start
-evaluate_counts = \
+evaluate_counts =\
     count_buildings.scripts.evaluate_counts:start
 get_tiles_from_image =\
     count_buildings.scripts.get_tiles_from_image:start
@@ -64,7 +64,7 @@ setup(
     ],
     author='Roy Hyunjin Han',
     author_email='rhh@crosscompute.com',
-    url='https://github.com/invisibleroads/find-settlements-cuda-convnet',
+    url='https://github.com/invisibleroads/find-buildings-cuda-convnet',
     keywords='web pyramid pylons crosscompute',
     packages=find_packages(),
     include_package_data=True,
