@@ -1,6 +1,8 @@
 This project has been deprecated. Please see the following link for the latest work:
 https://crosscompute.com/n/DAyIrX65pdVFri4rUfDntj2NqT219PoC
 
+This project builds off earlier work:
+https://github.com/invisibleroads/find-buildings-gblearn2
 
 Find buildings using cuda-convnet
 =================================
